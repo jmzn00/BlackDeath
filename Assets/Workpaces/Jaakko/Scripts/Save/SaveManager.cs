@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 [Serializable]
@@ -8,12 +9,16 @@ public class SaveData
     public string[] InventoryItems;
     public int QuestProgress;
 }
+[Serializable]
+public class GameSaveData
+{
+    public List<ActorSaveData> Actors = new List<ActorSaveData>();
+}
 public class SaveManager : IManager
 {
     private bool m_active;
     private string m_savePath;
     private SaveData m_currentSave;
-    private Player m_player;
 
     public void Update(float dt) 
     {
@@ -32,28 +37,21 @@ public class SaveManager : IManager
         m_active = false;
         return m_active;
     }
+    public SaveData GetSave() 
+    {
+        return m_currentSave;
+    }
     public void Save() 
     {
-        Player player = Services.Get<Player>();
-        if (player == null) 
+        var actorManager = Services.Get<ActorManager>();
+        GameSaveData save = new GameSaveData()
         {
-            Debug.LogError("Player is NULL");
-            return;
-        }
-        m_currentSave = new SaveData()
-        {
-            PlayerPosition = player.transform.position
+            Actors = actorManager.SaveAllActors()
         };
-        try 
-        {
-            string json = JsonUtility.ToJson(m_currentSave, true);
-            File.WriteAllText(m_savePath, json);
-            Debug.Log($"Game Saved to {m_savePath}");
-        }
-        catch (Exception e)
-        {
-            Debug.LogError($"Failed to save game: {e.Message}");
-        }
+        string json = JsonUtility.ToJson(save, true);
+        File.WriteAllText(m_savePath, json);
+
+        Debug.Log($"Game Saved To: {m_savePath}");
     }
     public void Load() 
     {
@@ -62,17 +60,13 @@ public class SaveManager : IManager
             Debug.Log("No save found, starting fresh");
             return;
         }
+        
+        string json = File.ReadAllText(m_savePath);
+        GameSaveData save = JsonUtility.FromJson<GameSaveData>(json);
 
-        try 
-        {
-            string json = File.ReadAllText(m_savePath);
-            m_currentSave = JsonUtility.FromJson<SaveData>(json);
-            Debug.Log($"Game loaded from {m_savePath}");            
-        }
-        catch (Exception e) 
-        {
-            Debug.Log($"Failed to load save: {e.Message}");
-        }
-        Services.Get<Player>().Load(m_currentSave);
+        var actorManager = Services.Get<ActorManager>();
+        actorManager.LoadAllActors(save.Actors);
+
+        Debug.Log($"Game Loaded From: {m_savePath}");
     }
 }

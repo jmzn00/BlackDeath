@@ -10,9 +10,10 @@ public class SaveUI : MonoBehaviour
     private void Start()
     {
         m_saveManager = Services.Get<SaveManager>();
+
         m_saveButton.onClick.AddListener(() =>
         {
-            m_saveManager.Save();
+            m_saveManager.Save();    
         });
         m_loadButton.onClick.AddListener(() =>
         {

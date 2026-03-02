@@ -7,6 +7,7 @@ public class GameManager : MonoBehaviour
 
     private InputManager Input;
     private SaveManager Save;
+    private ActorManager Director;
 
     // There Should Be Only One GameManager
     // GameManager Should Be Created In A
@@ -33,15 +34,20 @@ public class GameManager : MonoBehaviour
 
     private void CreateManagers() 
     {
+        Director = new ActorManager();
+        m_managers.Add(Director);
+
         Input = new InputManager();
         m_managers.Add(Input);
 
         Save = new SaveManager();
         m_managers.Add(Save);
 
+
+        Services.Register(Director);
         Services.Register(Input);
-        Services.Register(Save);
-    }
+        Services.Register(Save);        
+    }    
     private void InitManagers() 
     {
         foreach (var m in m_managers)
