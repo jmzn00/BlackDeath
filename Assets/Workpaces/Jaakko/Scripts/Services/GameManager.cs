@@ -3,35 +3,39 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    public static GameManager I;
-    public static InputManager InputManager { get; internal set; }
     private readonly List<IManager> m_managers = new();
 
-    public InputManager Input { get; private set; }
+    private InputManager Input;
+
+    // There Should Be Only One GameManager
+    // GameManager Should Be Created In A
+    // Bootstrap scene before anything else
 
     private void Awake()
     {
-        if (I != null) return;
+        DontDestroyOnLoad(this);
 
-        I = this;
         CreateManagers();
         InitManagers();
     }
-    private void OnDisable()
-    {
-        DisposeManagers();
-    }
     private void OnDestroy()
     {
-        if (I != this) return;
-
-        I = null;        
+        DisposeManagers();
+        Services.Clear();
+    }
+    private void Update()
+    {
+        float dt = Time.deltaTime;
+        for (int i = 0; i < m_managers.Count; i++) 
+            m_managers[i].Update(dt);
     }
 
     private void CreateManagers() 
     {
         Input = new InputManager();
         m_managers.Add(Input);
+
+        Services.Register(Input);
     }
     private void InitManagers() 
     {
