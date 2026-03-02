@@ -16,12 +16,14 @@ public class InputExample : MonoBehaviour
         m_inputActions.Player.Jump.performed += ctx =>
         {
             Debug.LogError("Jump Pressed");
-        };
+        };        
     }
     private void Update()
     {
         var state = m_inputManager.GetInputState();
 
         Debug.Log(state.InputDirection);
+
+
     }
 }

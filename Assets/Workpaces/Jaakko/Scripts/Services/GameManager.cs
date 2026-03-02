@@ -6,6 +6,7 @@ public class GameManager : MonoBehaviour
     private readonly List<IManager> m_managers = new();
 
     private InputManager Input;
+    private SaveManager Save;
 
     // There Should Be Only One GameManager
     // GameManager Should Be Created In A
@@ -35,7 +36,11 @@ public class GameManager : MonoBehaviour
         Input = new InputManager();
         m_managers.Add(Input);
 
+        Save = new SaveManager();
+        m_managers.Add(Save);
+
         Services.Register(Input);
+        Services.Register(Save);
     }
     private void InitManagers() 
     {
