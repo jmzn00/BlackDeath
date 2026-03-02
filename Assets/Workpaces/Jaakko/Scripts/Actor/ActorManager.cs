@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -55,10 +54,10 @@ public class ActorManager : IManager
     }
     public bool Register(IActor actor) 
     {
-        actor.EnsureID();
         if (m_actors.Contains(actor)) 
             return false;
 
+        actor.EnsureID();
         actor.Init();
         m_actors.Add(actor);
         return true;

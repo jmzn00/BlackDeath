@@ -6,6 +6,8 @@ public class SaveUI : MonoBehaviour
     [SerializeField] private Button m_saveButton;
     [SerializeField] private Button m_loadButton;
 
+    [SerializeField] private bool m_loadOnStart = false;
+
     private SaveManager m_saveManager;
     private void Start()
     {
@@ -19,5 +21,10 @@ public class SaveUI : MonoBehaviour
         {
             m_saveManager.Load();
         });
+
+        if (m_loadOnStart) 
+        {
+            m_saveManager.Load();
+        }
     }
 }
