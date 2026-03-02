@@ -6,33 +6,31 @@ public struct InputState
     public Vector2 InputDirection;
 }
 
-public class InputManager : MonoBehaviour
+public class InputManager : IManager
 {
     private InputState m_inputState;
-    public InputState InputState => m_inputState;
-
     private InputSystem_Actions m_inputActions;
     public InputSystem_Actions InputActions => m_inputActions;
 
-    public static InputManager I;
-
-    private void Awake()
+    public ref InputState GetInputState() 
     {
-        if (I != this)  return;
-        I = this;
+        return ref m_inputState;
+    }
+
+    public bool Init(GameManager game)
+    {
         m_inputActions = new InputSystem_Actions();
         m_inputActions.Enable();
 
         BindInputs();
+        return true;    
     }
-    private void OnDestroy()
+    public bool Dispose(GameManager game)
     {
-        if (I == this) I = null;
-
         m_inputActions.Disable();
         m_inputActions.Dispose();
+        return true;
     }
-
     private void BindInputs() 
     {
         m_inputActions.Player.Move.performed += ctx =>
@@ -44,7 +42,5 @@ public class InputManager : MonoBehaviour
             m_inputState.JumpPressed = true;
         m_inputActions.Player.Jump.canceled += ctx =>
             m_inputState.JumpPressed = false;
-
-
     }
 }
