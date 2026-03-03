@@ -19,7 +19,7 @@ public class InventoryAdd : Actor
             text.text = item.name;
             button.onClick.AddListener(() =>
             {
-                player.Inventory.TryAddItem(item.ItemID);
+                player.Get<InventoryComponent>().TryAddItem(item.ItemID);
             });
         }
 

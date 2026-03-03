@@ -7,7 +7,7 @@ public class ActorManager : IManager
 
     private List<IActor> m_actors;
 
-    private Actor m_player;
+    private Actor m_player = null;
     public Actor Player => m_player;
 
     private GameManager m_game;
@@ -15,11 +15,6 @@ public class ActorManager : IManager
     public ActorManager(GameManager game) 
     {
         m_game = game;
-    }
-
-    public void AddPlayer(Actor actor) 
-    {
-        m_player = actor;
     }
     public List<ActorSaveData> SaveAllActors() 
     {
@@ -50,7 +45,7 @@ public class ActorManager : IManager
     {
         m_actors = new List<IActor>();
         IActor[] actorsInScene = GameObject.
-            FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
+            FindObjectsByType<Actor>(FindObjectsSortMode.None)
             .OfType<IActor>().ToArray();
         foreach (var actor in actorsInScene)
             Register(actor, m_game);

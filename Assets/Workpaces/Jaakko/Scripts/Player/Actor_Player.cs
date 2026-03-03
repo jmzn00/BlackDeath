@@ -4,8 +4,19 @@ public class Actor_Player : Actor
 {
     public override void Init(GameManager game)
     {
-        ActorManager actorManager = game.Resolve<ActorManager>();
-        actorManager.AddPlayer(this);
-        base.Init(game);
+        AddComponent<HealthComponent>();
+        AddComponent<InventoryComponent>();
+
+        base.Init(game);        
+        UIController uiController = FindFirstObjectByType<UIController>();
+        if (uiController != null)
+        {
+            uiController.Init(this);
+            Debug.Log("UI Controller initialized for player");
+        }
+        else
+        {
+            Debug.LogError("UI Controller not found in scene");
+        }
     }
 }

@@ -14,6 +14,10 @@ public class InventoryComponent : MonoBehaviour, IActorComponent
         m_itemManager = game.Resolve<ItemManager>();
         return true;
     }
+    public void OnActorComponentsInitialized(Actor actor)
+    {
+        // Subscribe to health changes or other events here
+    }
     public bool Dispose() 
     {
         return true;

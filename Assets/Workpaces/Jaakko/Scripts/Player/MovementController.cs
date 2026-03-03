@@ -26,6 +26,10 @@ public class MovementController : MonoBehaviour, IActorComponent
         m_rigidBody = GetComponent<Rigidbody>();
         return true;
     }
+    public void OnActorComponentsInitialized(Actor actor)
+    {
+        // Subscribe to health changes or other events here
+    }
     public bool Dispose() 
     {
         return true;

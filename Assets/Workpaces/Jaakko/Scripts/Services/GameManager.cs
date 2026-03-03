@@ -7,16 +7,6 @@ public class GameManager : IManager
     private Container m_container;
     private List<IManager> m_managers = new();
 
-    private InputManager m_inputManager;
-    public InputManager Input => m_inputManager;
-    private SaveManager m_saveManager;
-    public SaveManager Save => m_saveManager;
-
-    private ActorManager m_actorManager;
-    public ActorManager Director => m_actorManager;
-
-    private ItemManager m_itemManager;
-    public ItemManager ItemManager => m_itemManager;
     public bool Init() 
     {
         m_container = new Container();
