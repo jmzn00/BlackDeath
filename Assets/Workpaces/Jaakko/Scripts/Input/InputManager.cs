@@ -12,6 +12,10 @@ public class InputManager : IManager
     private InputSystem_Actions m_inputActions;
     public InputSystem_Actions InputActions => m_inputActions;
 
+    public InputManager() 
+    {
+        
+    }
     public ref InputState GetInputState() 
     {
         return ref m_inputState;
@@ -27,21 +31,24 @@ public class InputManager : IManager
         m_inputState.JumpHeld =
             m_inputActions.Player.Jump.IsPressed();
     }
+    public void OnManagersInitialzied()
+    {
 
-    public bool Init(GameManager game)
+    }
+    public bool Init()
     {
         m_inputActions = new InputSystem_Actions();
         m_inputActions.Enable();
         m_active = true;        
         
-        return m_active;    
+        return true;    
     }
-    public bool Dispose(GameManager game)
+    public bool Dispose()
     {
         m_active = false;
 
         m_inputActions.Disable();
         m_inputActions.Dispose();        
-        return m_active;
+        return true;
     }   
 }

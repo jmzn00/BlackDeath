@@ -7,8 +7,23 @@ public class ActorManager : IManager
 
     private List<IActor> m_actors;
 
+    private Actor m_player;
+    public Actor Player => m_player;
+
+    private GameManager m_game;
+
+    public ActorManager(GameManager game) 
+    {
+        m_game = game;
+    }
+
+    public void AddPlayer(Actor actor) 
+    {
+        m_player = actor;
+    }
     public List<ActorSaveData> SaveAllActors() 
     {
+        // slow
         return m_actors.Select(actor => actor.Save()).ToList();
     }
     public void LoadAllActors(List<ActorSaveData> actorDataList) 
@@ -18,7 +33,7 @@ public class ActorManager : IManager
             IActor actor = m_actors.FirstOrDefault(a => a.ActorID == data.ActorID);
             if (actor != null) 
             {
-                actor.Load(data);
+                actor.LoadData(data);
             }
             else 
             {
@@ -26,19 +41,29 @@ public class ActorManager : IManager
             }
         }
     }
-    public bool Init(GameManager game) 
+    public bool Init() 
     {        
         m_active = true;
+        return true;
+    }
+    public void OnManagersInitialzied() 
+    {
         m_actors = new List<IActor>();
         IActor[] actorsInScene = GameObject.
             FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
             .OfType<IActor>().ToArray();
         foreach (var actor in actorsInScene)
-            Register(actor);
+            Register(actor, m_game);
 
-        return m_active;
+        m_player = m_actors.OfType<Actor>()
+            .FirstOrDefault(a => a.CompareTag("Player"));
+        if (m_player == null)
+            Debug.LogError("Player Actor not found in scene");
+
+        foreach (var a in m_actors)
+            a.Init(m_game);
     }
-    public bool Dispose(GameManager game) 
+    public bool Dispose() 
     {
         m_active = false;
 
@@ -46,19 +71,18 @@ public class ActorManager : IManager
         {
             Unregister(a);
         }
-        return m_active;
+        return true;
     }
     public void Update(float dt) 
     {
         if (!m_active) return;
     }
-    public bool Register(IActor actor) 
+    public bool Register(IActor actor, GameManager game) 
     {
         if (m_actors.Contains(actor)) 
             return false;
 
         actor.EnsureID();
-        actor.Init();
         m_actors.Add(actor);
         return true;
     }

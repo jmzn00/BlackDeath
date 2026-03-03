@@ -2,12 +2,11 @@ using UnityEngine;
 
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(MovementController))]
-[RequireComponent(typeof(SpriteRenderer))]
 public class AnimationController : MonoBehaviour
 {
     private Animator m_animator;
     private MovementController m_movementController;
-    private SpriteRenderer m_spriteRenderer;
+    [SerializeField] private SpriteRenderer m_spriteRenderer;
 
     [SerializeField] private AnimationClip m_idleAnim;
     [SerializeField] private AnimationClip m_runAnim;
@@ -16,7 +15,6 @@ public class AnimationController : MonoBehaviour
     {
         m_animator = GetComponent<Animator>();
         m_movementController = GetComponent<MovementController>();
-        m_spriteRenderer = GetComponent<SpriteRenderer>();
 
         m_movementController.OnMove += OnMove;
     }

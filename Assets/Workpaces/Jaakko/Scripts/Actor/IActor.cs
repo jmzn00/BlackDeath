@@ -6,16 +6,17 @@ public class ActorSaveData
 {
     public string ActorID;
     public Vector3 Position;
-    public bool IsDead;
+
     public string[] InventoryItems;
+    public float Health;
 }
 
 public interface IActor
 {
     string ActorID { get; }
-    void Init();
+    void Init(GameManager game);
     void Dispose();
-    void Load(ActorSaveData data);
+    void LoadData(ActorSaveData data);
     void EnsureID();
     ActorSaveData Save();        
 }

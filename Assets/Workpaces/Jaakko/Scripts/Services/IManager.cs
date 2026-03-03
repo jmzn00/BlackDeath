@@ -1,6 +1,7 @@
 public interface IManager
 {
-    bool Init(GameManager manager);
-    bool Dispose(GameManager manager);
+    bool Init();
+    void OnManagersInitialzied();
+    bool Dispose();
     void Update(float dt);
 }

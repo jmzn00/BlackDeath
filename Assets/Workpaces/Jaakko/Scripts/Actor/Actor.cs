@@ -1,6 +1,6 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 
 [ExecuteAlways]
 public class Actor : MonoBehaviour, IActor
@@ -8,7 +8,12 @@ public class Actor : MonoBehaviour, IActor
     public string ActorID => m_actorID;
     [SerializeField] private string m_actorID;
 
-    public event Action<bool> OnActorInit;
+    private List<IActorComponent> m_actorComponents;
+    private InventoryComponent m_inventoryComponent;
+    public InventoryComponent Inventory => m_inventoryComponent;
+
+    private HealthComponent m_healthComponent;
+    public HealthComponent Health => m_healthComponent;
 
 #if UNITY_EDITOR
     private void OnValidate()
@@ -42,25 +47,61 @@ public class Actor : MonoBehaviour, IActor
         if (string.IsNullOrEmpty(m_actorID) || IsDuplicateID())
             m_actorID = Guid.NewGuid().ToString();
     }
-    public virtual ActorSaveData Save() 
+    public ActorSaveData Save() 
     {
-        return new ActorSaveData()
+        ActorSaveData data = new ActorSaveData()
         {
-            ActorID = ActorID,
-            Position = transform.position
-        };
+            ActorID = ActorID
+        };  
+        SaveActorComponentData(data);
+        return data;
     }
-    public virtual void Load(ActorSaveData data)
+    public virtual void LoadData(ActorSaveData data)
     {
         m_actorID = data.ActorID;
         transform.position = data.Position;
+
+        LoadActorComponentData(data);
     }
-    public virtual void Init() 
-    {
-        OnActorInit?.Invoke(true);
+    public virtual void Init(GameManager game) 
+    {       
+        m_inventoryComponent = gameObject.AddComponent<InventoryComponent>();
+        m_healthComponent = gameObject.AddComponent<HealthComponent>();
+
+        InitializeActorComponents(game);            
     }
     public virtual void Dispose() 
     {
-        OnActorInit?.Invoke(false);
+        foreach (var component in m_actorComponents) 
+        {
+            component.Dispose();
+        }
+        m_actorComponents?.Clear();
     }    
+    private void InitializeActorComponents(GameManager game) 
+    {
+        m_actorComponents = new List<IActorComponent>(GetComponents<IActorComponent>());
+        if (m_actorComponents.Count == 0) return;
+
+        for (int i = 0; i < m_actorComponents.Count; i++) 
+        {
+            m_actorComponents[i].Initialize(game);
+        }
+    }
+    private void LoadActorComponentData(ActorSaveData data) 
+    {
+        if (m_actorComponents.Count == 0) return;
+        for (int i = 0; i < m_actorComponents.Count; i++)
+        {
+            m_actorComponents[i].LoadData(data);
+        }
+    }
+    private void SaveActorComponentData(ActorSaveData data) 
+    {
+        if (m_actorComponents.Count == 0) return;
+        for (int i = 0; i < m_actorComponents.Count; i++) 
+        {
+            m_actorComponents[i].SaveData(data);
+        }
+    }
 }

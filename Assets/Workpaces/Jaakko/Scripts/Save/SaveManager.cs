@@ -20,33 +20,44 @@ public class SaveManager : IManager
     private string m_savePath;
     private SaveData m_currentSave;
 
+    private ActorManager m_actorManager;
+
+    public SaveManager(ActorManager actorManager) 
+    {
+        m_actorManager = actorManager;
+    }
+
     public void Update(float dt) 
     {
         if (!m_active) return;                       
     }
-    public bool Init(GameManager gameManager) 
+    public bool Init() 
     {
+        //m_game = gameManager;
         m_savePath = Path.Combine(Application.persistentDataPath, "savegame.json");
         m_currentSave = new SaveData();
-        m_active = true;
+        m_active = true;        
 
-        return m_active;
+        return true;
     }
-    public bool Dispose(GameManager manager) 
+    public void OnManagersInitialzied()
+    {
+
+    }
+    public bool Dispose() 
     {
         m_active = false;
-        return m_active;
+        return true;
     }
     public SaveData GetSave() 
     {
         return m_currentSave;
     }
     public void Save() 
-    {
-        var actorManager = Services.Get<ActorManager>();
+    {       
         GameSaveData save = new GameSaveData()
         {
-            Actors = actorManager.SaveAllActors()
+            Actors = m_actorManager.SaveAllActors()
         };
         string json = JsonUtility.ToJson(save, true);
         File.WriteAllText(m_savePath, json);
@@ -60,13 +71,11 @@ public class SaveManager : IManager
             Debug.Log("No save found, starting fresh");
             return;
         }
-        
+        Debug.Log($"Game Loaded From: {m_savePath}");
+
         string json = File.ReadAllText(m_savePath);
         GameSaveData save = JsonUtility.FromJson<GameSaveData>(json);
 
-        var actorManager = Services.Get<ActorManager>();
-        actorManager.LoadAllActors(save.Actors);
-
-        Debug.Log($"Game Loaded From: {m_savePath}");
+        m_actorManager.LoadAllActors(save.Actors);
     }
 }

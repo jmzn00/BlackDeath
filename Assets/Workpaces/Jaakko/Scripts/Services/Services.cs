@@ -6,15 +6,17 @@ public static class Services
 {
     private static readonly Dictionary<Type, object> m_services = new();
 
-    public static void Register<T>(T service) where T : class 
+    public static void Register(object service)
     {
-        var type = typeof(T);
+        var type = service.GetType();
 
         if (m_services.ContainsKey(type))
             Debug.LogWarning($"Service {type.Name} already registered");
+
         m_services[type] = service;
     }
-    public static T Get<T>() where T : class 
+
+    public static T Get<T>() where T : class
     {
         var type = typeof(T);
 
@@ -24,7 +26,8 @@ public static class Services
         Debug.LogError($"Service {type.Name} not found");
         return null;
     }
-    public static void Clear() 
+
+    public static void Clear()
     {
         m_services.Clear();
     }

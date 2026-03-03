@@ -1,61 +1,92 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
-public class GameManager : MonoBehaviour
+public class GameManager : IManager
 {
-    private readonly List<IManager> m_managers = new();
+    private Container m_container;
+    private List<IManager> m_managers = new();
 
-    private InputManager Input;
-    private SaveManager Save;
-    private ActorManager Director;
+    private InputManager m_inputManager;
+    public InputManager Input => m_inputManager;
+    private SaveManager m_saveManager;
+    public SaveManager Save => m_saveManager;
 
-    // There Should Be Only One GameManager
-    // GameManager Should Be Created In A
-    // Bootstrap scene before anything else
+    private ActorManager m_actorManager;
+    public ActorManager Director => m_actorManager;
 
-    private void Awake()
+    private ItemManager m_itemManager;
+    public ItemManager ItemManager => m_itemManager;
+    public bool Init() 
     {
-        DontDestroyOnLoad(this);
+        m_container = new Container();
 
-        CreateManagers();
+        // Register this existing GameManager instance so Container won't create another one
+        m_container.RegisterInstance<GameManager>(this);
+
+        m_container.Register<InputManager>();
+        m_container.Register<SaveManager>();
+        m_container.Register<ActorManager>();
+        m_container.Register<ItemManager>();
+
+        // Exclude the GameManager itself from the managed managers list
+        m_managers = m_container.GetAll<IManager>().Where(m => !(m is GameManager)).ToList();
+
         InitManagers();
+        PopulateServices();
+
+        return true;
     }
-    private void OnDestroy()
+    public bool Dispose() 
     {
         DisposeManagers();
         Services.Clear();
+
+        return true;
     }
-    private void Update()
+    public void Update(float dt) 
     {
-        float dt = Time.deltaTime;
-        for (int i = 0; i < m_managers.Count; i++) 
+        for (int i = 0; i < m_managers.Count; i++)
             m_managers[i].Update(dt);
     }
-
-    private void CreateManagers() 
-    {
-        Director = new ActorManager();
-        m_managers.Add(Director);
-
-        Input = new InputManager();
-        m_managers.Add(Input);
-
-        Save = new SaveManager();
-        m_managers.Add(Save);
-
-
-        Services.Register(Director);
-        Services.Register(Input);
-        Services.Register(Save);        
-    }    
     private void InitManagers() 
     {
+        foreach (var m in m_managers) 
+        {
+            if (!m.Init()) 
+            {
+                Debug.LogError($"Manager {m} failed to Init");
+            }
+        }
+        OnManagersInitialzied(); 
+    }
+    public void OnManagersInitialzied()
+    {
         foreach (var m in m_managers)
-            m.Init(this);
+            m.OnManagersInitialzied();
     }
     private void DisposeManagers() 
     {
-        foreach (var m in m_managers)
-            m.Dispose(this);
+        foreach (var m in m_managers) 
+        {
+            if (!m.Dispose()) 
+            {
+                Debug.LogError($"Manager {m} failed to Dispose");
+            }
+        }
+            
+    }    
+    private void PopulateServices() 
+    {
+        Services.Register(this);
+
+        foreach (var m in m_managers) 
+        {
+            Services.Register(m);
+        }
+    }
+    public T Resolve<T>() where T : class
+    {
+        return m_container.Resolve<T>();
     }
 }
