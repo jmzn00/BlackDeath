@@ -1,4 +1,9 @@
+using System;
 using UnityEngine;
+public enum UIInputAction
+{
+    Inventory
+}
 public struct InputState 
 {
     public bool JumpPressed;
@@ -16,6 +21,9 @@ public class InputManager : IManager
     private InputState m_inputState;
     private InputSystem_Actions m_inputActions;
     public InputSystem_Actions InputActions => m_inputActions;
+
+    public event Action<UIInputAction> OnUIInputAction;
+
 
     public InputManager() 
     {
@@ -44,6 +52,11 @@ public class InputManager : IManager
 
         m_inputState.CrouchPressed =
             m_inputActions.Player.Crouch.IsPressed();
+
+        if (m_inputActions.UI.OpenInventory.IsPressed())
+            OnUIInputAction?.Invoke(UIInputAction.Inventory);
+
+
     }
     public void OnManagersInitialzied()
     {

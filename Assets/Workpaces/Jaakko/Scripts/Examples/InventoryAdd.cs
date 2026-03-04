@@ -8,8 +8,7 @@ public class InventoryAdd : MonoBehaviour
     [SerializeField] private GameObject m_buttonPrefab;
     private void Start()
     {        
-        var itemManager = Services.Get<ItemManager>();
-        var player = Services.Get<ActorManager>().CurrentControlled;
+        var itemManager = Services.Get<ItemManager>();        
 
         foreach (var item in itemManager.GetAllItems())
         {
@@ -18,7 +17,8 @@ public class InventoryAdd : MonoBehaviour
             text.text = item.name;
             button.onClick.AddListener(() =>
             {
-                player.Get<InventoryComponent>().TryAddItem(item.ItemID);
+                Services.Get<ActorManager>().CurrentControlled
+                .Get<InventoryComponent>().TryAddItem(item.ItemID);
             });
         }
     }

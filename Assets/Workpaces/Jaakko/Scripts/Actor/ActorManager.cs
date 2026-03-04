@@ -31,7 +31,6 @@ public class ActorManager : IManager
         actor.SetControl(true);
 
         m_currentControlled = actor;
-        Debug.Log($"Now controlling actor: {actor.name}");
     }
     public void SwitchToNextActor() 
     {

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Unity.Cinemachine;
+using Unity.VisualScripting;
 using UnityEngine;
 
 [ExecuteAlways]
@@ -20,6 +21,9 @@ public class Actor : MonoBehaviour, IActor
 
     private CinemachineCamera m_camera; // TEMP
     [SerializeField] private Transform m_trackingTarget; // TEMP
+    public Sprite actorSprite; // TEMP
+
+    private UIController m_uiController;
 
 #if UNITY_EDITOR
     private void OnValidate()
@@ -52,11 +56,12 @@ public class Actor : MonoBehaviour, IActor
             return;
 
         IsControlled = controlled;
-        
+
         if (controlled) 
         {
             ChangeComponentInputSource(m_playerInputSource);
             m_camera.Follow = m_trackingTarget; // TEMP
+            m_uiController.ChangeActor(this); // TEMP
         }
         else 
         {
@@ -97,6 +102,13 @@ public class Actor : MonoBehaviour, IActor
     public virtual void Init(GameManager game)
     {
         m_camera = FindFirstObjectByType<CinemachineCamera>(); // TEMP, for testing purposes
+
+        if (m_playable) 
+        {
+            m_uiController = FindFirstObjectByType<UIController>(); // TEMP, for testing purposes
+        }
+            
+
         // Get all IActorComponent scripts on this GameObject
         var components = GetComponents<IActorComponent>();
         foreach (var comp in components)

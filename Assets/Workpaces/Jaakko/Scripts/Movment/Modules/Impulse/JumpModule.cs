@@ -3,7 +3,6 @@ using UnityEngine;
 public class JumpModule : IImpulseModule
 {
     private readonly MovementController m_controller;
-    private float m_coyoteTimer = 0f;
 
     public JumpModule(MovementController controller)
     {

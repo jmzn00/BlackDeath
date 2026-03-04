@@ -18,6 +18,19 @@ public class HealthUI : UIComponentBase
     {
         m_health.OnHealthChanged -= m_view.OnHealthChanged;
     }
+    public override void OnActorChanged(Actor actor)
+    {
+        if (m_health != null)
+            m_health.OnHealthChanged -= m_view.OnHealthChanged;
+
+        m_health = actor.Get<HealthComponent>();
+        if (m_health != null)
+            m_health.OnHealthChanged += m_view.OnHealthChanged;
+
+        m_view.OnActorChanged(actor);
+        m_view.OnHealthChanged(m_health.GetHealth());
+    }
+
     public override void Toggle(bool show)
     {
         if (show)

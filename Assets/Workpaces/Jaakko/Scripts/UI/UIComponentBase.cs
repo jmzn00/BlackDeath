@@ -5,4 +5,5 @@ public abstract class UIComponentBase : IUIComponent
     public abstract void Initialize(Actor actor);    
     public abstract void Dispose();
     public abstract void Toggle(bool show);
+    public abstract void OnActorChanged(Actor actor);
 }

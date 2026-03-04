@@ -6,7 +6,8 @@ using UnityEngine;
 
 public class InventoryComponent : MonoBehaviour, IActorComponent
 {
-    public event Action<string> OnItemsChanged;
+    public event Action<string[]> OnItemsChanged;
+    public event Action<string> OnItemAdded;
     public string[] InventoryItems => m_inventoryItems.ToArray();
     private List<string> m_inventoryItems = new List<string>();
 
@@ -30,11 +31,7 @@ public class InventoryComponent : MonoBehaviour, IActorComponent
 
         m_inventoryItems = inventoryItems.ToList<string>();
 
-        foreach (string item in inventoryItems)
-        {            
-            ItemDefinition def = m_itemManager.GetItemDefinition(item);
-            OnItemsChanged?.Invoke(def.DisplayName);
-        }
+        OnItemsChanged?.Invoke(m_inventoryItems.ToArray());
     }
     public void SaveData(ActorSaveData data) 
     {
@@ -42,7 +39,7 @@ public class InventoryComponent : MonoBehaviour, IActorComponent
     }
     public void SetInputSource(IInputSource source) 
     {
-    
+        
     }
     public bool TryAddItem(string itemID) 
     {
@@ -50,10 +47,10 @@ public class InventoryComponent : MonoBehaviour, IActorComponent
         {
             return false;
         }
-        ItemDefinition itemDef = m_itemManager.GetItemDefinition(itemID);
-        OnItemsChanged?.Invoke(itemDef.DisplayName);
-        
+        ItemDefinition itemDef = m_itemManager.GetItemDefinition(itemID);                
         m_inventoryItems.Add(itemID);
+        OnItemAdded?.Invoke(itemID);
+
         return true;
     }
     public bool TryEquipItem() 

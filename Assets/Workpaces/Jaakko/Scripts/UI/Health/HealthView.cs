@@ -16,11 +16,13 @@ public class HealthView : MonoBehaviour, IUIComponentView
     {
     
     }
+    public void OnActorChanged(Actor actor) 
+    {
+        
+    }
     public void OnHealthChanged(float newHealth) 
     {
         if (m_healthSlider == null) return;
-
-        Debug.Log($"Health changed: {newHealth}");
 
         m_healthSlider.value = newHealth;
     }

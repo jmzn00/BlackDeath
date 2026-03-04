@@ -15,7 +15,6 @@ public class GravityModule : IEnvironmentModule
 
         if (!m_controller.MovmentState.IsGrounded) 
         {
-            Debug.Log("Applying gravity");
             PlayerStats stats = m_controller.RuntimeStats;            
 
             velocity.y += stats.Gravity * Time.deltaTime;
