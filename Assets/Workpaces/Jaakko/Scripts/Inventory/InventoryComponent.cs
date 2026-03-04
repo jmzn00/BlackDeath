@@ -1,10 +1,12 @@
 using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
 public class InventoryComponent : MonoBehaviour, IActorComponent
 {
+    public event Action<string> OnItemsChanged;
     public string[] InventoryItems => m_inventoryItems.ToArray();
     private List<string> m_inventoryItems = new List<string>();
 
@@ -29,9 +31,9 @@ public class InventoryComponent : MonoBehaviour, IActorComponent
         m_inventoryItems = inventoryItems.ToList<string>();
 
         foreach (string item in inventoryItems)
-        {
+        {            
             ItemDefinition def = m_itemManager.GetItemDefinition(item);
-            Debug.Log($"{gameObject.name} Loaded {def.DisplayName}");
+            OnItemsChanged?.Invoke(def.DisplayName);
         }
     }
     public void SaveData(ActorSaveData data) 
@@ -44,7 +46,9 @@ public class InventoryComponent : MonoBehaviour, IActorComponent
         {
             return false;
         }
-        Debug.Log($"{gameObject.name} Added {m_itemManager.GetItemDefinition(itemID).DisplayName}");
+        ItemDefinition itemDef = m_itemManager.GetItemDefinition(itemID);
+        OnItemsChanged?.Invoke(itemDef.DisplayName);
+        
         m_inventoryItems.Add(itemID);
         return true;
     }

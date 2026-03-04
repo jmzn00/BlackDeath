@@ -14,8 +14,6 @@ public class UIController : MonoBehaviour
 
         BuildModules();
         InitializeModules();
-
-        Debug.Log($"UI Modules Count {m_uiComponents.Count}");
     }
     void BuildModules() 
     {

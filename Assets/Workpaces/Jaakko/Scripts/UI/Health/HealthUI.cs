@@ -10,10 +10,19 @@ public class HealthUI : UIComponentBase
     }
     public override void Initialize()
     {
-        m_health.OnHealthChanged += m_view.OnHealthChanged;
+        m_view.Init();
+
+        m_health.OnHealthChanged += m_view.OnHealthChanged;        
     }
     public override void Dispose()
     {
         m_health.OnHealthChanged -= m_view.OnHealthChanged;
+    }
+    public override void Toggle(bool show)
+    {
+        if (show)
+            m_view.View();
+        else
+            m_view.Hide();
     }
 }

@@ -2,15 +2,14 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class InventoryAdd : Actor
+public class InventoryAdd : MonoBehaviour
 {
     [SerializeField] private Transform m_buttonSpawn;
     [SerializeField] private GameObject m_buttonPrefab;
-
-    public override void Init(GameManager game)
-    {
-        var itemManager = game.Resolve<ItemManager>();    
-        var player = game.Resolve<ActorManager>().Player;
+    private void Start()
+    {        
+        var itemManager = Services.Get<ItemManager>();
+        var player = Services.Get<ActorManager>().Player;
 
         foreach (var item in itemManager.GetAllItems())
         {
@@ -22,7 +21,5 @@ public class InventoryAdd : Actor
                 player.Get<InventoryComponent>().TryAddItem(item.ItemID);
             });
         }
-
-        base.Init(game);        
-    }    
+    }
 }

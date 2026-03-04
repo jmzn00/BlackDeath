@@ -24,7 +24,7 @@ public class AnimationController : MonoBehaviour
     }
     private void OnMove(Vector3 velocity) 
     {
-        if (velocity.magnitude > 0.001f) 
+        if (velocity.sqrMagnitude > 1f) 
         {
             m_animator.Play(m_runAnim.name);
         }

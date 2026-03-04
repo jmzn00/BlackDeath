@@ -3,7 +3,12 @@ public struct InputState
 {
     public bool JumpPressed;
     public bool JumpHeld;
+   
     public Vector2 InputDirection;
+
+    public bool DashPressed;
+    public bool DashPressedThisFrame;
+    public bool CrouchPressed;
 }
 public class InputManager : IManager
 {
@@ -30,6 +35,15 @@ public class InputManager : IManager
             m_inputActions.Player.Jump.WasPressedThisFrame();
         m_inputState.JumpHeld =
             m_inputActions.Player.Jump.IsPressed();
+
+        m_inputState.DashPressedThisFrame = 
+            m_inputActions.Player.Dash.WasPressedThisFrame();
+
+        m_inputState.DashPressed = 
+            m_inputActions.Player.Dash.IsPressed();
+
+        m_inputState.CrouchPressed =
+            m_inputActions.Player.Crouch.IsPressed();
     }
     public void OnManagersInitialzied()
     {
