@@ -28,6 +28,10 @@ public class HealthComponent : MonoBehaviour, IDamageable, IActorComponent
     {
         data.Health = m_currentHealth;
     }
+    public void SetInputSource(IInputSource source) 
+    {
+
+    }
     public float GetHealth() 
     {
         return m_currentHealth;

@@ -7,7 +7,7 @@ public class DamageUI : MonoBehaviour
     [SerializeField] private Button m_healButton;
     private void Start()
     {
-        Actor player = Services.Get<ActorManager>().Player;
+        Actor player = Services.Get<ActorManager>().CurrentControlled;
         m_damageButton.onClick.AddListener(() =>
         {
             player.Get<HealthComponent>().ApplyDamage(null, 10f);

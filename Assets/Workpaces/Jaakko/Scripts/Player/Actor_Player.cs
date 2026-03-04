@@ -7,16 +7,17 @@ public class Actor_Player : Actor
         AddComponent<HealthComponent>();
         AddComponent<InventoryComponent>();
 
-        base.Init(game);        
+        base.Init(game);  
+        /*
         UIController uiController = FindFirstObjectByType<UIController>();
         if (uiController != null)
         {
             uiController.Init(this);
-            Debug.Log("UI Controller initialized for player");
         }
         else
         {
             Debug.LogError("UI Controller not found in scene");
         }
+        */
     }
 }

@@ -9,7 +9,7 @@ public class InventoryAdd : MonoBehaviour
     private void Start()
     {        
         var itemManager = Services.Get<ItemManager>();
-        var player = Services.Get<ActorManager>().Player;
+        var player = Services.Get<ActorManager>().CurrentControlled;
 
         foreach (var item in itemManager.GetAllItems())
         {

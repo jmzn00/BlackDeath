@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Unity.Cinemachine;
 using UnityEngine;
 
 [ExecuteAlways]
@@ -9,6 +10,16 @@ public class Actor : MonoBehaviour, IActor
     [SerializeField] private string m_actorID;
 
     private Dictionary<Type, IActorComponent> m_components = new();
+
+    [SerializeField] private bool m_playable;
+    public bool IsPlayable => m_playable;
+    public bool IsControlled { get; private set; }
+
+    private PlayerInputSource m_playerInputSource;
+    private AIInputSource m_aiInputSource;
+
+    private CinemachineCamera m_camera; // TEMP
+    [SerializeField] private Transform m_trackingTarget; // TEMP
 
 #if UNITY_EDITOR
     private void OnValidate()
@@ -35,7 +46,30 @@ public class Actor : MonoBehaviour, IActor
         return false;
     }
 #endif
+    public void SetControl(bool controlled) 
+    {
+        if (IsControlled == controlled)
+            return;
 
+        IsControlled = controlled;
+        
+        if (controlled) 
+        {
+            ChangeComponentInputSource(m_playerInputSource);
+            m_camera.Follow = m_trackingTarget; // TEMP
+        }
+        else 
+        {
+            ChangeComponentInputSource(m_aiInputSource);
+        }
+    }
+    void ChangeComponentInputSource(IInputSource source) 
+    {
+        foreach (var comp in m_components.Values)
+        {
+            comp.SetInputSource(source);
+        }
+    }
     public void EnsureID()
     {
         if (string.IsNullOrEmpty(m_actorID) || IsDuplicateID())
@@ -62,6 +96,7 @@ public class Actor : MonoBehaviour, IActor
 
     public virtual void Init(GameManager game)
     {
+        m_camera = FindFirstObjectByType<CinemachineCamera>(); // TEMP, for testing purposes
         // Get all IActorComponent scripts on this GameObject
         var components = GetComponents<IActorComponent>();
         foreach (var comp in components)
@@ -73,6 +108,9 @@ public class Actor : MonoBehaviour, IActor
         // Notify all components
         foreach (var comp in m_components.Values)
             comp.OnActorComponentsInitialized(this);
+
+        m_playerInputSource = new PlayerInputSource(game.Resolve<InputManager>());
+        m_aiInputSource = new AIInputSource();
     }
 
     public virtual void Dispose()

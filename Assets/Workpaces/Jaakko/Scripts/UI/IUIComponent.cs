@@ -1,5 +1,5 @@
 public interface IUIComponent
 {
-    void Initialize();
+    void Initialize(Actor actor);
     void Dispose();
 }

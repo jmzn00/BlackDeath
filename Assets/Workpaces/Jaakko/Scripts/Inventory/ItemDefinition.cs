@@ -5,6 +5,11 @@ public interface IItemAction
     string ActionName { get; }
     bool CanExecute(Actor actor, ItemDefinition itemDef);
 }
+public interface IEquippable
+{
+    void OnEquip(Actor actor);
+    void OnUnequip(Actor actor);
+}
 public abstract class ItemActionSO : ScriptableObject, IItemAction 
 {
     public abstract string ActionName { get; }
@@ -15,7 +20,16 @@ public abstract class ItemActionSO : ScriptableObject, IItemAction
 public enum ItemType 
 {
     Default,
-    Consumeable
+    Consumeable,
+    Weapon,
+    Armor,
+    Quest
+}
+public enum EquipmentSlot 
+{
+    Weapon,
+    Gloves,
+    Gem,
 }
 
 [CreateAssetMenu(fileName = "NewItem", menuName = "Game/Item Definition")]

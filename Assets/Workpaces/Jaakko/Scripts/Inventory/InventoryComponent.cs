@@ -40,6 +40,10 @@ public class InventoryComponent : MonoBehaviour, IActorComponent
     {
         data.InventoryItems = InventoryItems;
     }
+    public void SetInputSource(IInputSource source) 
+    {
+    
+    }
     public bool TryAddItem(string itemID) 
     {
         if (string.IsNullOrEmpty(itemID)) 
@@ -50,6 +54,10 @@ public class InventoryComponent : MonoBehaviour, IActorComponent
         OnItemsChanged?.Invoke(itemDef.DisplayName);
         
         m_inventoryItems.Add(itemID);
+        return true;
+    }
+    public bool TryEquipItem() 
+    {
         return true;
     }
 }

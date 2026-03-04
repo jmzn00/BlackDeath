@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ItemDefinition
   ItemID: 2
   DisplayName: Shield Item
-  Icon: {fileID: 0}
+  Icon: {fileID: 21300000, guid: a08ba9bb52fdde746aa2d907a9bfe9a0, type: 3}
   Type: 0
   Description: 
   MaxStack: 1

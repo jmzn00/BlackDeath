@@ -8,9 +8,9 @@ public class HealthUI : UIComponentBase
         m_health = health;
         m_view = view;
     }
-    public override void Initialize()
+    public override void Initialize(Actor actor)
     {
-        m_view.Init();
+        m_view.Init(actor);
 
         m_health.OnHealthChanged += m_view.OnHealthChanged;        
     }

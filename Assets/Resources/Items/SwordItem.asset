@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ItemDefinition
   ItemID: 1
   DisplayName: Sword Item
-  Icon: {fileID: 0}
+  Icon: {fileID: 21300000, guid: 57a8354bc659a1348a228838813b4268, type: 3}
   Type: 0
   Description: 
   MaxStack: 1

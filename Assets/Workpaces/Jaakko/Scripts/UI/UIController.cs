@@ -6,14 +6,19 @@ using System.Collections.Generic;
 
 public class UIController : MonoBehaviour
 {
-    private Actor m_player;    
+    private Actor m_actor;    
     private List<IUIComponent> m_uiComponents = new List<IUIComponent>();
-    public void Init(Actor player) 
+    public void Init(Actor actor) 
     {
-        m_player = player;
+        m_actor = actor;
 
         BuildModules();
-        InitializeModules();
+        InitializeModules(actor);
+    }
+    public void ChangeActor(Actor actor) 
+    {
+        m_actor = actor;
+        InitializeModules(actor);
     }
     void BuildModules() 
     {
@@ -27,7 +32,7 @@ public class UIController : MonoBehaviour
             var attr = type.GetCustomAttribute<UIForAttribute>();
             if (attr == null) continue;
 
-            var actorComponent = m_player.Get(attr.ActorComponentType);
+            var actorComponent = m_actor.Get(attr.ActorComponentType);
             if (actorComponent == null) 
             {
                 Debug.LogWarning($"Actor component of type {attr.ActorComponentType.Name} not found for UI component {type.Name}");
@@ -47,9 +52,9 @@ public class UIController : MonoBehaviour
         }
 
     }
-    void InitializeModules() 
+    void InitializeModules(Actor actor) 
     {
         foreach (var comp in m_uiComponents)
-            comp.Initialize();
+            comp.Initialize(actor);
     }  
 }

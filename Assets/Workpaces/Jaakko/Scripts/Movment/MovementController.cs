@@ -86,6 +86,11 @@ public class MovementController : MonoBehaviour, IActorComponent
     {
 
     }
+    private IInputSource m_inputSource;
+    public void SetInputSource(IInputSource source)
+    {
+        m_inputSource = source;
+    }
 
     private void AddModule(object module)
     {
@@ -98,7 +103,9 @@ public class MovementController : MonoBehaviour, IActorComponent
     private void Update()
     {
 
-        m_inputState = m_inputManager.GetInputState();
+        if (m_inputSource == null) return;
+
+        m_inputState = m_inputSource.GetInput();
 
         UpdateContact();
         CollisionFlags flags = m_controller.Move(Velocity * Time.deltaTime);

@@ -1,6 +1,6 @@
 public interface IUIComponentView
 {
-    void Init();
+    void Init(Actor actor);
     void View();
     void Hide();
 }

@@ -12,6 +12,40 @@ public class ActorManager : IManager
 
     private GameManager m_game;
 
+    private List<Actor> m_party = new List<Actor>();
+    private Actor m_currentControlled;
+
+    public Actor CurrentControlled => m_currentControlled;
+    public IReadOnlyList<Actor> Party => m_party;
+
+    public void SetControlledActor(Actor actor) 
+    {
+        if (actor == null || !m_party.Contains(actor)) 
+        {
+            Debug.LogWarning("Trying to set controlled actor that is not in party");
+            return;
+        }
+        if (m_currentControlled != null)        
+            m_currentControlled.SetControl(false);
+
+        actor.SetControl(true);
+
+        m_currentControlled = actor;
+        Debug.Log($"Now controlling actor: {actor.name}");
+    }
+    public void SwitchToNextActor() 
+    {
+        if (m_party.Count <= 1) 
+        {
+            Debug.Log($"Cannot switch actors. Party count: {m_party.Count}");
+            return;
+        }
+        int currentIndex = m_party.IndexOf(m_currentControlled);
+        int nextIndex = (currentIndex + 1) % m_party.Count;
+
+        SetControlledActor(m_party[nextIndex]);
+    }
+
     public ActorManager(GameManager game) 
     {
         m_game = game;
@@ -47,16 +81,28 @@ public class ActorManager : IManager
         IActor[] actorsInScene = GameObject.
             FindObjectsByType<Actor>(FindObjectsSortMode.None)
             .OfType<IActor>().ToArray();
+
         foreach (var actor in actorsInScene)
             Register(actor, m_game);
 
-        m_player = m_actors.OfType<Actor>()
-            .FirstOrDefault(a => a.CompareTag("Player"));
-        if (m_player == null)
-            Debug.LogError("Player Actor not found in scene");
-
         foreach (var a in m_actors)
             a.Init(m_game);
+
+        m_party = m_actors.OfType<Actor>()
+            .Where(a => a.IsPlayable)
+            .ToList();
+        if (m_party.Count > 0) 
+        {
+            foreach (var a in m_party) 
+            {
+                if (a.CompareTag("Player"))
+                    SetControlledActor(a);
+            }
+            if (m_currentControlled == null)
+                SetControlledActor(m_party[0]);
+        }            
+        else
+            Debug.LogWarning("No playable actors found in scene!");
     }
     public bool Dispose() 
     {

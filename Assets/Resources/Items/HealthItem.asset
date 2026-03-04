@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ItemDefinition
   ItemID: 3
   DisplayName: Health Item
-  Icon: {fileID: 0}
+  Icon: {fileID: 21300000, guid: 78f753bd2d305ec40b041c0ba98f25dd, type: 3}
   Type: 1
   Description: 
   MaxStack: 5

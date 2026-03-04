@@ -8,10 +8,12 @@ public class InventoryUI : UIComponentBase
         m_view = view;
         m_inventory = component;
     }
-    public override void Initialize()
+    public override void Initialize(Actor actor)
     {
+        m_view.Init(actor);
         m_inventory.OnItemsChanged += m_view.OnInventoryItemsChanged;
     }
+
     public override void Dispose()
     {
         m_inventory.OnItemsChanged -= m_view.OnInventoryItemsChanged;
