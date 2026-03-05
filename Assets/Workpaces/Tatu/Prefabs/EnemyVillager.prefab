@@ -346,8 +346,9 @@ MonoBehaviour:
   animator: {fileID: 6565367575729624553}
   idleAnim: {fileID: 7400000, guid: f3cea4a4894bcb74d9a8c25139eaef94, type: 2}
   availableActions:
-  - {fileID: 11400000, guid: 298b1b658ff32d9469a5b3dbb6f2ccd4, type: 2}
   - {fileID: 11400000, guid: b3da4f73c0a01f24aacbc9eee08fa5a6, type: 2}
+  - {fileID: 11400000, guid: 0136cfa58281a484c9aa4b7f718529b6, type: 2}
+  - {fileID: 11400000, guid: 298b1b658ff32d9469a5b3dbb6f2ccd4, type: 2}
   - {fileID: 11400000, guid: 4d7f45d8525da954daca5b2b1de1773b, type: 2}
   behavior: {fileID: 11400000, guid: 9ddf4435df9b7c546abcc6581f733224, type: 2}
   onStatsChanged:
