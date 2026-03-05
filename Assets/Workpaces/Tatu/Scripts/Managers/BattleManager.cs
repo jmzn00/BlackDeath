@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.EventSystems;
 
 public class BattleManager : MonoBehaviour
 {
@@ -67,6 +68,10 @@ public class BattleManager : MonoBehaviour
 
     // Current actor
     private Combatant m_currentActor;
+
+    // Skill selection result
+    private CombatAction m_selectedSkill = null;
+    private bool m_skillSelectionComplete = false;
 
     // ── Unity ──────────────────────────────────────────────────────────────
     private void Awake()
@@ -350,12 +355,15 @@ public class BattleManager : MonoBehaviour
 
         SetCameraTarget(playerGO, actionSelectZoom, playerFollowOffset);
 
-        int chosenActionIndex = -1;
+        // Main menu selection
+        int chosenMenuOption = -1;
         battleUI?.ShowMenu();
-        if (battleUI != null) battleUI.onOptionSelected = idx => chosenActionIndex = idx;
+        if (battleUI != null) battleUI.onOptionSelected = idx => chosenMenuOption = idx;
 
         float navCooldown = 0f;
-        while (chosenActionIndex < 0)
+        float prevMoveY = 0f;
+
+        while (chosenMenuOption < 0)
         {
             navCooldown -= Time.deltaTime;
             if (navCooldown <= 0f)
@@ -368,13 +376,20 @@ public class BattleManager : MonoBehaviour
                     down = kb.downArrowKey.wasPressedThisFrame || kb.sKey.wasPressedThisFrame;
                     confirm = kb.spaceKey.wasPressedThisFrame || kb.enterKey.wasPressedThisFrame;
                 }
+
+                // Controller input for vertical menu navigation
                 try
                 {
                     if (actions != null)
                     {
                         var move = actions.Player.Move.ReadValue<UnityEngine.Vector2>();
-                        if (move.y > 0.5f) up = true;
-                        if (move.y < -0.5f) down = true;
+
+                        // Detect stick crossing threshold (going from neutral to up/down)
+                        if (Mathf.Abs(prevMoveY) < 0.5f && move.y > 0.5f) up = true;
+                        if (Mathf.Abs(prevMoveY) < 0.5f && move.y < -0.5f) down = true;
+
+                        prevMoveY = move.y;
+
                         if (actions.Player.Confirm.WasPressedThisFrame()) confirm = true;
                     }
                 }
@@ -382,16 +397,86 @@ public class BattleManager : MonoBehaviour
 
                 if (up) { battleUI?.Previous(); navCooldown = 0.2f; }
                 if (down) { battleUI?.Next(); navCooldown = 0.2f; }
-                if (confirm) { chosenActionIndex = battleUI?.SelectedIndex ?? 0; }
+                if (confirm)
+                {
+                    // Get the currently selected index from BattleUI instead of relying on callback
+                    chosenMenuOption = battleUI?.SelectedIndex ?? 0;
+                }
             }
             yield return null;
         }
 
+        // Wait for confirm button to be released before proceeding
+        yield return new WaitForSeconds(0.1f);
+        bool confirmStillPressed = true;
+        while (confirmStillPressed)
+        {
+            confirmStillPressed = false;
+            var kb = Keyboard.current;
+            if (kb != null && (kb.spaceKey.isPressed || kb.enterKey.isPressed))
+                confirmStillPressed = true;
+
+            try
+            {
+                if (actions != null && actions.Player.Confirm.IsPressed())
+                    confirmStillPressed = true;
+            }
+            catch { }
+
+            if (confirmStillPressed)
+                yield return null;
+        }
+
         battleUI?.HideMenu();
 
-        CombatAction action = PickPlayerAction(actor, chosenActionIndex);
+        CombatAction action = null;
+
+        // Handle menu choice: 0 = Attack, 1 = Skills, 2 = Items
+        if (chosenMenuOption == 0)
+        {
+            // Attack - use first available action (basic attack)
+            action = PickPlayerAction(actor, 0);
+        }
+        else if (chosenMenuOption == 1)
+        {
+            // Skills - show skills submenu
+            yield return StartCoroutine(Co_SelectSkill(actor, actions));
+
+            if (m_selectedSkill == null)
+            {
+                // Player went back, restart turn
+                yield return StartCoroutine(Co_PlayerTurn(actor));
+                yield break;
+            }
+
+            action = m_selectedSkill;
+            m_selectedSkill = null; // Reset for next time
+
+            // Check AP Cost and enough AP
+            if (action.apCost > actor.actionPoints)
+            {
+                battleUI.ShowReactivePrompt("Not Enough AP!");
+                yield return new WaitForSeconds(2.0f);
+                battleUI.HideReactivePrompt();
+
+                // Restart turn
+                yield return StartCoroutine(Co_PlayerTurn(actor));
+                yield break;
+            }
+
+            // Consume Action Points
+            actor.actionPoints -= action.apCost;
+        }
+        else if (chosenMenuOption == 2)
+        {
+            // Items - not implemented yet
+            Debug.LogWarning("[BattleManager] Items menu not implemented yet.");
+            yield break;
+        }
+
         if (action == null) yield break;
 
+        // Target selection (in Co_PlayerTurn method, replace the target selection section)
         var enemies = GetAliveEnemies();
         if (enemies.Count == 0) yield break;
 
@@ -399,14 +484,21 @@ public class BattleManager : MonoBehaviour
         if (enemies.Count == 1)
         {
             target = enemies[0];
+            // Focus camera on single enemy
+            SetCameraTarget(target.gameObject, targetSelectZoom, normalFollowOffset);
+            battleUI?.ShowTargetSelection(enemies, 0);
+            yield return new WaitForSeconds(0.5f); // Give player time to see the target
         }
         else
         {
-            SetCameraTarget(playerGO, targetSelectZoom, normalFollowOffset);
             int targetIndex = 0;
+            // Focus camera on first enemy
+            SetCameraTarget(enemies[targetIndex].gameObject, targetSelectZoom, normalFollowOffset);
             battleUI?.ShowTargetSelection(enemies, targetIndex);
+
             bool targetConfirmed = false;
             navCooldown = 0f;
+            float prevMoveX = 0f;
 
             while (!targetConfirmed)
             {
@@ -421,20 +513,41 @@ public class BattleManager : MonoBehaviour
                         left = kb.leftArrowKey.wasPressedThisFrame || kb.aKey.wasPressedThisFrame;
                         confirm = kb.spaceKey.wasPressedThisFrame || kb.enterKey.wasPressedThisFrame;
                     }
+
+                    // Controller input for horizontal target selection
                     try
                     {
                         if (actions != null)
                         {
                             var move = actions.Player.Move.ReadValue<UnityEngine.Vector2>();
-                            if (move.x > 0.5f) right = true;
-                            if (move.x < -0.5f) left = true;
+
+                            // Detect stick crossing threshold (going from neutral to left/right)
+                            if (Mathf.Abs(prevMoveX) < 0.5f && move.x > 0.5f) right = true;
+                            if (Mathf.Abs(prevMoveX) < 0.5f && move.x < -0.5f) left = true;
+
+                            prevMoveX = move.x;
+
                             if (actions.Player.Confirm.WasPressedThisFrame()) confirm = true;
                         }
                     }
                     catch { }
 
-                    if (right) { targetIndex = (targetIndex + 1) % enemies.Count; battleUI?.UpdateTargetSelection(enemies, targetIndex); navCooldown = 0.2f; }
-                    if (left) { targetIndex = (targetIndex - 1 + enemies.Count) % enemies.Count; battleUI?.UpdateTargetSelection(enemies, targetIndex); navCooldown = 0.2f; }
+                    if (right)
+                    {
+                        targetIndex = (targetIndex + 1) % enemies.Count;
+                        // Focus camera on new target
+                        SetCameraTarget(enemies[targetIndex].gameObject, targetSelectZoom, normalFollowOffset);
+                        battleUI?.UpdateTargetSelection(enemies, targetIndex);
+                        navCooldown = 0.2f;
+                    }
+                    if (left)
+                    {
+                        targetIndex = (targetIndex - 1 + enemies.Count) % enemies.Count;
+                        // Focus camera on new target
+                        SetCameraTarget(enemies[targetIndex].gameObject, targetSelectZoom, normalFollowOffset);
+                        battleUI?.UpdateTargetSelection(enemies, targetIndex);
+                        navCooldown = 0.2f;
+                    }
                     if (confirm) targetConfirmed = true;
                 }
                 yield return null;
@@ -446,6 +559,132 @@ public class BattleManager : MonoBehaviour
 
         SetCameraTarget(playerGO, normalZoom, normalFollowOffset);
         yield return StartCoroutine(Co_ExecuteAction(actor, action, target));
+    }
+
+    // Skill selection submenu
+    private IEnumerator Co_SelectSkill(Combatant actor, InputSystem_Actions actions)
+    {
+        // Get available skills (skip first action which is basic attack)
+        var allActions = actor.availableActions;
+        if (allActions == null || allActions.Length <= 1)
+        {
+            Debug.LogWarning("[BattleManager] No skills available.");
+            m_selectedSkill = null;
+            yield break;
+        }
+
+        // Create skills array (exclude basic attack at index 0)
+        var skills = new CombatAction[allActions.Length - 1];
+        System.Array.Copy(allActions, 1, skills, 0, skills.Length);
+
+        int chosenSkillIndex = -1;
+        bool backToMainMenu = false;
+
+        if (battleUI != null)
+        {
+            battleUI.onOptionSelected = idx => chosenSkillIndex = idx;
+            battleUI.onBackToMainMenu = () => backToMainMenu = true;
+            battleUI.ShowSkills(skills);
+        }
+
+        float navCooldown = 0f;
+        float prevMoveY = 0f;
+
+        while (chosenSkillIndex < 0 && !backToMainMenu)
+        {
+            navCooldown -= Time.deltaTime;
+            if (navCooldown <= 0f)
+            {
+                bool up = false, down = false, confirm = false, back = false;
+                var kb = Keyboard.current;
+                if (kb != null)
+                {
+                    up = kb.upArrowKey.wasPressedThisFrame || kb.wKey.wasPressedThisFrame;
+                    down = kb.downArrowKey.wasPressedThisFrame || kb.sKey.wasPressedThisFrame;
+                    confirm = kb.spaceKey.wasPressedThisFrame || kb.enterKey.wasPressedThisFrame;
+                    back = kb.escapeKey.wasPressedThisFrame || kb.backspaceKey.wasPressedThisFrame;
+                }
+
+                // Controller input for skills menu navigation
+                try
+                {
+                    if (actions != null)
+                    {
+                        var move = actions.Player.Move.ReadValue<UnityEngine.Vector2>();
+
+                        // Detect stick crossing threshold (going from neutral to up/down)
+                        if (Mathf.Abs(prevMoveY) < 0.5f && move.y > 0.5f) up = true;
+                        if (Mathf.Abs(prevMoveY) < 0.5f && move.y < -0.5f) down = true;
+
+                        prevMoveY = move.y;
+
+                        if (actions.Player.Confirm.WasPressedThisFrame()) confirm = true;
+                    }
+                }
+                catch { }
+
+                if (up) { battleUI?.Previous(); navCooldown = 0.2f; }
+                if (down) { battleUI?.Next(); navCooldown = 0.2f; }
+                if (confirm)
+                {
+                    // Get the currently selected index from BattleUI
+                    int selectedIndex = battleUI?.SelectedIndex ?? 0;
+                    int skillButtonCount = battleUI?.SkillButtonCount ?? 0;
+
+                    // Check if it's the back button (last in the list) or a skill
+                    if (selectedIndex >= skillButtonCount)
+                    {
+                        // Back button selected
+                        backToMainMenu = true;
+                    }
+                    else
+                    {
+                        // Skill button selected
+                        chosenSkillIndex = selectedIndex;
+                    }
+                }
+                if (back) { backToMainMenu = true; }
+            }
+            yield return null;
+        }
+
+        // Wait for confirm button to be released before proceeding // no double confirms
+        if (chosenSkillIndex >= 0)
+        {
+            yield return new WaitForSeconds(0.1f);
+            bool confirmStillPressed = true;
+            while (confirmStillPressed)
+            {
+                confirmStillPressed = false;
+                var kb = Keyboard.current;
+                if (kb != null && (kb.spaceKey.isPressed || kb.enterKey.isPressed))
+                    confirmStillPressed = true;
+
+                try
+                {
+                    if (actions != null && actions.Player.Confirm.IsPressed())
+                        confirmStillPressed = true;
+                }
+                catch { }
+
+                if (confirmStillPressed)
+                    yield return null;
+            }
+        }
+
+        battleUI?.HideSkills();
+
+        if (backToMainMenu)
+        {
+            m_selectedSkill = null;
+            yield break;
+        }
+
+        // Store the selected skill
+        if (chosenSkillIndex >= 0 && chosenSkillIndex < skills.Length)
+            m_selectedSkill = skills[chosenSkillIndex];
+        else
+            m_selectedSkill = null;
     }
 
     // Enemy Turn

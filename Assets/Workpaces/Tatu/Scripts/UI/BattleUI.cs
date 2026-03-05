@@ -13,6 +13,19 @@ public class BattleUI : MonoBehaviour
     public Button skillsButton;
     public Button itemsButton;
 
+    [Header("Skills Menu")]
+    public GameObject skillsPanel;
+    public Button skillButton1;
+    public Button skillButton2;
+    public Button skillButton3;
+    public Button skillBackButton;
+    public TextMeshProUGUI skillButton1Label;
+    public TextMeshProUGUI skillButton2Label;
+    public TextMeshProUGUI skillButton3Label;
+    public TextMeshProUGUI skillAPCost1Label;
+    public TextMeshProUGUI skillAPCost2Label;
+    public TextMeshProUGUI skillAPCost3Label;
+
     [Header("Player Stats")]
     public TextMeshProUGUI playerNameText;
     public TextMeshProUGUI playerHealthText;
@@ -27,6 +40,12 @@ public class BattleUI : MonoBehaviour
     [Header("Target Selection")]
     [Tooltip("Highlight shown over the currently targeted enemy HUD entry.")]
     public GameObject targetHighlight;
+    [Tooltip("Panel showing detailed info about the currently targeted enemy.")]
+    public GameObject targetInfoPanel;
+    public TextMeshProUGUI targetNameText;
+    public TextMeshProUGUI targetHealthText;
+    public Slider targetHealthBar;
+    public TextMeshProUGUI targetStatusText;
 
     [Header("Reactive Prompt")]
     public GameObject reactiveRoot;
@@ -44,12 +63,16 @@ public class BattleUI : MonoBehaviour
 
     // Events / state
     public Action<int> onOptionSelected;
+    public Action onBackToMainMenu;
     public int SelectedIndex => m_selectedIndex;
+    public int SkillButtonCount => m_skillButtonCount;
 
     private List<Button> m_menuOptions = new List<Button>();
     private int m_selectedIndex = 0;
+    private int m_skillButtonCount = 0;
     private Combatant m_boundPlayer;
     private List<Combatant> m_boundEnemies = new List<Combatant>();
+    private Combatant m_currentTargetedEnemy;
 
     private void Awake()
     {
@@ -59,10 +82,17 @@ public class BattleUI : MonoBehaviour
         if (parryIndicator != null) parryIndicator.SetActive(false);
         if (dodgeIndicator != null) dodgeIndicator.SetActive(false);
         if (targetHighlight != null) targetHighlight.SetActive(false);
+        if (skillsPanel != null) skillsPanel.SetActive(false);
+        if (targetInfoPanel != null) targetInfoPanel.SetActive(false);
 
         if (attackButton != null) attackButton.onClick.AddListener(() => ConfirmIndex(0));
         if (skillsButton != null) skillsButton.onClick.AddListener(() => ConfirmIndex(1));
         if (itemsButton != null) itemsButton.onClick.AddListener(() => ConfirmIndex(2));
+
+        if (skillButton1 != null) skillButton1.onClick.AddListener(() => ConfirmSkillIndex(0));
+        if (skillButton2 != null) skillButton2.onClick.AddListener(() => ConfirmSkillIndex(1));
+        if (skillButton3 != null) skillButton3.onClick.AddListener(() => ConfirmSkillIndex(2));
+        if (skillBackButton != null) skillBackButton.onClick.AddListener(() => onBackToMainMenu?.Invoke());
 
         // Hide all enemy HUD slots initially
         if (enemyHUDEntries != null)
@@ -124,6 +154,7 @@ public class BattleUI : MonoBehaviour
     public void ShowTargetSelection(List<Combatant> enemies, int selectedIndex)
     {
         UpdateTargetSelection(enemies, selectedIndex);
+        if (targetInfoPanel != null) targetInfoPanel.SetActive(true);
     }
 
     public void UpdateTargetSelection(List<Combatant> enemies, int selectedIndex)
@@ -147,13 +178,97 @@ public class BattleUI : MonoBehaviour
                 targetHighlight.transform.localPosition = Vector3.zero;
             }
         }
+
+        // Update target info panel
+        if (selectedIndex >= 0 && selectedIndex < enemies.Count)
+        {
+            UpdateTargetInfo(enemies[selectedIndex]);
+        }
     }
 
     public void HideTargetSelection()
     {
         if (targetHighlight != null) targetHighlight.SetActive(false);
+        if (targetInfoPanel != null) targetInfoPanel.SetActive(false);
         if (enemyHUDEntries != null)
             foreach (var hud in enemyHUDEntries) hud?.SetTargeted(false);
+        
+        UnbindCurrentTarget();
+    }
+
+    // Target info panel
+    private void UpdateTargetInfo(Combatant target)
+    {
+        if (target == null) return;
+
+        // Unbind previous target
+        UnbindCurrentTarget();
+
+        // Bind new target
+        m_currentTargetedEnemy = target;
+        
+        if (targetNameText != null) targetNameText.text = target.gameObject.name;
+        if (targetHealthBar != null)
+        {
+            targetHealthBar.maxValue = target.maxHealth;
+            targetHealthBar.value = target.health;
+        }
+        if (targetHealthText != null)
+            targetHealthText.text = $"{target.health}/{target.maxHealth}";
+
+        // Display status effects
+        if (targetStatusText != null)
+        {
+            string statusInfo = GetStatusEffectsText(target);
+            targetStatusText.text = statusInfo;
+        }
+
+        // Listen to target stat changes
+        target.onStatsChanged.AddListener(OnTargetStatsChanged);
+    }
+
+    private void UnbindCurrentTarget()
+    {
+        if (m_currentTargetedEnemy != null)
+        {
+            m_currentTargetedEnemy.onStatsChanged.RemoveListener(OnTargetStatsChanged);
+            m_currentTargetedEnemy = null;
+        }
+    }
+
+    private void OnTargetStatsChanged(int hp, int ap)
+    {
+        if (m_currentTargetedEnemy == null) return;
+        
+        if (targetHealthBar != null) targetHealthBar.value = hp;
+        if (targetHealthText != null)
+            targetHealthText.text = $"{hp}/{m_currentTargetedEnemy.maxHealth}";
+    }
+
+    private string GetStatusEffectsText(Combatant target)
+    {
+        if (target == null || target.ActiveEffects == null || target.ActiveEffects.Count == 0)
+            return "No Status Effects";
+
+        List<string> statuses = new List<string>();
+        
+        foreach (var activeEffect in target.ActiveEffects)
+        {
+            if (activeEffect?.effect != null)
+            {
+                // Display effect name and remaining duration
+                string effectName = activeEffect.effect.name; // or use a display name property if available
+                string durationText = activeEffect.remainingDuration > 0 
+                    ? $" ({activeEffect.remainingDuration})" 
+                    : "";
+                statuses.Add(effectName + durationText);
+            }
+        }
+
+        if (statuses.Count == 0)
+            return "No Status Effects";
+        
+        return string.Join(", ", statuses);
     }
 
     // Stat callbacks
@@ -179,6 +294,8 @@ public class BattleUI : MonoBehaviour
     {
         if (menuPanel == null) return;
         menuPanel.SetActive(true);
+        if (skillsPanel != null) skillsPanel.SetActive(false);
+
         if (attackButton != null) attackButton.interactable = true;
         if (skillsButton != null) skillsButton.interactable = !attackOnly;
         if (itemsButton != null) itemsButton.interactable = !attackOnly;
@@ -189,6 +306,7 @@ public class BattleUI : MonoBehaviour
         if (itemsButton != null) m_menuOptions.Add(itemsButton);
 
         m_selectedIndex = 0;
+        m_skillButtonCount = 0;
         RefreshMenuSelection();
     }
 
@@ -202,6 +320,81 @@ public class BattleUI : MonoBehaviour
     public void HideMenuImmediate()
     {
         if (menuPanel != null) menuPanel.SetActive(false);
+        if (skillsPanel != null) skillsPanel.SetActive(false);
+    }
+
+    public void ShowSkills(CombatAction[] availableSkills)
+    {
+        if (skillsPanel == null) return;
+
+        // Hide main menu, show skills panel
+        if (menuPanel != null) menuPanel.SetActive(false);
+        skillsPanel.SetActive(true);
+
+        m_menuOptions.Clear();
+        m_skillButtonCount = 0;
+
+        // Populate skill buttons based on available skills
+        int skillCount = availableSkills != null ? availableSkills.Length : 0;
+
+        if (ConfigureSkillButton(skillButton1, skillButton1Label, skillAPCost1Label, skillCount > 0 ? availableSkills[0] : null, 0))
+            m_skillButtonCount++;
+        if (ConfigureSkillButton(skillButton2, skillButton2Label, skillAPCost2Label, skillCount > 1 ? availableSkills[1] : null, 1))
+            m_skillButtonCount++;
+        if (ConfigureSkillButton(skillButton3, skillButton3Label, skillAPCost3Label, skillCount > 2 ? availableSkills[2] : null, 2))
+            m_skillButtonCount++;
+
+        // Add back button to options
+        if (skillBackButton != null) m_menuOptions.Add(skillBackButton);
+
+        m_selectedIndex = 0;
+        RefreshMenuSelection();
+    }
+
+    private bool ConfigureSkillButton(Button button, TextMeshProUGUI label, TextMeshProUGUI apLabel, CombatAction skill, int index)
+    {
+        if (button == null) return false;
+
+        if (skill != null)
+        {
+            button.gameObject.SetActive(true);
+            
+            // Check if player has enough AP
+            int currentAP = m_boundPlayer != null ? m_boundPlayer.actionPoints : 0;
+            bool canAfford = currentAP >= skill.apCost;
+            button.interactable = canAfford;
+            
+            if (label != null)
+            {
+                label.text = skill.actionName;
+                // Gray out if can't afford
+                label.color = canAfford ? Color.white : new Color(0.5f, 0.5f, 0.5f, 1f);
+            }
+            
+            // apCost int to string, or hide if 0 cost
+            if (apLabel != null)
+            {
+                apLabel.text = skill.apCost > 0 ? $"AP: {skill.apCost}" : "";
+                apLabel.color = canAfford ? Color.white : Color.red;
+            }
+
+            m_menuOptions.Add(button);
+            return true;
+        }
+        else
+        {
+            button.gameObject.SetActive(false);
+            button.interactable = false;
+            if (label != null) label.text = "---";
+            return false;
+        }
+    }
+
+    public void HideSkills()
+    {
+        if (skillsPanel == null) return;
+        skillsPanel.SetActive(false);
+        EventSystem.current?.SetSelectedGameObject(null);
     }
 
     public void Next()
@@ -221,6 +414,8 @@ public class BattleUI : MonoBehaviour
     public void Confirm() => ConfirmIndex(m_selectedIndex);
 
     private void ConfirmIndex(int index) => onOptionSelected?.Invoke(index);
+
+    private void ConfirmSkillIndex(int index) => onOptionSelected?.Invoke(index);
 
     private void RefreshMenuSelection()
     {

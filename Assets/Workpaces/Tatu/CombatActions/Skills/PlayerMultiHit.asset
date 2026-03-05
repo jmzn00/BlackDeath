@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3887e8723cf2314aaf6a02dc5954cbd, type: 3}
+  m_Name: PlayerMultiHit
+  m_EditorClassIdentifier: Assembly-CSharp::SkillAction
+  actionName: Multihit
+  description: 
+  apCost: 1
+  animationClip: {fileID: 7400000, guid: 69ab8b53dd5cd704590ff1f64c408c3d, type: 2}
+  isReactive: 1
+  grantsApOnUse: 0
+  damage: 5
+  bonusDamageOnSuccess: 5
+  targetEffects:
+  - {fileID: 11400000, guid: 07e9a58e95049d440b8743652bde8aa6, type: 2}
+  selfEffects: []
