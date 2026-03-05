@@ -6,7 +6,6 @@ public class Actor_Player : Actor
     {
         AddComponent<HealthComponent>();
         AddComponent<InventoryComponent>();
-        AddComponent<CombatActor>();
 
         base.Init(game);  
     }

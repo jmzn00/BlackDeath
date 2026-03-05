@@ -18,4 +18,9 @@ public class SkillAction : CombatAction
 
     [Tooltip("Effects applied to the USER (self-buffs) on use.")]
     public StatusEffect[] selfEffects;
+
+    public override void Resolve(CombatContext context)
+    {
+        throw new System.NotImplementedException();
+    }
 }

@@ -14,7 +14,12 @@ public class UIController : MonoBehaviour
     private bool m_initialized = false;
 
     private InputManager m_inputManager;
+    private GameManager m_game;
 
+    public void Inject(GameManager game) 
+    {
+        m_game = game;
+    }   
     public void ShowComponent<T>(bool show) where T : IUIComponent
     {
         var comp = m_uiComponents.OfType<T>().FirstOrDefault();
@@ -28,7 +33,6 @@ public class UIController : MonoBehaviour
     public void Init(Actor actor) 
     {
         m_initialized = true;
-
         m_actor = actor;
 
         BuildModules();
@@ -36,6 +40,7 @@ public class UIController : MonoBehaviour
 
         ShowComponent<HealthUI>(true);
         ShowComponent<InventoryUI>(false);
+        ShowComponent<CombatUI>(false);
     }
 
     public void ChangeActor(Actor actor) 

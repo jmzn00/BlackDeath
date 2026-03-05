@@ -52,7 +52,10 @@ public class ActorManager : IManager
     public List<ActorSaveData> SaveAllActors() 
     {
         // slow
-        return m_actors.Select(actor => actor.Save()).ToList();
+        return m_actors
+            .Select(actor
+            => actor.Save())
+            .ToList();
     }
     public void LoadAllActors(List<ActorSaveData> actorDataList) 
     {

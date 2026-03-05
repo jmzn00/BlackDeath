@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -55,6 +56,11 @@ public class GameManager : IManager
     {
         foreach (var m in m_managers)
             m.OnManagersInitialzied();
+
+        // TEMP
+        var ui = GameObject.FindFirstObjectByType<UIController>();
+        if (ui)
+            ui.Inject(this);
     }
     private void DisposeManagers() 
     {
@@ -74,7 +80,7 @@ public class GameManager : IManager
         foreach (var m in m_managers) 
         {
             Services.Register(m);
-        }
+        }      
     }
     public T Resolve<T>() where T : class
     {

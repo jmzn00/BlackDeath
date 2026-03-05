@@ -1,11 +1,27 @@
-using Mono.Cecil;
-using NUnit.Framework.Interfaces;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.Loading;
 using UnityEngine;
+public class ActionContext 
+{
+    public ActionContext() 
+    {
+    
+    }
+    public CombatActor Source;
+    public CombatActor Target;
 
+    public CombatAction Action;
+}
+public class CombatContext
+{
+    public CombatContext()
+    {
+
+    }
+    public List<CombatActor> Actors;
+    public CombatActor CurrentActor;
+    public int TurnIndex;
+}
 public enum CombatState 
 {
     None,
@@ -64,7 +80,6 @@ public class CombatManager : IManager
     public void Update(float dt)
     {
         if (m_state == CombatState.None) return;
-        Debug.Log("CombatState" + m_state);
 
         m_reactiveWindow.Update(dt);
 
@@ -87,10 +102,12 @@ public class CombatManager : IManager
                 break;
         }
     }
+    List<CombatActor> m_partyCombatActors;
+    List<CombatActor> m_enemyCombatActors;
     public void StartBattle(CombatPreferences prefs)
     {
         if (m_state != CombatState.None)
-            return;
+            return;        
         m_input.ToggleInput(false);
         List<CombatActor> participants = new List<CombatActor>();
         foreach (var t in prefs.m_enemySpawnPoints) 
@@ -106,11 +123,12 @@ public class CombatManager : IManager
             else 
             {
                 participants.Add(a);
-                Debug.Log($"Combat Participant Added {a.name}");
             }
         }
         List<Actor> partyActors = m_actorManager.Party.ToList();
         int spawnIndex = 0;
+        m_partyCombatActors = new List<CombatActor>();
+        
         foreach (Actor pa in partyActors) 
         {
             CombatActor ca = pa.Get<CombatActor>();
@@ -122,50 +140,82 @@ public class CombatManager : IManager
             else 
             {
                 participants.Add(ca);
+                m_partyCombatActors.Add(ca);
                 pa.Get<MovementController>().Move(prefs.m_partySpawnPoints[spawnIndex].position);
                 spawnIndex++;
                 Debug.Log($"Combat Participant Added {ca.name}");
             }                
         }        
-
-        m_combatActors = participants;
+        
+        m_combatActors = participants;        
         m_turnIndex = 0;
         m_playerActor = participants.Find(p => p.IsPlayer);
-
+        
         m_state = CombatState.Starting;
     }
     private void BeginFirstTurn() 
     {
         m_state = CombatState.PlayerTurn;
         m_currentActor = m_combatActors[m_turnIndex];
+
+        foreach (var a in m_combatActors)
+            a.OnCombatStarted();
+
+        UpdateContext();
+    }
+    void UpdateContext() 
+    {
+        CombatContext context = new CombatContext()
+        {
+            Actors = m_combatActors,
+            CurrentActor = m_currentActor,
+            TurnIndex = m_turnIndex
+        };
+        foreach (var a in m_combatActors)
+            a.OnCombatContextChanged(context);
     }
     private void ProcessTurn()
-    {
+    {        
         if (m_currentActor == null || m_currentActor.IsDead)
         {
             AdvanceTurn();
             return;
         }
-
         if (m_currentActor.IsPlayer)
         {
-            var target = new CombatActor(); // TODO: Select target
-            ExecuteAction(m_currentActor, target);
+            // Get Action
+            // Get Target
+            // Execute
+            // TODO 
+            //m_currentActor.RequestAction(m_combatActors);
+            ActionContext ctx = m_currentActor.RequestAction(m_combatActors);
+
+            if (ctx == null)
+            {
+                return;
+            }
+            else
+            {
+                ExecuteAction(ctx);   
+            }
+
         }
         else
         {
-            ExecuteAction(m_currentActor, m_playerActor);
-        }
+            //ExecuteAction(m_currentActor, m_playerActor);
+        }        
     }
-    private void ExecuteAction(CombatActor actor, CombatActor target) 
+    private void ExecuteAction(ActionContext ctx) 
     {
-        if (actor == null || target == null) 
+        /*
+        if (ctx.Source == null || ctx.Target == null) 
         {
             return;
-        }
+        } */
         m_state = CombatState.ResolvingAction;
         m_waitingForResolve = true;
         m_actionTimeout = ACTION_TIMEOUT;
+        
     }
     private void UpdateResolve(float dt) 
     {
@@ -190,6 +240,12 @@ public class CombatManager : IManager
         bool enemiesAlive = m_combatActors.Exists(c => !c.IsPlayer && !c.IsDead);
         return !enemiesAlive;
     }
+    public void NextTurn() 
+    {
+        if (m_state == CombatState.None) return;
+
+        AdvanceTurn();
+    }
     private void AdvanceTurn() 
     {
         if (CheckBattleEnd()) 
@@ -199,6 +255,9 @@ public class CombatManager : IManager
         }
         m_turnIndex = (m_turnIndex + 1) % m_combatActors.Count;
         m_currentActor = m_combatActors[m_turnIndex];
+        m_actorManager.SetControlledActor(m_currentActor.GetComponent<Actor>());
+
+        UpdateContext();
 
         m_state = m_currentActor.IsPlayer
             ? CombatState.PlayerTurn
@@ -206,9 +265,13 @@ public class CombatManager : IManager
     }
     private void EndBattle()
     {
+        foreach (var a in m_combatActors)
+            a.OnCombatFinished();
+
         m_input.ToggleInput(true);
         m_state = CombatState.None;
         m_combatActors.Clear();
+        m_partyCombatActors.Clear();
     }
     private void HandleDefensiveInput() 
     {

@@ -24,6 +24,7 @@ public class Actor : MonoBehaviour, IActor
     public Sprite actorSprite; // TEMP
 
     private UIController m_uiController;
+    public UIController UI => m_uiController;
 
 #if UNITY_EDITOR
     private void OnValidate()
