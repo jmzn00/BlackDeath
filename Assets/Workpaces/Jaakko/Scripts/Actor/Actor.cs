@@ -49,7 +49,7 @@ public class Actor : MonoBehaviour, IActor
 
         return false;
     }
-#endif
+#endif    
     public void SetControl(bool controlled) 
     {
         if (IsControlled == controlled)

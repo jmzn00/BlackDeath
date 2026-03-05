@@ -51,7 +51,13 @@ public class MovementController : MonoBehaviour, IActorComponent
 
     [SerializeField] private PlayerStats m_playerStats;
     public PlayerStats RuntimeStats => m_playerStats;
-    
+    public void Move(Vector3 pos) 
+    {
+        m_controller.enabled = false;
+        Velocity = Vector3.zero;
+        transform.position = pos;
+        m_controller.enabled = true;
+    }
     public void LoadData(ActorSaveData data)
     {
         m_controller.enabled = false;

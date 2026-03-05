@@ -18,6 +18,7 @@ public class GameManager : IManager
         m_container.Register<SaveManager>();
         m_container.Register<ActorManager>();
         m_container.Register<ItemManager>();
+        m_container.Register<CombatManager>();
 
         // Exclude the GameManager itself from the managed managers list
         m_managers = m_container.GetAll<IManager>().Where(m => !(m is GameManager)).ToList();

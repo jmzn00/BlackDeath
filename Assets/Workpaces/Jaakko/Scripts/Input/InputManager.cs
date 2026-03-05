@@ -14,6 +14,9 @@ public struct InputState
     public bool DashPressed;
     public bool DashPressedThisFrame;
     public bool CrouchPressed;
+
+    public bool ParryPressed;
+    public bool DodgePressed;
 }
 public class InputManager : IManager
 {
@@ -53,6 +56,12 @@ public class InputManager : IManager
         m_inputState.CrouchPressed =
             m_inputActions.Player.Crouch.IsPressed();
 
+        m_inputState.ParryPressed = 
+            m_inputActions.Player.Parry.WasPressedThisFrame();
+
+        m_inputState.DodgePressed = 
+            m_inputActions.Player.Dodge.WasPressedThisFrame();
+
         if (m_inputActions.UI.OpenInventory.IsPressed())
             OnUIInputAction?.Invoke(UIInputAction.Inventory);
 
@@ -61,6 +70,18 @@ public class InputManager : IManager
     public void OnManagersInitialzied()
     {
 
+    }
+    public void ToggleInput(bool value) 
+    {
+        if (!value) 
+        {
+            m_inputState = new InputState();
+            m_inputActions.Disable();
+        }
+        else 
+        {
+            m_inputActions.Enable();
+        }
     }
     public bool Init()
     {
