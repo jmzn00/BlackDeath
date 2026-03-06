@@ -1,18 +1,30 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-
+public enum GameState 
+{
+    None,
+    Combat
+}
 public class GameManager : IManager
 {
     private Container m_container;
     private List<IManager> m_managers = new();
 
+    private GameState m_state;
+    public GameState State => m_state;
+
+    public void SetState(GameState state) 
+    {
+        if (state == m_state) return;
+
+        m_state = state;
+    }
+
     public bool Init() 
     {
         m_container = new Container();
 
-        // Register this existing GameManager instance so Container won't create another one
         m_container.RegisterInstance<GameManager>(this);
 
         m_container.Register<InputManager>();
@@ -20,13 +32,16 @@ public class GameManager : IManager
         m_container.Register<ActorManager>();
         m_container.Register<ItemManager>();
         m_container.Register<CombatManager>();
+        m_container.Register<CameraManager>();
 
-        // Exclude the GameManager itself from the managed managers list
-        m_managers = m_container.GetAll<IManager>().Where(m => !(m is GameManager)).ToList();
+        // Exclude the GameManager
+        m_managers = m_container
+            .GetAll<IManager>()
+            .Where(m => !(m is GameManager))
+            .ToList();
 
         InitManagers();
         PopulateServices();
-
         return true;
     }
     public bool Dispose() 

@@ -21,6 +21,7 @@ public class Actor : MonoBehaviour, IActor
 
     private CinemachineCamera m_camera; // TEMP
     [SerializeField] private Transform m_trackingTarget; // TEMP
+    public Transform TrackingTarget => m_trackingTarget;
     public Sprite actorSprite; // TEMP
 
     private UIController m_uiController;
@@ -61,8 +62,6 @@ public class Actor : MonoBehaviour, IActor
         if (controlled) 
         {
             ChangeComponentInputSource(m_playerInputSource);
-            m_camera.Follow = m_trackingTarget; // TEMP
-            m_uiController.ChangeActor(this); // TEMP
         }
         else 
         {
@@ -102,7 +101,7 @@ public class Actor : MonoBehaviour, IActor
 
     public virtual void Init(GameManager game)
     {
-        m_camera = FindFirstObjectByType<CinemachineCamera>(); // TEMP, for testing purposes
+        //m_camera = FindFirstObjectByType<CinemachineCamera>(); // TEMP, for testing purposes
 
         if (m_playable) 
         {

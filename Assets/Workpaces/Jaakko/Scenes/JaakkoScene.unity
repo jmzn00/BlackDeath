@@ -520,9 +520,9 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1988529701}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 1, y: 0.5}
-  m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -400, y: 0}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: 50, y: -0.0000076293945}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &126122891
@@ -816,7 +816,7 @@ Transform:
   m_GameObject: {fileID: 150782658}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.25, y: 0, z: -1.25}
+  m_LocalPosition: {x: 0.125, y: 0, z: -3.625}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2378,7 +2378,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CombatArea
   m_combatPreferences:
     m_enemies:
-    - {fileID: 9023665651031572745, guid: bd3927e68a91fa04c83cc7ce08f16e42, type: 3}
+    - {fileID: 1550098968372106492, guid: bd3927e68a91fa04c83cc7ce08f16e42, type: 3}
     m_enemySpawnPoints:
     - {fileID: 1377865058}
     - {fileID: 813770327}
@@ -2722,7 +2722,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1000722743
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3049,7 +3049,7 @@ MonoBehaviour:
   m_StreamingVersion: 20241001
   m_LegacyPriority: 0
   Target:
-    TrackingTarget: {fileID: 282058843}
+    TrackingTarget: {fileID: 0}
     LookAtTarget: {fileID: 0}
     CustomLookAtTarget: 0
   Lens:
@@ -3540,10 +3540,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1301911463}
-  - component: {fileID: 1301911462}
   - component: {fileID: 1301911461}
   - component: {fileID: 1301911460}
   - component: {fileID: 1301911459}
+  - component: {fileID: 1301911464}
   m_Layer: 5
   m_Name: Canvas_ActorUI
   m_TagString: Untagged
@@ -3614,18 +3614,6 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
---- !u!114 &1301911462
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1301911458}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ce25fc0a9274b5b45bab2d604cfdf2ab, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::UIController
 --- !u!224 &1301911463
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3648,6 +3636,18 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &1301911464
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1301911458}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ce25fc0a9274b5b45bab2d604cfdf2ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIController
 --- !u!1 &1375662973
 GameObject:
   m_ObjectHideFlags: 0
@@ -4463,9 +4463,9 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1988529701}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 1, y: 0.5}
-  m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -200, y: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1589875558
@@ -5921,10 +5921,10 @@ RectTransform:
   - {fileID: 1589875557}
   m_Father: {fileID: 1301911463}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 700.00006, y: -250}
-  m_SizeDelta: {x: -1399.9999, y: -499.99997}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: 250, y: 0}
+  m_SizeDelta: {x: 500, y: 580}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1988529702
 MonoBehaviour:

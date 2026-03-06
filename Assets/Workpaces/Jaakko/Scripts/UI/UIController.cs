@@ -19,7 +19,23 @@ public class UIController : MonoBehaviour
     public void Inject(GameManager game) 
     {
         m_game = game;
-    }   
+
+        m_game.Resolve<ActorManager>().OnActorControlChanged += ChangeActor;
+        m_game.Resolve<InputManager>().OnUIInputAction += OnUiInputAction;
+
+        Actor actor = m_game.Resolve<ActorManager>().CurrentControlled;
+
+        m_initialized = true;
+        m_actor = actor;
+
+        BuildModules();
+        InitializeModules(actor);
+
+        ShowComponent<HealthUI>(true);
+        ShowComponent<InventoryUI>(false);
+        ShowComponent<CombatUI>(false);
+    }
+   
     public void ShowComponent<T>(bool show) where T : IUIComponent
     {
         var comp = m_uiComponents.OfType<T>().FirstOrDefault();
@@ -59,6 +75,8 @@ public class UIController : MonoBehaviour
             .Where(t => typeof(UIComponentBase)
             .IsAssignableFrom(t) && !t.IsAbstract);
 
+        Debug.Log("ui types " + uiTypes.ToList().Count);
+
         foreach (var type in uiTypes) 
         {
             var attr = type.GetCustomAttribute<UIForAttribute>();
@@ -88,13 +106,9 @@ public class UIController : MonoBehaviour
         foreach (var comp in m_uiComponents)
             comp.Initialize(actor);        
     }
-    private void Start()
-    {
-        m_inputManager = Services.Get<InputManager>();
-        m_inputManager.OnUIInputAction += OnUiInputAction;
-    }
     private void OnUiInputAction(UIInputAction action) 
     {
+        //Debug.Log($"UIInputAction {action}");
         switch (action) 
         {
             case UIInputAction.Inventory:

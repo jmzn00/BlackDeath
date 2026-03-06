@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -41,6 +42,7 @@ public class CombatManager : IManager
     private int m_turnIndex;
 
     private CombatState m_state = CombatState.None;
+    public CombatState State => m_state;
 
     private CombatActor m_currentActor;
     private CombatActor m_playerActor;
@@ -52,9 +54,16 @@ public class CombatManager : IManager
     private const float ACTION_TIMEOUT = 3f;
 
     private ActorManager m_actorManager;
-    public CombatManager(InputManager input, ActorManager actorManager)
+    private GameManager m_game;
+
+    public event Action<Actor> OnCurrentActorChanged;
+    private Actor m_actor;
+    public Actor Actor => m_actor;
+
+    public CombatManager(InputManager input, ActorManager actorManager, GameManager game)
     {
         m_input = input;
+        m_game = game;
         m_actorManager = actorManager;
     }
 
@@ -112,17 +121,24 @@ public class CombatManager : IManager
         List<CombatActor> participants = new List<CombatActor>();
         foreach (var t in prefs.m_enemySpawnPoints) 
         {
-            CombatActor a = 
+            Actor a = 
                 GameObject.Instantiate(prefs.m_enemies[0], t.position, t.rotation);
 
             if (a == null) 
             {
-                Debug.Log("Combat Actor Component is NULL");
+                Debug.Log("Actor Component is NULL");
                 continue;
             }
             else 
             {
-                participants.Add(a);
+                a.Init(m_game);
+                CombatActor ca = a.Get<CombatActor>();
+                if (ca == null) 
+                {
+                    Debug.LogWarning($"CombatActor NULL on {a.name}");
+                    continue;
+                }
+                participants.Add(ca);
             }
         }
         List<Actor> partyActors = m_actorManager.Party.ToList();
@@ -151,16 +167,19 @@ public class CombatManager : IManager
         m_turnIndex = 0;
         m_playerActor = participants.Find(p => p.IsPlayer);
         
-        m_state = CombatState.Starting;
+        m_state = CombatState.Starting;        
     }
     private void BeginFirstTurn() 
     {
+        m_game.SetState(GameState.Combat);
         m_state = CombatState.PlayerTurn;
+
         m_currentActor = m_combatActors[m_turnIndex];
+        m_actor = m_currentActor.Actor;
+        OnCurrentActorChanged?.Invoke(m_actor);        
 
         foreach (var a in m_combatActors)
             a.OnCombatStarted();
-
         UpdateContext();
     }
     void UpdateContext() 
@@ -255,8 +274,12 @@ public class CombatManager : IManager
         }
         m_turnIndex = (m_turnIndex + 1) % m_combatActors.Count;
         m_currentActor = m_combatActors[m_turnIndex];
-        m_actorManager.SetControlledActor(m_currentActor.GetComponent<Actor>());
-
+        if (m_currentActor.IsPlayer)
+        {
+            m_actorManager.SetControlledActor(m_currentActor.GetComponent<Actor>());
+        }
+        
+        OnCurrentActorChanged?.Invoke(m_currentActor.Actor);
         UpdateContext();
 
         m_state = m_currentActor.IsPlayer
@@ -270,8 +293,10 @@ public class CombatManager : IManager
 
         m_input.ToggleInput(true);
         m_state = CombatState.None;
+        m_game.SetState(GameState.None);
+
         m_combatActors.Clear();
-        m_partyCombatActors.Clear();
+        m_partyCombatActors.Clear();        
     }
     private void HandleDefensiveInput() 
     {

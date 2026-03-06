@@ -7,6 +7,8 @@ public class AiActor : Actor
     {
         AddComponent<HealthComponent>();
         AddComponent<InventoryComponent>();
+        AddComponent<CombatActor>();
+        
 
         base.Init(game);
     }

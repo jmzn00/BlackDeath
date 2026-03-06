@@ -30,5 +30,5 @@ public abstract class CombatAction : ScriptableObject
     {
         executor.PlayAction(this, target);
     }
-    public abstract void Resolve(CombatContext context);
+    public abstract bool Resolve(CombatContext context);
 }

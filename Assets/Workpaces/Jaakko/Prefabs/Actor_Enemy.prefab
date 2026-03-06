@@ -102,9 +102,8 @@ GameObject:
   - component: {fileID: 5730682946787434844}
   - component: {fileID: 7519845105093333698}
   - component: {fileID: 806502385994463262}
-  - component: {fileID: 1550098968372106492}
   - component: {fileID: 691782086803937665}
-  - component: {fileID: 9023665651031572745}
+  - component: {fileID: 1550098968372106492}
   m_Layer: 0
   m_Name: Actor_Enemy
   m_TagString: Untagged
@@ -222,22 +221,6 @@ MonoBehaviour:
     SecondWallJumpStaminaCost: 0
     WallJumpStaminaCost: 0
     ConsecutiveWallJumpStaminaCostMultiplier: 0
---- !u!114 &1550098968372106492
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 562378834416262406}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7703f0d091e12574c985a35ce98fc52f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::AiActor
-  m_actorID: d3abb613-3a78-45bd-9af5-7b11ac8963af
-  m_playable: 0
-  m_trackingTarget: {fileID: 0}
-  actorSprite: {fileID: 0}
 --- !u!114 &691782086803937665
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -253,7 +236,7 @@ MonoBehaviour:
   m_spriteRenderer: {fileID: 5093997064220521558}
   m_idleAnim: {fileID: 7400000, guid: 514bc794587bf3348b66f7b318109bac, type: 2}
   m_runAnim: {fileID: 7400000, guid: 63e02d32969e3b7438060ca2da476b80, type: 2}
---- !u!114 &9023665651031572745
+--- !u!114 &1550098968372106492
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -262,11 +245,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 562378834416262406}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d49067907496b884aa91ef2b8c6f15bd, type: 3}
+  m_Script: {fileID: 11500000, guid: 7703f0d091e12574c985a35ce98fc52f, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CombatActor
-  IsDead: 0
-  IsPlayer: 0
+  m_EditorClassIdentifier: Assembly-CSharp::AiActor
+  m_actorID: d3abb613-3a78-45bd-9af5-7b11ac8963af
+  m_playable: 0
+  m_trackingTarget: {fileID: 1092603015612332266}
+  actorSprite: {fileID: 0}
 --- !u!1 &1251749698081068059
 GameObject:
   m_ObjectHideFlags: 0
@@ -406,7 +391,7 @@ Transform:
   m_GameObject: {fileID: 3621792740450021076}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.625, z: -0.75}
+  m_LocalPosition: {x: 0, y: 1.5, z: -0.875}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

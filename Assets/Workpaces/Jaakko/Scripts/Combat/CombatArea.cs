@@ -5,7 +5,7 @@ using UnityEngine;
 [System.Serializable]
 public class CombatPreferences 
 {
-    public CombatActor[] m_enemies;
+    public Actor[] m_enemies;
     public Transform[] m_enemySpawnPoints;
 
     public Transform[] m_partySpawnPoints;    
@@ -23,6 +23,11 @@ public class CombatArea : MonoBehaviour
     }
     public void StartBattle() 
     {
+        if (m_combatPreferences.m_enemies[0] == null) 
+        {
+            Debug.LogWarning("CombatArea Enemy Prefab NULL");
+            return;
+        }
         m_combatManager.StartBattle(m_combatPreferences);
     }
     private void OnTriggerEnter(Collider other)

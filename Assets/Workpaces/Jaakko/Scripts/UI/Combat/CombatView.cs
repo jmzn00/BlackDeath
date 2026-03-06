@@ -87,7 +87,10 @@ public class CombatView : MonoBehaviour, IUIComponentView
                 {
                     Action = action
                 };
-                m_currentActor.SetActionContext(ctx);
+                if (!m_currentActor.SetActionContext(ctx)) 
+                {
+                    
+                }
             });
         }
     }

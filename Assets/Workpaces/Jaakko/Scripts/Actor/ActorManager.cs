@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -18,6 +19,8 @@ public class ActorManager : IManager
     public Actor CurrentControlled => m_currentControlled;
     public IReadOnlyList<Actor> Party => m_party;
 
+    public event Action<Actor> OnActorControlChanged;
+
     public void SetControlledActor(Actor actor) 
     {
         if (actor == null || !m_party.Contains(actor)) 
@@ -31,6 +34,7 @@ public class ActorManager : IManager
         actor.SetControl(true);
 
         m_currentControlled = actor;
+        OnActorControlChanged?.Invoke(actor);
     }
     public void SwitchToNextActor() 
     {

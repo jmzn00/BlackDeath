@@ -14,6 +14,7 @@ public class CombatActor : MonoBehaviour, IActorComponent
     public bool IsPlayer;
 
     private Actor m_actor;
+    public Actor Actor => m_actor;
     private CombatManager m_combatManager;
 
     [SerializeField] private List<CombatAction> m_actions;
@@ -25,6 +26,8 @@ public class CombatActor : MonoBehaviour, IActorComponent
     private CombatAction m_action;
 
     public event Action<CombatContext> OnContextChanged;
+
+
     #region IActorComponent
     public bool Initialize(GameManager game) 
     {
@@ -84,8 +87,9 @@ public class CombatActor : MonoBehaviour, IActorComponent
         return null;
     }
     private CombatAction m_selectedAction;
-    public void SetActionContext(ActionContext ctx) 
+    public bool SetActionContext(ActionContext ctx) 
     {
-        Debug.Log($"{name} Selected Action {ctx.Action.actionName}");
+        
+        return false;   
     }
 }
