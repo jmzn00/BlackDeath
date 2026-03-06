@@ -4,9 +4,9 @@ public class Actor_Player : Actor
 {
     public override void Init(GameManager game)
     {
-        AddComponent<HealthComponent>();
+        base.Init(game);
         AddComponent<InventoryComponent>();
 
-        base.Init(game);  
+        OnActorComponentsInitialized();
     }
 }

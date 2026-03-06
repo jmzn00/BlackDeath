@@ -59,6 +59,8 @@ public class CombatManager : IManager
 
     private ReactiveWindow m_reactiveWindow = new ReactiveWindow();
 
+    private CombatArea m_currentArea;
+
     public CombatManager(InputManager input, ActorManager actorManager, GameManager game)
     {
         m_input = input;
@@ -109,6 +111,26 @@ public class CombatManager : IManager
     }
     private void AdvanceTurn()
     {
+        int attempts = 0;
+        do
+        {
+            m_turnIndex = (m_turnIndex + 1) % m_combatActors.Count;
+            m_currentActor = m_combatActors[m_turnIndex];
+            attempts++;
+        } while (m_currentActor.IsDead && attempts <= m_combatActors.Count);
+
+        if (CheckBattleEnd()) 
+        {
+            m_state = CombatState.Ending;
+            return;
+        }
+        OnCurrentActorChanged?.Invoke(m_currentActor.Actor);
+        UpdateContext();
+
+        m_state = m_currentActor.IsPlayer
+            ? CombatState.PlayerTurn
+            : CombatState.EnemyTurn;
+        /*
         if (CheckBattleEnd())
         {
             m_state = CombatState.Ending;
@@ -127,6 +149,7 @@ public class CombatManager : IManager
         m_state = m_currentActor.IsPlayer
             ? CombatState.PlayerTurn
             : CombatState.EnemyTurn;
+        */
     }
     public void SubmitAction(ActionContext ctx) 
     {
@@ -149,13 +172,13 @@ public class CombatManager : IManager
             Debug.Log("Context Target is NULL");
             return;
         }        
-        Debug.Log($"{ctx.Source.name} Selected {ctx.Action.actionName} On {ctx.Target.name}");
         ExecuteAction(ctx);
     }
     public void StartBattle(CombatPreferences prefs)
     {
         if (m_state != CombatState.None)
-            return;        
+            return;
+        m_currentArea = prefs.m_area;
         m_input.ToggleInput(false);
         List<CombatActor> participants = new List<CombatActor>();
         int spawns = 0;
@@ -237,7 +260,7 @@ public class CombatManager : IManager
     private void ProcessTurn()
     {
         if (m_currentActor == null || m_currentActor.IsDead)
-        {
+        {            
             AdvanceTurn();
             return;
         }
@@ -279,7 +302,13 @@ public class CombatManager : IManager
         m_game.SetState(GameState.None);
 
         m_combatActors.Clear();
-        m_partyCombatActors.Clear();        
+        m_partyCombatActors.Clear();
+
+        // TEMP. Set based on wow / loss
+        m_currentArea.SetCompleted(true);
+
+        foreach (var c in m_combatActors)
+            c.OnCombatFinished();
     }
     private void HandleDefensiveInput() 
     {
@@ -295,7 +324,20 @@ public class CombatManager : IManager
             m_reactiveWindow.TryActivateDodge();
         }
     }
-    
+    public void OnActorDied(CombatActor actor) 
+    {
+        if (m_combatActors.Contains(actor)) 
+        {
+            Debug.Log(actor.name + " Has Died");
+            UpdateContext();
+
+            if (actor == m_currentActor) 
+            {
+                m_waitingForResolve = true;
+                AdvanceTurn();
+            }            
+        }
+    }
     // ================
     //     ANIMATION
     // ================

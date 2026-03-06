@@ -39,8 +39,8 @@ public class CombatActor : MonoBehaviour, IActorComponent
     #region IActorComponent
     public bool Initialize(GameManager game) 
     {
-        m_actor = GetComponent<Actor>();
-        m_health = m_actor.Get<HealthComponent>();
+        m_actor = GetComponent<Actor>();             
+
         m_combatManager = game.Resolve<CombatManager>();
         m_uiController = game.Resolve<UIManager>().Controller;
 
@@ -54,8 +54,19 @@ public class CombatActor : MonoBehaviour, IActorComponent
         else 
         {
             SetActionProvider(new AIActionProvider());
-        }
+        }        
             return true;
+    }
+    [SerializeField] private GameObject m_visual; // temp  
+    void OnHealthChanged(float value) 
+    {
+        if (value <= 0f) 
+        {
+            IsDead = true;
+            m_combatManager.OnActorDied(this);
+            if (m_visual)
+                m_visual.SetActive(false);
+        }
     }
     public bool Dispose() 
     {
@@ -63,7 +74,8 @@ public class CombatActor : MonoBehaviour, IActorComponent
     }
     public void OnActorComponentsInitialized(Actor actor) 
     {
-    
+        m_health = m_actor.Get<HealthComponent>();
+        m_health.OnHealthChanged += OnHealthChanged;
     }
     public void SetInputSource(IInputSource source) 
     {
@@ -89,7 +101,8 @@ public class CombatActor : MonoBehaviour, IActorComponent
     }
     public void OnCombatFinished() 
     {
-    
+        if (!IsPlayer)
+            Destroy(gameObject); // add pooling?
     }
     
     private ActionContext m_pendingAction;

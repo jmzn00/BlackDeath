@@ -27,46 +27,36 @@ public class CombatView : MonoBehaviour, IUIComponentView
     private CombatActor m_currentTarget = null;
     public void OnContextChanged(CombatContext ctx) 
     {
-        int count = ctx.Actors.Count;
-        int currentIndex = ctx.TurnIndex % count;
-        int nextIndex = (currentIndex + 1) % count;
-
-        CombatActor current = ctx.Actors[currentIndex];
-        if (!current.IsPlayer) 
+        ClearButtons();
+        m_currentActor = ctx.CurrentActor;
+        if (!ctx.CurrentActor.IsPlayer || ctx.CurrentActor.IsDead) 
         {
-            m_currentTarget = null;
-            ClearButtons();
+            // hide action selection
+            return;
+        }        
+        var Actions = ctx.CurrentActor.Actions;
+        var AttackActions = Actions.OfType<AttackAction>().ToList<CombatAction>();
+        var SkillActions = Actions.OfType<SkillAction>().ToList<CombatAction>();
+
+        if (AttackActions.Count > 0) 
+        {
+            CreateButtonType("Attacks", AttackActions);
         }
-        
+        if (SkillActions.Count > 0) 
+        {
+            CreateButtonType("Skills", SkillActions);
+        }
 
-        m_currentActorText.text = "Current: " + current.name;
-
-        m_nextActor.text = "Next: " + ctx.Actors[nextIndex].name;
-
-        List<CombatActor> enemies = ctx.Actors.FindAll(a => !a.IsPlayer);
-        foreach (var e in enemies)
+        List<CombatActor> aliveEnemies = ctx.Actors.Where(a => a != a.IsPlayer && a != a.IsDead).ToList();
+        foreach(var e in aliveEnemies) 
+        {
             CreateTargetButton(e);
+        }        
     }
     public void OnActorChanged(Actor actor) 
-    {        
-        ClearButtons();
+    {     
 
-        CombatActor combatActor = actor.Get<CombatActor>();
-        m_currentActor = combatActor;
-        var Actions = combatActor.Actions;
-        var attackActions = Actions.OfType<AttackAction>().ToList<CombatAction>();
-        var skillActions = Actions.OfType<SkillAction>().ToList<CombatAction>();
-
-        if (attackActions.Count > 0) 
-        {
-            CreateButtonType("Attacks", attackActions);
-        }
-        if (skillActions.Count > 0) 
-        {
-            CreateButtonType("Skills", skillActions);
-        }                
     }
-    
     private void CreateTargetButton(CombatActor actor) 
     {
         Button button = Instantiate(targetButtonPrefab, TargetsContainer);

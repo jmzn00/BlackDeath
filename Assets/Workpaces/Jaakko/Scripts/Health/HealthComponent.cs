@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class HealthComponent : MonoBehaviour, IDamageable, IActorComponent
 {
-    [SerializeField] private float m_maxHealth = 100f;
+    [SerializeField] private float m_maxHealth = 5f;
 
     public event Action<float> OnHealthChanged;
     private float m_currentHealth;
@@ -38,20 +38,17 @@ public class HealthComponent : MonoBehaviour, IDamageable, IActorComponent
     }
     public void ApplyDamage(float amount, Actor attacker = null) 
     {
-        Debug.Log($"Applied {amount} Damage To {name}");
         float newHealth = Mathf.Max(0, m_currentHealth - amount);
         SetHealth(newHealth);
     }
     public void ApplyHealth(float amount, Actor healer = null) 
     {
-        Debug.Log($"Applied {amount} Health To {name}");
         float newHealth = Mathf.Min(m_currentHealth + amount, m_maxHealth);
         SetHealth(newHealth);
     }
     private void SetHealth(float value) 
     {
         m_currentHealth = value;
-
         OnHealthChanged?.Invoke(m_currentHealth);
     }
 }

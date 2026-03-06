@@ -108,14 +108,16 @@ public class Actor : MonoBehaviour, IActor
         {
             comp.Initialize(game);
             m_components[comp.GetType()] = comp;
-        }
-        foreach (var comp in m_components.Values)
-            comp.OnActorComponentsInitialized(this);
-
+        }        
+        OnActorComponentsInitialized();
         m_playerInputSource = new PlayerInputSource(game.Resolve<InputManager>());
         m_aiInputSource = new AIInputSource();        
     }
-
+    public virtual void OnActorComponentsInitialized() 
+    {
+        foreach (var comp in m_components.Values)
+            comp.OnActorComponentsInitialized(this);
+    }
     public virtual void Dispose()
     {
         foreach (var comp in m_components.Values)
