@@ -75,8 +75,6 @@ public class UIController : MonoBehaviour
             .Where(t => typeof(UIComponentBase)
             .IsAssignableFrom(t) && !t.IsAbstract);
 
-        Debug.Log("ui types " + uiTypes.ToList().Count);
-
         foreach (var type in uiTypes) 
         {
             var attr = type.GetCustomAttribute<UIForAttribute>();

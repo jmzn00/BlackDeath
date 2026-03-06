@@ -33,26 +33,15 @@ public enum CombatState
     Ending
 }
 public class CombatManager : IManager
-{
-    private List<CombatArea> m_combatAreas = new List<CombatArea>();
-
-    private InputManager m_input;
-
-    private List<CombatActor> m_combatActors = new List<CombatActor>();
-    private int m_turnIndex;
-
+{  
     private CombatState m_state = CombatState.None;
     public CombatState State => m_state;
-
-    private CombatActor m_currentActor;
-    private CombatActor m_playerActor;
-
-    private ReactiveWindow m_reactiveWindow = new ReactiveWindow();
 
     private bool m_waitingForResolve;
     private float m_actionTimeout;
     private const float ACTION_TIMEOUT = 3f;
 
+    private InputManager m_input;
     private ActorManager m_actorManager;
     private GameManager m_game;
 
@@ -60,13 +49,22 @@ public class CombatManager : IManager
     private Actor m_actor;
     public Actor Actor => m_actor;
 
+    private CombatActor m_currentActor;
+    private CombatActor m_playerActor;
+
+    private List<CombatActor> m_partyCombatActors;
+    private List<CombatArea> m_combatAreas = new List<CombatArea>();
+    private List<CombatActor> m_combatActors = new List<CombatActor>();
+    private int m_turnIndex;
+
+    private ReactiveWindow m_reactiveWindow = new ReactiveWindow();
+
     public CombatManager(InputManager input, ActorManager actorManager, GameManager game)
     {
         m_input = input;
         m_game = game;
         m_actorManager = actorManager;
     }
-
     public bool Init()
     {
         m_combatAreas = new List<CombatArea>(
@@ -78,10 +76,7 @@ public class CombatManager : IManager
 
         return true;
     }
-    public void OnManagersInitialzied()
-    {
-
-    }
+    public void OnManagersInitialzied(){}
     public bool Dispose()
     {
         return true;
@@ -104,25 +99,72 @@ public class CombatManager : IManager
                 ProcessTurn();
                 break;
             case CombatState.ResolvingAction:
-                UpdateResolve(dt);
+                if (!m_waitingForResolve)
+                    AdvanceTurn();
                 break;
             case CombatState.Ending:
                 EndBattle();
                 break;
         }
     }
-    List<CombatActor> m_partyCombatActors;
-    List<CombatActor> m_enemyCombatActors;
+    private void AdvanceTurn()
+    {
+        if (CheckBattleEnd())
+        {
+            m_state = CombatState.Ending;
+            return;
+        }
+        m_turnIndex = (m_turnIndex + 1) % m_combatActors.Count;
+        m_currentActor = m_combatActors[m_turnIndex];
+        if (m_currentActor.IsPlayer)
+        {
+            m_actorManager.SetControlledActor(m_currentActor.GetComponent<Actor>());
+        }
+
+        OnCurrentActorChanged?.Invoke(m_currentActor.Actor);
+        UpdateContext();
+
+        m_state = m_currentActor.IsPlayer
+            ? CombatState.PlayerTurn
+            : CombatState.EnemyTurn;
+    }
+    public void SubmitAction(ActionContext ctx) 
+    {
+        if (m_state == CombatState.ResolvingAction)
+        {
+            Debug.LogWarning("Action blocked: already resolving another action");
+            return;
+        }
+        if (ctx == null || ctx.Action == null) 
+        {
+            Debug.Log("Context Or Action Is NULL");
+            return;
+        }            
+        if (ctx.Source != m_currentActor) 
+        {
+            return;
+        }    
+        if (ctx.Target == null) 
+        {
+            Debug.Log("Context Target is NULL");
+            return;
+        }        
+        Debug.Log($"{ctx.Source.name} Selected {ctx.Action.actionName} On {ctx.Target.name}");
+        ExecuteAction(ctx);
+    }
     public void StartBattle(CombatPreferences prefs)
     {
         if (m_state != CombatState.None)
             return;        
         m_input.ToggleInput(false);
         List<CombatActor> participants = new List<CombatActor>();
+        int spawns = 0;
         foreach (var t in prefs.m_enemySpawnPoints) 
         {
             Actor a = 
                 GameObject.Instantiate(prefs.m_enemies[0], t.position, t.rotation);
+            a.gameObject.name += spawns.ToString();
+            spawns++;
 
             if (a == null) 
             {
@@ -159,7 +201,6 @@ public class CombatManager : IManager
                 m_partyCombatActors.Add(ca);
                 pa.Get<MovementController>().Move(prefs.m_partySpawnPoints[spawnIndex].position);
                 spawnIndex++;
-                Debug.Log($"Combat Participant Added {ca.name}");
             }                
         }        
         
@@ -194,63 +235,26 @@ public class CombatManager : IManager
             a.OnCombatContextChanged(context);
     }
     private void ProcessTurn()
-    {        
+    {
         if (m_currentActor == null || m_currentActor.IsDead)
         {
             AdvanceTurn();
             return;
         }
-        if (m_currentActor.IsPlayer)
-        {
-            // Get Action
-            // Get Target
-            // Execute
-            // TODO 
-            //m_currentActor.RequestAction(m_combatActors);
-            ActionContext ctx = m_currentActor.RequestAction(m_combatActors);
-
-            if (ctx == null)
-            {
-                return;
-            }
-            else
-            {
-                ExecuteAction(ctx);   
-            }
-
-        }
-        else
-        {
-            //ExecuteAction(m_currentActor, m_playerActor);
-        }        
+        //Debug.Log($"Process Turn {m_currentActor.name}");
+        m_currentActor.
+            ActionProvider.
+            RequestAction(m_currentActor, m_combatActors);
     }
     private void ExecuteAction(ActionContext ctx) 
     {
-        /*
-        if (ctx.Source == null || ctx.Target == null) 
-        {
-            return;
-        } */
         m_state = CombatState.ResolvingAction;
         m_waitingForResolve = true;
-        m_actionTimeout = ACTION_TIMEOUT;
-        
-    }
-    private void UpdateResolve(float dt) 
-    {
-        if (!m_waitingForResolve) 
+        ctx.Action.Resolve(ctx, () => 
         {
-            AdvanceTurn();
-            return;
-        }
-
-        m_actionTimeout -= dt;
-
-        if (m_actionTimeout <= 0f) 
-        {
-            ResolveAction();
-        }
-    }
+            m_waitingForResolve = false;
+        });        
+    }    
     private bool CheckBattleEnd() 
     {
         if (m_playerActor == null || m_playerActor.IsDead)
@@ -264,28 +268,7 @@ public class CombatManager : IManager
         if (m_state == CombatState.None) return;
 
         AdvanceTurn();
-    }
-    private void AdvanceTurn() 
-    {
-        if (CheckBattleEnd()) 
-        {
-            m_state = CombatState.Ending;
-            return;
-        }
-        m_turnIndex = (m_turnIndex + 1) % m_combatActors.Count;
-        m_currentActor = m_combatActors[m_turnIndex];
-        if (m_currentActor.IsPlayer)
-        {
-            m_actorManager.SetControlledActor(m_currentActor.GetComponent<Actor>());
-        }
-        
-        OnCurrentActorChanged?.Invoke(m_currentActor.Actor);
-        UpdateContext();
-
-        m_state = m_currentActor.IsPlayer
-            ? CombatState.PlayerTurn
-            : CombatState.EnemyTurn;
-    }
+    }    
     private void EndBattle()
     {
         foreach (var a in m_combatActors)
@@ -312,7 +295,7 @@ public class CombatManager : IManager
             m_reactiveWindow.TryActivateDodge();
         }
     }
-
+    
     // ================
     //     ANIMATION
     // ================
@@ -327,10 +310,5 @@ public class CombatManager : IManager
             Debug.Log($"{target} parried");
         
         m_reactiveWindow.Reset();
-    }
-    public void ResolveAction() 
-    {
-        m_waitingForResolve = false;
-        m_state = CombatState.PlayerTurn;
-    }
+    }    
 }

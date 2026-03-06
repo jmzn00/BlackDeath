@@ -104,6 +104,7 @@ GameObject:
   - component: {fileID: 806502385994463262}
   - component: {fileID: 691782086803937665}
   - component: {fileID: 1550098968372106492}
+  - component: {fileID: 4169105763984667912}
   m_Layer: 0
   m_Name: Actor_Enemy
   m_TagString: Untagged
@@ -252,6 +253,21 @@ MonoBehaviour:
   m_playable: 0
   m_trackingTarget: {fileID: 1092603015612332266}
   actorSprite: {fileID: 0}
+--- !u!114 &4169105763984667912
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 562378834416262406}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d49067907496b884aa91ef2b8c6f15bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CombatActor
+  m_initiative: 0
+  m_actions:
+  - {fileID: 11400000, guid: 298b1b658ff32d9469a5b3dbb6f2ccd4, type: 2}
 --- !u!1 &1251749698081068059
 GameObject:
   m_ObjectHideFlags: 0

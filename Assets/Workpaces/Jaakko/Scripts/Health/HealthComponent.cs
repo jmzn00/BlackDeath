@@ -36,13 +36,15 @@ public class HealthComponent : MonoBehaviour, IDamageable, IActorComponent
     {
         return m_currentHealth;
     }
-    public void ApplyDamage(Actor attacker, float amount) 
+    public void ApplyDamage(float amount, Actor attacker = null) 
     {
+        Debug.Log($"Applied {amount} Damage To {name}");
         float newHealth = Mathf.Max(0, m_currentHealth - amount);
         SetHealth(newHealth);
     }
-    public void ApplyHealth(Actor healer, float amount) 
+    public void ApplyHealth(float amount, Actor healer = null) 
     {
+        Debug.Log($"Applied {amount} Health To {name}");
         float newHealth = Mathf.Min(m_currentHealth + amount, m_maxHealth);
         SetHealth(newHealth);
     }

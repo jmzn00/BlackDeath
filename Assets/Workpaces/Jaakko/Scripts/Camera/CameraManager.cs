@@ -69,6 +69,5 @@ public class CameraManager : IManager
         m_mode?.Exit();
         m_mode = mode;
         m_mode.Enter();
-        Debug.Log($"Enter: {m_mode}");
     }
 }

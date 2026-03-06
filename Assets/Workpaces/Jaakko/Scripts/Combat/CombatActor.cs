@@ -9,15 +9,15 @@ using UnityEngine;
 public class CombatActor : MonoBehaviour, IActorComponent
 {
     [SerializeField] private int m_initiative = 0;
+    [SerializeField] private List<CombatAction> m_actions;
     public int Initiative => m_initiative;
-    public bool IsDead;
-    public bool IsPlayer;
+    
+    public bool IsDead { get; private set; }
+    public bool IsPlayer { get; private set; }
 
     private Actor m_actor;
     public Actor Actor => m_actor;
-    private CombatManager m_combatManager;
-
-    [SerializeField] private List<CombatAction> m_actions;
+    private CombatManager m_combatManager;    
     public List<CombatAction> Actions => m_actions;
 
     private CombatContext m_combatContext;
@@ -27,15 +27,35 @@ public class CombatActor : MonoBehaviour, IActorComponent
 
     public event Action<CombatContext> OnContextChanged;
 
+    private IActionProvider m_actionProvider;
+    public IActionProvider ActionProvider => m_actionProvider;
+
+    private HealthComponent m_health;
+    public HealthComponent Health => m_health;
+
+    private UIController m_uiController;
+
 
     #region IActorComponent
     public bool Initialize(GameManager game) 
     {
         m_actor = GetComponent<Actor>();
+        m_health = m_actor.Get<HealthComponent>();
         m_combatManager = game.Resolve<CombatManager>();
+        m_uiController = game.Resolve<UIManager>().Controller;
 
         IsPlayer = m_actor.IsPlayable;
-        return true;
+
+        if (IsPlayer) 
+        {
+            SetActionProvider(new PlayerActionProvider(m_combatManager
+                , m_uiController));
+        }
+        else 
+        {
+            SetActionProvider(new AIActionProvider());
+        }
+            return true;
     }
     public bool Dispose() 
     {
@@ -58,10 +78,6 @@ public class CombatActor : MonoBehaviour, IActorComponent
     
     }
     #endregion
-    public void ReceiveAction(CombatContext ctx) 
-    {
-    
-    }
     public void OnCombatContextChanged(CombatContext ctx) 
     {
         m_combatContext = ctx;
@@ -69,27 +85,27 @@ public class CombatActor : MonoBehaviour, IActorComponent
     }
     public void OnCombatStarted() 
     {
-        if (IsPlayer) 
-        {
-            m_actor.UI.ShowComponent<CombatUI>(true);
-        }
+
     }
     public void OnCombatFinished() 
     {
     
     }
-    public void OnTurn() 
+    
+    private ActionContext m_pendingAction;
+    public void ExecuteAction(ActionContext ctx) 
     {
-        
+                
     }
-    public ActionContext RequestAction(List<CombatActor> participants) 
-    {
-        return null;
-    }
-    private CombatAction m_selectedAction;
     public bool SetActionContext(ActionContext ctx) 
     {
-        
+        ctx.Source = this;
+
+        m_combatManager.SubmitAction(ctx);
         return false;   
+    }
+    private void SetActionProvider(IActionProvider provider) 
+    {
+        m_actionProvider = provider;
     }
 }

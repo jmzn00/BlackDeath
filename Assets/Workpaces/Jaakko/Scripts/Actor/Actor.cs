@@ -24,8 +24,8 @@ public class Actor : MonoBehaviour, IActor
     public Transform TrackingTarget => m_trackingTarget;
     public Sprite actorSprite; // TEMP
 
-    private UIController m_uiController;
-    public UIController UI => m_uiController;
+    private GameManager m_game;
+    public GameManager Game => m_game;
 
 #if UNITY_EDITOR
     private void OnValidate()
@@ -101,28 +101,19 @@ public class Actor : MonoBehaviour, IActor
 
     public virtual void Init(GameManager game)
     {
-        //m_camera = FindFirstObjectByType<CinemachineCamera>(); // TEMP, for testing purposes
+        m_game = game;
 
-        if (m_playable) 
-        {
-            m_uiController = FindFirstObjectByType<UIController>(); // TEMP, for testing purposes
-        }
-            
-
-        // Get all IActorComponent scripts on this GameObject
         var components = GetComponents<IActorComponent>();
         foreach (var comp in components)
         {
             comp.Initialize(game);
             m_components[comp.GetType()] = comp;
         }
-
-        // Notify all components
         foreach (var comp in m_components.Values)
             comp.OnActorComponentsInitialized(this);
 
         m_playerInputSource = new PlayerInputSource(game.Resolve<InputManager>());
-        m_aiInputSource = new AIInputSource();
+        m_aiInputSource = new AIInputSource();        
     }
 
     public virtual void Dispose()

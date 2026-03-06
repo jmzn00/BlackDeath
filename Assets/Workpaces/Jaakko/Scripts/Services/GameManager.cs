@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -13,12 +14,14 @@ public class GameManager : IManager
 
     private GameState m_state;
     public GameState State => m_state;
+    public event Action<GameState> OnStateChanged;
 
     public void SetState(GameState state) 
     {
         if (state == m_state) return;
 
         m_state = state;
+        OnStateChanged?.Invoke(state);
     }
 
     public bool Init() 
@@ -32,9 +35,9 @@ public class GameManager : IManager
         m_container.Register<ActorManager>();
         m_container.Register<ItemManager>();
         m_container.Register<CombatManager>();
-        m_container.Register<CameraManager>();
+        m_container.Register<UIManager>();
+        m_container.Register<CameraManager>();        
 
-        // Exclude the GameManager
         m_managers = m_container
             .GetAll<IManager>()
             .Where(m => !(m is GameManager))
@@ -48,7 +51,6 @@ public class GameManager : IManager
     {
         DisposeManagers();
         Services.Clear();
-
         return true;
     }
     public void Update(float dt) 
@@ -71,11 +73,6 @@ public class GameManager : IManager
     {
         foreach (var m in m_managers)
             m.OnManagersInitialzied();
-
-        // TEMP
-        var ui = GameObject.FindFirstObjectByType<UIController>();
-        if (ui)
-            ui.Inject(this);
     }
     private void DisposeManagers() 
     {

@@ -18,6 +18,7 @@ public class CombatUI : UIComponentBase
     public override void Initialize(Actor actor) 
     {
         m_actor = actor;
+        m_view.Init(actor);
 
         m_combatActor.OnContextChanged += OnContextChanged;
     }

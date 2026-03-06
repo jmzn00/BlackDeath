@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 /// <summary>
@@ -12,8 +13,10 @@ public class AttackAction : CombatAction
     [Tooltip("Extra damage added when the reactive prompt is hit successfully.")]
     public int bonusDamageOnSuccess = 1;
 
-    public override bool Resolve(CombatContext context)
+    public override bool Resolve(ActionContext context, Action OnComplete)
     {
-        return false;
+        context.Target.Health.ApplyDamage(damage);
+        OnComplete?.Invoke();
+        return true;
     }
 }

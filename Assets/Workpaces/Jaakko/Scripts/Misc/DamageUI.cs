@@ -9,11 +9,11 @@ public class DamageUI : MonoBehaviour
     {
         m_damageButton.onClick.AddListener(() =>
         {
-            Services.Get<ActorManager>().CurrentControlled.Get<HealthComponent>().ApplyDamage(null, 10f);
+            Services.Get<ActorManager>().CurrentControlled.Get<HealthComponent>().ApplyDamage(10f);
         });
         m_healButton.onClick.AddListener(() =>
         {
-            Services.Get<ActorManager>().CurrentControlled.Get<HealthComponent>().ApplyHealth(null, 10f);
+            Services.Get<ActorManager>().CurrentControlled.Get<HealthComponent>().ApplyHealth(10f);
         });
     }
 }

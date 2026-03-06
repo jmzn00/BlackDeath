@@ -38,6 +38,8 @@ public class ActorManager : IManager
     }
     public void SwitchToNextActor() 
     {
+        if (m_game.State == GameState.Combat) return;
+
         if (m_party.Count <= 1) 
         {
             Debug.Log($"Cannot switch actors. Party count: {m_party.Count}");

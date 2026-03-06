@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 /// <summary>
@@ -30,5 +31,5 @@ public abstract class CombatAction : ScriptableObject
     {
         executor.PlayAction(this, target);
     }
-    public abstract bool Resolve(CombatContext context);
+    public abstract bool Resolve(ActionContext context, Action OnComplete);
 }
