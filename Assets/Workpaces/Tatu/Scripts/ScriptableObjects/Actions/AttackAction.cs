@@ -15,8 +15,21 @@ public class AttackAction : CombatAction
 
     public override bool Resolve(ActionContext context, Action OnComplete)
     {
-        context.Target.Health.ApplyDamage(damage);
-        OnComplete?.Invoke();
+        context.Source.PlayAction(context, OnComplete);
         return true;
+    }
+    protected override void OnHit(ActionContext ctx)
+    {
+        ctx.Target.Health.ApplyDamage(damage);
+        base.OnHit(ctx);
+    }
+    protected override void OnDodged(ActionContext ctx)
+    {
+        ctx.Target.Health.ApplyDamage(damage / 2);
+    }    
+    protected override void OnParried(ActionContext ctx)
+    {
+        ctx.Source.Health.ApplyDamage(damage);
+        base.OnParried(ctx);
     }
 }

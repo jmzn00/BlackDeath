@@ -6,8 +6,13 @@ public class AIActionProvider : IActionProvider
 {
     private float m_waitTime = 2f;
     private Coroutine m_coroutine;
+    private bool m_hasActed;
     public void RequestAction(CombatActor actor, List<CombatActor> participants) 
     {
+        if (m_hasActed)
+            return;
+
+        //Debug.Log($"Request Action from {actor.name}");
         if (m_coroutine == null)
             m_coroutine = actor.StartCoroutine(WaitAndAct(actor, participants));
     }
@@ -17,6 +22,8 @@ public class AIActionProvider : IActionProvider
     }
     private IEnumerator WaitAndAct(CombatActor actor, List<CombatActor> participants) 
     {
+        m_hasActed = true;
+
         yield return new WaitForSeconds(m_waitTime);
 
         CombatActor target = participants.Find(a => a.IsPlayer);
@@ -30,6 +37,8 @@ public class AIActionProvider : IActionProvider
             Action = action,
         };
         actor.SetActionContext(ctx);
+        //Debug.Log($"{actor.name} Set Action");
         m_coroutine = null;
+        m_hasActed = false;
     }
 }

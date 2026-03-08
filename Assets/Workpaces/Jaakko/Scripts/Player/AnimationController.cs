@@ -24,6 +24,9 @@ public class AnimationController : MonoBehaviour
     }
     private void OnMove(Vector3 velocity) 
     {
+        if (m_actionAnimationPlaying)
+            return;
+        
         if (velocity.sqrMagnitude > 1f) 
         {
             m_animator.Play(m_runAnim.name);
@@ -37,5 +40,18 @@ public class AnimationController : MonoBehaviour
             m_spriteRenderer.flipX = true;
         else
             m_spriteRenderer.flipX = false;
+        
+    }
+    private bool m_actionAnimationPlaying;
+    public void PlayActionAnimation(AnimationClip clip) 
+    {
+        m_actionAnimationPlaying = true;
+        m_animator.Play(clip.name, 0, 0f);
+    }
+    public void OnActionAnimationFinished() 
+    {
+        m_actionAnimationPlaying = false;
+
+        m_animator.Play(m_idleAnim.name, 0, 0f);
     }
 }

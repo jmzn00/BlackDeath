@@ -5,7 +5,5 @@ public class AiActor : Actor
         base.Init(game);
 
         AddComponent<InventoryComponent>();
-
-        OnActorComponentsInitialized();
     }
 }

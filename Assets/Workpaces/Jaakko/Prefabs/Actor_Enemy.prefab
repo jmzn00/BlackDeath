@@ -100,9 +100,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1620661794050020554}
   - component: {fileID: 5730682946787434844}
+  - component: {fileID: 691782086803937665}
   - component: {fileID: 7519845105093333698}
   - component: {fileID: 806502385994463262}
-  - component: {fileID: 691782086803937665}
   - component: {fileID: 1550098968372106492}
   - component: {fileID: 4169105763984667912}
   - component: {fileID: 6752013568241414850}
@@ -153,6 +153,21 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &691782086803937665
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 562378834416262406}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e11d133ad2accc0448d76529985cbc2d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AnimationController
+  m_spriteRenderer: {fileID: 5093997064220521558}
+  m_idleAnim: {fileID: 7400000, guid: 514bc794587bf3348b66f7b318109bac, type: 2}
+  m_runAnim: {fileID: 7400000, guid: 63e02d32969e3b7438060ca2da476b80, type: 2}
 --- !u!143 &7519845105093333698
 CharacterController:
   m_ObjectHideFlags: 0
@@ -223,21 +238,6 @@ MonoBehaviour:
     SecondWallJumpStaminaCost: 0
     WallJumpStaminaCost: 0
     ConsecutiveWallJumpStaminaCostMultiplier: 0
---- !u!114 &691782086803937665
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 562378834416262406}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e11d133ad2accc0448d76529985cbc2d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::AnimationController
-  m_spriteRenderer: {fileID: 5093997064220521558}
-  m_idleAnim: {fileID: 7400000, guid: 514bc794587bf3348b66f7b318109bac, type: 2}
-  m_runAnim: {fileID: 7400000, guid: 63e02d32969e3b7438060ca2da476b80, type: 2}
 --- !u!114 &1550098968372106492
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -268,7 +268,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CombatActor
   m_initiative: 0
   m_actions:
-  - {fileID: 11400000, guid: 298b1b658ff32d9469a5b3dbb6f2ccd4, type: 2}
+  - {fileID: 11400000, guid: dfdad7663ecea414698ac367f47a6981, type: 2}
   m_visual: {fileID: 1251749698081068059}
 --- !u!114 &6752013568241414850
 MonoBehaviour:

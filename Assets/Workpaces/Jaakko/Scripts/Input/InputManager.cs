@@ -57,10 +57,10 @@ public class InputManager : IManager
             m_inputActions.Player.Crouch.IsPressed();
 
         m_inputState.ParryPressed = 
-            m_inputActions.Player.Parry.WasPressedThisFrame();
+            m_inputActions.Combat.Parry.IsPressed();
 
         m_inputState.DodgePressed = 
-            m_inputActions.Player.Dodge.WasPressedThisFrame();
+            m_inputActions.Combat.Dodge.IsPressed();
 
         if (m_inputActions.UI.OpenInventory.IsPressed())
             OnUIInputAction?.Invoke(UIInputAction.Inventory);
@@ -76,11 +76,11 @@ public class InputManager : IManager
         if (!value) 
         {
             m_inputState = new InputState();
-            m_inputActions.Disable();
+            m_inputActions.Player.Disable();
         }
         else 
         {
-            m_inputActions.Enable();
+            m_inputActions.Player.Enable();
         }
     }
     public bool Init()

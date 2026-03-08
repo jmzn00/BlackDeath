@@ -11,7 +11,7 @@ public class PlayerActionProvider : IActionProvider
     private ActionContext m_pendingAction;
     public void RequestAction(CombatActor actor, List<CombatActor> participants) 
     {
-        Debug.Log("Requesting Player Input");
+        //Debug.Log("Requesting Player Input");
         if (m_pendingAction != null) 
         {
             actor.SetActionContext(m_pendingAction);

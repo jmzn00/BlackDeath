@@ -8,9 +8,6 @@ using UnityEngine.UI;
 
 public class CombatView : MonoBehaviour, IUIComponentView
 {
-    [Header("Combat Order")]
-    [SerializeField] private TMP_Text m_currentActorText;
-    [SerializeField] private TMP_Text m_nextActor;
     [Header("UI Containers")]
     [SerializeField] private Transform actionTypeButtonContainer;
     [SerializeField] private Transform actionButtonContainer;
@@ -61,7 +58,7 @@ public class CombatView : MonoBehaviour, IUIComponentView
     {
         Button button = Instantiate(targetButtonPrefab, TargetsContainer);
         TMP_Text text = button.GetComponentInChildren<TMP_Text>();
-        text.text = actor.name;
+        text.text = $"{actor.name} H:{actor.Health.GetHealth()}";
         m_currentButtons.Add(button);
 
         button.onClick.AddListener(() =>

@@ -47,7 +47,7 @@ public class HealthComponent : MonoBehaviour, IDamageable, IActorComponent
         SetHealth(newHealth);
     }
     private void SetHealth(float value) 
-    {
+    {        
         m_currentHealth = value;
         OnHealthChanged?.Invoke(m_currentHealth);
     }

@@ -6,7 +6,5 @@ public class Actor_Player : Actor
     {
         base.Init(game);
         AddComponent<InventoryComponent>();
-
-        OnActorComponentsInitialized();
     }
 }

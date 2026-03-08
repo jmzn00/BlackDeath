@@ -1,5 +1,12 @@
+using Mono.Cecil;
 using System;
 using UnityEngine;
+public enum ActionResult 
+{
+    Hit,
+    Dodged,
+    Parried
+}
 
 /// <summary>
 /// Base class for all combat actions. Use AttackAction or SkillAction subclasses.
@@ -32,4 +39,23 @@ public abstract class CombatAction : ScriptableObject
         executor.PlayAction(this, target);
     }
     public abstract bool Resolve(ActionContext context, Action OnComplete);
+
+    public virtual void ResolveResult(ActionContext ctx,  ActionResult result) 
+    {
+        switch (result) 
+        {
+            case ActionResult.Hit:
+                OnHit(ctx);
+                break;
+            case ActionResult.Dodged:
+                OnDodged(ctx);
+                break;
+            case ActionResult.Parried:
+                OnParried(ctx);
+                break;
+        }
+    } 
+    protected virtual void OnHit(ActionContext ctx) { }
+    protected virtual void OnDodged(ActionContext ctx) { }
+    protected virtual void OnParried(ActionContext ctx) { }
 }

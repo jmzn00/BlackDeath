@@ -1,53 +1,45 @@
 using UnityEngine;
 
+public enum ReactionType 
+{
+    None,
+    Parry,
+    Dodge
+}
+
 public class ReactiveWindow
 {
-    public bool ParryActive { get; private set; }
-    public bool DodgeActive { get; private set; }
-
-    private float m_parryEndTime;
-    private float m_dodgeEndTime;
-
-    private float m_parryCooldownEnd;
-    private float m_dodgeCooldownEnd;
-
-    private float m_time;
-
-    private readonly float m_parryDuration = 0.2f;
-    private readonly float m_dodgeDuration = 0.4f;
-    private readonly float m_parryCooldown = 1f;
-    private readonly float m_dodgeCooldown = 0.5f;
-
-    public void Update(float dt) 
+    public bool WindowOpen;
+    private ReactionType m_currentReaction;
+    
+    public void Open() 
     {
-        m_time += dt;
-
-        if (ParryActive && m_time >= m_parryCooldownEnd)
-            ParryActive = false;
-
-        if (DodgeActive && m_time >= m_dodgeEndTime)
-            DodgeActive = false;
+        WindowOpen = true;
+        m_currentReaction = ReactionType.None;
     }
-
     public void TryActivateParry() 
     {
-        if (m_time < m_parryCooldownEnd) return;
-
-        ParryActive = true;
-        m_parryEndTime = m_time + m_parryDuration;
-        m_parryCooldownEnd = m_time + m_parryCooldown;
+        if (!WindowOpen) return;
+        m_currentReaction = ReactionType.Parry;
     }
     public void TryActivateDodge() 
     {
-        if (m_time < m_dodgeCooldownEnd) return;
+        if (!WindowOpen) return;
+        m_currentReaction = ReactionType.Dodge;
+    }
+    public ReactionType ConsumeReaction() 
+    {
 
-        DodgeActive = true;
-        m_dodgeEndTime = m_time + m_dodgeDuration;
-        m_dodgeCooldownEnd = m_time + m_dodgeCooldown;
+        ReactionType result = m_currentReaction;
+        m_currentReaction = ReactionType.None;
+        return result;
     }
     public void Reset() 
     {
-        ParryActive = false;
-        DodgeActive = false;        
+        WindowOpen = false;
+    }
+    public void Update(float dt)
+    {
+
     }
 }
