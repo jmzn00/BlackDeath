@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Rendering;
 using UnityEngine.UI;
 
 public class CombatView : MonoBehaviour, IUIComponentView
@@ -17,11 +16,27 @@ public class CombatView : MonoBehaviour, IUIComponentView
     [SerializeField] private Button actionButtonPrefab;
     [SerializeField] private Button targetButtonPrefab;
 
+    [Header("Parry / Dodge")]
+    [SerializeField] private GameObject parryIndicator;
+    [SerializeField] private GameObject dodgeIndicator;
+
     private List<Button> m_currentButtons = new List<Button>();    
     private CombatManager m_combatManager;
     private CombatActor m_currentActor;
 
     private CombatActor m_currentTarget = null;
+
+    private void Update()
+    {
+        if (m_combatManager == null) return;
+        if (m_combatManager.State == CombatState.None) return;
+        if (m_currentActor == null || m_currentActor.IsPlayer) return;
+
+        ReactiveWindow window = m_combatManager.ReactiveWindow;
+
+        parryIndicator.SetActive(window.CanParry);
+        dodgeIndicator.SetActive(window.CanDodge);
+    }
     public void OnContextChanged(CombatContext ctx) 
     {
         ClearButtons();

@@ -39,8 +39,6 @@ public class CombatManager : IManager
     public CombatState State => m_state;
 
     private bool m_waitingForResolve;
-    private float m_actionTimeout;
-    private const float ACTION_TIMEOUT = 3f;
 
     private InputManager m_input;
     private ActorManager m_actorManager;
@@ -59,6 +57,7 @@ public class CombatManager : IManager
     private int m_turnIndex;
 
     private ReactiveWindow m_reactiveWindow = new ReactiveWindow();
+    public ReactiveWindow ReactiveWindow => m_reactiveWindow;
 
     private CombatArea m_currentArea;
 
@@ -68,6 +67,7 @@ public class CombatManager : IManager
         m_game = game;
         m_actorManager = actorManager;
     }
+    #region IManager
     public bool Init()
     {
         m_combatAreas = new List<CombatArea>(
@@ -84,10 +84,23 @@ public class CombatManager : IManager
     {
         return true;
     }
+    #endregion
+    private void HandleInput()
+    {
+        ref var input = ref m_input.GetInputState();
+
+        if (input.ParryPressedThisFrame)
+        {
+            m_reactiveWindow.TryActivateParry();
+        }
+        if (input.DodgePressedThisFrame)
+        {
+            m_reactiveWindow.TryActivateDodge();
+        }
+    }
     public void Update(float dt)
     {
         if (m_state == CombatState.None) return;
-
         HandleInput();
         m_reactiveWindow.Update(dt);
 
@@ -108,17 +121,28 @@ public class CombatManager : IManager
                 break;
         }
     }
-    private void HandleInput() 
+    public void OnActorDied(CombatActor actor)
     {
-        if (m_input.GetInputState().ParryPressed) 
+        if (!m_combatActors.Contains(actor)) return;
+
+        if (actor == m_currentActor)
         {
-            m_reactiveWindow.TryActivateParry();
+            AdvanceTurn();
         }
-        if (m_input.GetInputState().DodgePressed) 
-        {
-            m_reactiveWindow.TryActivateDodge();
-        }
+        UpdateContext();
     }
+    private void UpdateContext()
+    {
+        CombatContext context = new CombatContext()
+        {
+            Actors = m_combatActors,
+            CurrentActor = m_currentActor,
+            TurnIndex = m_turnIndex
+        };
+        foreach (var a in m_combatActors)
+            a.OnCombatContextChanged(context);
+    }
+
     private void AdvanceTurn()
     {
         if (m_combatActors == null || m_combatActors.Count == 0)
@@ -145,6 +169,17 @@ public class CombatManager : IManager
 
         m_state = CombatState.ActorTurn;
     }
+    private void ProcessTurn()
+    {
+        if (m_currentActor == null || m_currentActor.IsDead)
+        {
+            AdvanceTurn();
+            return;
+        }
+        m_currentActor.
+            ActionProvider.
+            RequestAction(m_currentActor, m_combatActors);
+    }
     public void SubmitAction(ActionContext ctx)
     {
         if (m_state == CombatState.ResolvingAction)
@@ -168,6 +203,39 @@ public class CombatManager : IManager
         }
         ExecuteAction(ctx);
     }
+    private void ExecuteAction(ActionContext ctx)
+    {
+        m_state = CombatState.ResolvingAction;
+        m_waitingForResolve = true;
+        ctx.Action.Resolve(ctx, () =>
+        {
+            m_waitingForResolve = false;
+        });
+    }
+    private void ResolveAction(ActionContext ctx)
+    {
+        if (ctx == null || ctx.Action == null)
+        {
+            Debug.LogWarning("Cannot Resolve Action. Ctx is NULL");
+            return;
+        }
+
+        ReactionType reaction = m_reactiveWindow.ConsumeReaction();
+        ActionResult result = ActionResult.Hit;
+        switch (reaction)
+        {
+            case ReactionType.Parry:
+                result = ActionResult.Parried;
+                break;
+            case ReactionType.Dodge:
+                result = ActionResult.Dodged;
+                break;
+        }
+        Debug.Log($"{ctx.Source.name} Performed {ctx.Action.actionName}" +
+            $" On {ctx.Target.name}. Result: {result}");
+        ctx.Action.ResolveResult(ctx, result);
+    }
+
     public void StartBattle(CombatPreferences prefs)
     {
         if (m_state != CombatState.None)
@@ -241,37 +309,6 @@ public class CombatManager : IManager
             a.OnCombatStarted();
         UpdateContext();
     }
-    private void UpdateContext()
-    {
-        CombatContext context = new CombatContext()
-        {
-            Actors = m_combatActors,
-            CurrentActor = m_currentActor,
-            TurnIndex = m_turnIndex
-        };
-        foreach (var a in m_combatActors)
-            a.OnCombatContextChanged(context);
-    }
-    private void ProcessTurn()
-    {
-        if (m_currentActor == null || m_currentActor.IsDead)
-        {
-            AdvanceTurn();
-            return;
-        }
-        m_currentActor.
-            ActionProvider.
-            RequestAction(m_currentActor, m_combatActors);
-    }
-    private void ExecuteAction(ActionContext ctx)
-    {
-        m_state = CombatState.ResolvingAction;
-        m_waitingForResolve = true;
-        ctx.Action.Resolve(ctx, () =>
-        {
-            m_waitingForResolve = false;
-        });
-    }
     private bool CheckBattleEnd()
     {
         if (m_playerActor == null || m_playerActor.IsDead)
@@ -279,12 +316,6 @@ public class CombatManager : IManager
 
         bool enemiesAlive = m_combatActors.Exists(c => !c.IsPlayer && !c.IsDead);
         return !enemiesAlive;
-    }
-    public void NextTurn()
-    {
-        if (m_state == CombatState.None) return;
-
-        AdvanceTurn();
     }
     private void EndBattle()
     {
@@ -301,16 +332,7 @@ public class CombatManager : IManager
         m_combatActors.Clear();
         m_partyCombatActors.Clear();
     }
-    public void OnActorDied(CombatActor actor)
-    {
-        if (!m_combatActors.Contains(actor)) return;
 
-        if (actor == m_currentActor)
-        {
-            AdvanceTurn();
-        }
-        UpdateContext();
-    }
     public void OpenReactiveWindow(ActionContext ctx)
     {
         m_reactiveWindow.Open();
@@ -319,28 +341,5 @@ public class CombatManager : IManager
     {
         ResolveAction(ctx);
         m_reactiveWindow.Reset();
-    }
-    private void ResolveAction(ActionContext ctx) 
-    {
-        if (ctx == null || ctx.Action == null) 
-        {
-            Debug.LogWarning("Cannot Resolve Action. Ctx is NULL");
-            return;
-        }
-
-        ReactionType reaction = m_reactiveWindow.ConsumeReaction();        
-        ActionResult result = ActionResult.Hit;
-        switch (reaction) 
-        {
-            case ReactionType.Parry:
-                result = ActionResult.Parried;
-                break;
-            case ReactionType.Dodge:
-                result = ActionResult.Dodged;
-                break;
-        }
-        Debug.Log($"{ctx.Source.name} Performed {ctx.Action.actionName}" +
-            $" On {ctx.Target.name}. Result: {result}");
-        ctx.Action.ResolveResult(ctx, result);
     }
 }

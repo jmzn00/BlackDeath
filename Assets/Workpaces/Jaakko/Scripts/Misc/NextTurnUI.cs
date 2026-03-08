@@ -9,7 +9,7 @@ public class NextTurnUI : MonoBehaviour
     {
         m_nextTurnButton.onClick.AddListener(() =>
         {
-            Services.Get<CombatManager>().NextTurn();
+            //Services.Get<CombatManager>().NextTurn();
         });
     }
 }

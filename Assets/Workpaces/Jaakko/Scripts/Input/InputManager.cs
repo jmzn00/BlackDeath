@@ -17,6 +17,9 @@ public struct InputState
 
     public bool ParryPressed;
     public bool DodgePressed;
+
+    public bool ParryPressedThisFrame;
+    public bool DodgePressedThisFrame;
 }
 public class InputManager : IManager
 {
@@ -61,6 +64,12 @@ public class InputManager : IManager
 
         m_inputState.DodgePressed = 
             m_inputActions.Combat.Dodge.IsPressed();
+
+        m_inputState.ParryPressedThisFrame =
+            m_inputActions.Combat.Parry.WasPressedThisFrame();
+
+        m_inputState.DodgePressedThisFrame =
+            m_inputActions.Combat.Dodge.WasPressedThisFrame();
 
         if (m_inputActions.UI.OpenInventory.IsPressed())
             OnUIInputAction?.Invoke(UIInputAction.Inventory);

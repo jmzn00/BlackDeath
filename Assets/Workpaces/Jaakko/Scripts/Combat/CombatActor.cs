@@ -28,14 +28,18 @@ public class CombatActor : MonoBehaviour, IActorComponent
 
     private UIController m_uiController;
 
-    private Animator m_animator;
+    private ActionContext m_currentContext;
+    private Action m_onActionComplete;
+    private AnimationController m_animationController;
+    private Coroutine m_actionTimeout;
+
+    [SerializeField] private GameObject m_visual; // temp 
 
 
     #region IActorComponent
     public bool Initialize(GameManager game)
     {
         m_actor = GetComponent<Actor>();
-        m_animator = GetComponent<Animator>();
 
         m_combatManager = game.Resolve<CombatManager>();
         m_uiController = game.Resolve<UIManager>().Controller;
@@ -52,8 +56,7 @@ public class CombatActor : MonoBehaviour, IActorComponent
             SetActionProvider(new AIActionProvider());
         }
         return true;
-    }
-    [SerializeField] private GameObject m_visual; // temp  
+    }     
     void OnHealthChanged(float value)
     {
         if (value <= 0f)
@@ -112,18 +115,15 @@ public class CombatActor : MonoBehaviour, IActorComponent
     private void SetActionProvider(IActionProvider provider)
     {
         m_actionProvider = provider;
-    }
+    }    
 
-    private ActionContext m_currentContext;
-    private Action m_onActionComplete;
-    private AnimationController m_animationController;
-    private Coroutine m_actionTimeout;
+    // called by CombatManager
     public void PlayAction(ActionContext ctx, Action onComplete)
     {
         m_currentContext = ctx;
         m_onActionComplete = onComplete;
         
-        if (m_animator == null || ctx.Action?.animationClip == null)
+        if (m_animationController == null || ctx.Action?.animationClip == null)
         {
             Debug.LogWarning($"PlayAction: On {name} Animator or Clip is NULL");
             InvokeAndClearOnComplete();
