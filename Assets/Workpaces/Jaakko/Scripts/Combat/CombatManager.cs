@@ -311,11 +311,10 @@ public class CombatManager : IManager
     }
     private bool CheckBattleEnd()
     {
-        if (m_playerActor == null || m_playerActor.IsDead)
-            return true;
+        bool alliesAlive = m_combatActors.Exists(c => c.IsPlayer && !c.IsDead);
 
         bool enemiesAlive = m_combatActors.Exists(c => !c.IsPlayer && !c.IsDead);
-        return !enemiesAlive;
+        return !enemiesAlive || !alliesAlive;
     }
     private void EndBattle()
     {

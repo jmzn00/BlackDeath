@@ -123,11 +123,12 @@ public class CombatView : MonoBehaviour, IUIComponentView
     private void ClearButtons() 
     {
         foreach (var btn in m_currentButtons)
-            Destroy(btn.gameObject);
-        m_currentButtons.Clear();
+            Destroy(btn.gameObject);        
 
         foreach (Transform child in actionButtonContainer)
             Destroy(child.gameObject);
+
+        m_currentButtons.Clear();
     }
     public void Init(Actor actor) 
     {
