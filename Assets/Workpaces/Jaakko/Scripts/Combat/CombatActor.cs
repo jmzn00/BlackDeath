@@ -40,6 +40,8 @@ public class CombatActor : MonoBehaviour, IActorComponent
     public List<ActorStatusEffect> StatusEffects => m_statusEffects;    
     public event Action<List<ActorStatusEffect>> OnStatusEffectsChanged;
 
+    public event Action OnActionFinished;
+
 
     #region IActorComponent
     public bool Initialize(GameManager game)
@@ -167,7 +169,7 @@ public class CombatActor : MonoBehaviour, IActorComponent
         if (m_actionTimeout != null)
             StopCoroutine(m_actionTimeout);
         float clipLength = ctx.Action.animationClip.length;
-        m_actionTimeout = StartCoroutine(ActionTimeout(clipLength + 0.25f));
+        m_actionTimeout = StartCoroutine(ActionTimeout(clipLength + 0.75f));
     }
     // called by animation clip
     public void Anim_CloseWindow()
@@ -189,6 +191,7 @@ public class CombatActor : MonoBehaviour, IActorComponent
         try
         {
             m_onActionComplete?.Invoke();
+            OnActionFinished?.Invoke();
         }
         catch (Exception ex)
         {

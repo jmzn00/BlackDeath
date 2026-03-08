@@ -19,7 +19,7 @@ public class CombatPortrait : MonoBehaviour
 
     private CombatActor m_actor;
 
-    public void Initialize(CombatActor actor, Action<CombatActor> onClick) 
+    public void Initialize(CombatActor actor, Action<CombatActor> onClick)
     {
         m_actor = actor;
         m_onClick = onClick;
@@ -31,7 +31,7 @@ public class CombatPortrait : MonoBehaviour
             m_onClick?.Invoke(m_actor);
         });
         m_actorName.text = m_actor.name;
-        if (m_actor.Actor.actorSprite != null) 
+        if (m_actor.Actor.actorSprite != null)
         {
             m_actorSprite.sprite = m_actor.Actor.actorSprite;
         }
@@ -40,16 +40,23 @@ public class CombatPortrait : MonoBehaviour
     }
     public void Dispose()
     {
+        // If the Unity object was already destroyed, the overloaded == operator
+        // will return true — bail out to avoid accessing gameObject or other properties.
+        if (this == null)
+            return;
+
         if (m_actor != null)
             m_actor.OnStatusEffectsChanged -= UpdateStatusEffects;
-        m_button.onClick.RemoveAllListeners();
+
+        if (m_button != null)
+            m_button.onClick.RemoveAllListeners();
 
         Destroy(gameObject);
     }
-    void UpdateStatusEffects(List<ActorStatusEffect> effects) 
-    {        
+    void UpdateStatusEffects(List<ActorStatusEffect> effects)
+    {
         string text = "Status Effects: ";
-        if (effects != null && effects.Count > 0) 
+        if (effects != null && effects.Count > 0)
         {
             foreach (var e in effects)
             {
@@ -57,5 +64,5 @@ public class CombatPortrait : MonoBehaviour
             }
         }
         m_statusEffectsText.text = text;
-    }        
+    }
 }

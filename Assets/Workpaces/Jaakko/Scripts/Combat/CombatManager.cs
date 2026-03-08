@@ -87,6 +87,8 @@ public class CombatManager : IManager
     #endregion
     private void HandleInput()
     {
+        if (m_currentActor == null || m_currentActor.IsPlayer) return;
+
         ref var input = ref m_input.GetInputState();
 
         if (input.ParryPressedThisFrame)
@@ -231,8 +233,10 @@ public class CombatManager : IManager
                 result = ActionResult.Dodged;
                 break;
         }
+        /*
         Debug.Log($"{ctx.Source.name} Performed {ctx.Action.actionName}" +
             $" On {ctx.Target.name}. Result: {result}");
+        */
         ctx.Action.ResolveResult(ctx, result);
     }
 

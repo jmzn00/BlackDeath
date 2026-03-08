@@ -6,6 +6,7 @@ public class AnimationController : MonoBehaviour
 {
     private Animator m_animator;
     private MovementController m_movementController;
+    private CombatActor m_combatActor;
     [SerializeField] private SpriteRenderer m_spriteRenderer;
 
     [SerializeField] private AnimationClip m_idleAnim;
@@ -18,9 +19,17 @@ public class AnimationController : MonoBehaviour
 
         m_movementController.OnMove += OnMove;
     }
+    private void Start()
+    {
+        m_combatActor = GetComponent<CombatActor>();
+        if (m_combatActor != null)
+            m_combatActor.OnActionFinished += OnActionAnimationFinished;
+    }
     private void OnDestroy()
     {
         m_movementController.OnMove -= OnMove;
+        if (m_combatActor != null)
+            m_combatActor.OnActionFinished -= OnActionAnimationFinished;
     }
     private void OnMove(Vector3 velocity) 
     {
