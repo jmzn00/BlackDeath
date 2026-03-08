@@ -27,6 +27,8 @@ public class UIManager : IManager
     }
     private void OnGameStateChanged(GameState state) 
     {
+        if (m_uiController == null) return;
+
         switch (state) 
         {
             case GameState.None:
