@@ -1,5 +1,7 @@
 using Mono.Cecil;
+using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 public enum ActionResult 
 {
@@ -29,6 +31,8 @@ public abstract class CombatAction : ScriptableObject
     public bool isReactive = true;
     [Tooltip("Grant 1 AP to the user on use.")]
     public bool grantsApOnUse = false;
+
+    public List<ActorStatusEffect> AppliedEffects = new List<ActorStatusEffect>();
 
     /// <summary>
     /// Execute this action. Called by Combatant.PlayAction.

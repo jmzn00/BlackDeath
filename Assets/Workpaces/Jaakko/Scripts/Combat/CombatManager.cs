@@ -150,7 +150,7 @@ public class CombatManager : IManager
             m_state = CombatState.Ending;
             return;
         }
-
+        m_currentActor.OnTurnEnd();
         int attempts = 0;
         do
         {
@@ -166,7 +166,7 @@ public class CombatManager : IManager
         }
         OnCurrentActorChanged?.Invoke(m_currentActor.Actor);
         UpdateContext();
-
+        m_currentActor.OnTurnStart();
         m_state = CombatState.ActorTurn;
     }
     private void ProcessTurn()

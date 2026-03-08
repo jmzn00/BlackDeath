@@ -20,6 +20,8 @@ public class CombatView : MonoBehaviour, IUIComponentView
     [SerializeField] private GameObject parryIndicator;
     [SerializeField] private GameObject dodgeIndicator;
 
+    [SerializeField] private CombatPortrait m_combatPortraitPrefab;
+
     private List<Button> m_currentButtons = new List<Button>();    
     private CombatManager m_combatManager;
     private CombatActor m_currentActor;
@@ -59,6 +61,10 @@ public class CombatView : MonoBehaviour, IUIComponentView
             CreateButtonType("Skills", SkillActions);
         }
 
+        foreach (var p in m_portraits) 
+        {
+            p.Dispose();
+        }
         List<CombatActor> aliveEnemies = ctx.Actors.Where(a => a != a.IsPlayer && a != a.IsDead).ToList();
         foreach(var e in aliveEnemies) 
         {
@@ -69,17 +75,16 @@ public class CombatView : MonoBehaviour, IUIComponentView
     {     
 
     }
+    private List<CombatPortrait> m_portraits = new List<CombatPortrait>();
     private void CreateTargetButton(CombatActor actor) 
     {
-        Button button = Instantiate(targetButtonPrefab, TargetsContainer);
-        TMP_Text text = button.GetComponentInChildren<TMP_Text>();
-        text.text = $"{actor.name} H:{actor.Health.GetHealth()}";
-        m_currentButtons.Add(button);
+        CombatPortrait p = Instantiate(m_combatPortraitPrefab, TargetsContainer);
 
-        button.onClick.AddListener(() =>
+        p.Initialize(actor, (clickedActor) =>
         {
-            m_currentTarget = actor;
+            m_currentTarget = clickedActor;
         });
+        m_portraits.Add(p);
     }
     private void CreateButtonType(string label, List<CombatAction> actions) 
     {

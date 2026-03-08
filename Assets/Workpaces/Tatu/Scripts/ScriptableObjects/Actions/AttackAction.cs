@@ -21,6 +21,11 @@ public class AttackAction : CombatAction
     protected override void OnHit(ActionContext ctx)
     {
         ctx.Target.Health.ApplyDamage(damage);
+        foreach(var e in AppliedEffects) 
+        {
+            ctx.Target.ApplyStatus(e);
+        }
+
         base.OnHit(ctx);
     }
     protected override void OnDodged(ActionContext ctx)

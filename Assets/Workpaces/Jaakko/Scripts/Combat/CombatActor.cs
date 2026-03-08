@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 [RequireComponent(typeof(Actor))]
 public class CombatActor : MonoBehaviour, IActorComponent
@@ -34,6 +35,10 @@ public class CombatActor : MonoBehaviour, IActorComponent
     private Coroutine m_actionTimeout;
 
     [SerializeField] private GameObject m_visual; // temp 
+
+    private List<ActorStatusEffect> m_statusEffects = new List<ActorStatusEffect>();
+    public List<ActorStatusEffect> StatusEffects => m_statusEffects;    
+    public event Action<List<ActorStatusEffect>> OnStatusEffectsChanged;
 
 
     #region IActorComponent
@@ -91,6 +96,28 @@ public class CombatActor : MonoBehaviour, IActorComponent
 
     }
     #endregion
+    #region Combat
+    public void OnTurnStart() 
+    {
+        foreach (var e in m_statusEffects)
+            e.TurnStart();
+    }
+    public void OnTurnEnd() 
+    {
+        for (int i = m_statusEffects.Count - 1; i >= 0; i--) 
+        {
+            var effect = m_statusEffects[i];
+            effect.TurnEnd();
+
+            if (effect.TickDuration()) 
+            {
+                effect.Expire();
+                m_statusEffects.RemoveAt(i);
+                Destroy(effect);
+            }
+        }
+        OnStatusEffectsChanged?.Invoke(m_statusEffects);
+    }
     public void OnCombatContextChanged(CombatContext ctx)
     {
         OnContextChanged?.Invoke(ctx);
@@ -101,6 +128,11 @@ public class CombatActor : MonoBehaviour, IActorComponent
     }
     public void OnCombatFinished()
     {
+        foreach (var effect in m_statusEffects)
+            Destroy(effect);
+
+        m_statusEffects.Clear();
+
         // have combatmanager handle obj destruction
         if (!IsPlayer)
             Destroy(gameObject); // add pooling?
@@ -115,20 +147,20 @@ public class CombatActor : MonoBehaviour, IActorComponent
     private void SetActionProvider(IActionProvider provider)
     {
         m_actionProvider = provider;
-    }    
+    }
 
     // called by CombatManager
     public void PlayAction(ActionContext ctx, Action onComplete)
     {
         m_currentContext = ctx;
         m_onActionComplete = onComplete;
-        
+
         if (m_animationController == null || ctx.Action?.animationClip == null)
         {
             Debug.LogWarning($"PlayAction: On {name} Animator or Clip is NULL");
             InvokeAndClearOnComplete();
             return;
-        }                        
+        }
         m_animationController?.PlayActionAnimation(ctx.Action.animationClip);
 
         // fallback if the animator never calls Anim_AttackFinished
@@ -143,7 +175,7 @@ public class CombatActor : MonoBehaviour, IActorComponent
         m_combatManager.CloseReactiveWindow(m_currentContext);
     }
     // called by animator
-    public void Anim_OpenWindow() 
+    public void Anim_OpenWindow()
     {
         m_combatManager.OpenReactiveWindow(m_currentContext);
     }
@@ -167,15 +199,35 @@ public class CombatActor : MonoBehaviour, IActorComponent
             m_onActionComplete = null;
             m_currentContext = null;
         }
-    }   
-    private IEnumerator ActionTimeout(float time) 
+    }
+    private IEnumerator ActionTimeout(float time)
     {
         yield return new WaitForSeconds(time);
 
-        if (m_onActionComplete != null) 
+        if (m_onActionComplete != null)
         {
             Debug.LogWarning($"{name} Action timeout fallback triggered");
             InvokeAndClearOnComplete();
         }
     }
+    #endregion
+    #region StatusEffect
+    public void ApplyStatus(ActorStatusEffect effect) 
+    {
+        foreach (var e in m_statusEffects) 
+        {
+            if (e.GetType() == effect.GetType()) 
+            {
+                e.AddDuration(effect.duration);
+                OnStatusEffectsChanged?.Invoke(m_statusEffects);
+                return;
+            }
+        }
+        ActorStatusEffect instance = Instantiate(effect);
+        instance.Initialize(this);
+        m_statusEffects.Add(instance);
+        OnStatusEffectsChanged?.Invoke(m_statusEffects);
+    }        
+    #endregion
+
 }
