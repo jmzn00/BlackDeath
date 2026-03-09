@@ -176,8 +176,9 @@ public class CombatActor : MonoBehaviour, IActorComponent
         m_combatManager.CloseReactiveWindow(m_currentContext);
     }
     // called by animator
-    public void Anim_OpenWindow()
+    public void Anim_OpenWindow(string promptKey)
     {
+        m_currentContext.PromptKey = promptKey;
         m_combatManager.OpenReactiveWindow(m_currentContext);
     }
     // called by animation clip

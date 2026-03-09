@@ -1,3 +1,6 @@
+using JetBrains.Annotations;
+using Mono.Cecil;
+using NUnit.Framework.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +17,9 @@ public class ActionContext
     public CombatActor Target;
 
     public CombatAction Action;
+
+    public string PromptKey;
+    public InputPrompt Prompt;
 }
 public class CombatContext
 {
@@ -23,7 +29,7 @@ public class CombatContext
     }
     public List<CombatActor> Actors;
     public CombatActor CurrentActor;
-    public int TurnIndex;
+    public int TurnIndex;    
 }
 public enum CombatState
 {
@@ -56,12 +62,31 @@ public class CombatManager : IManager
     private List<CombatActor> m_combatActors = new List<CombatActor>();
     private int m_turnIndex;
 
-    private ReactiveWindow m_reactiveWindow = new ReactiveWindow();
+    private ReactiveWindow m_reactiveWindow;
     public ReactiveWindow ReactiveWindow => m_reactiveWindow;
 
     private CombatArea m_currentArea;
 
     public Action<CombatContext> OnContextChanged;
+
+    private InputPrompt m_activePrompt;
+
+    private InputPromptLibrary m_promptLibrary;
+    private InputPromptLibrary PromptLibrary 
+    {
+        get 
+        {
+            if (m_promptLibrary == null) 
+            {
+                m_promptLibrary =
+                    Resources.Load<InputPromptLibrary>("InputPrompts/PromptLibrary");
+                if (m_promptLibrary == null)
+                    Debug.LogError("InputPromptLibrary not found");
+            }
+            return m_promptLibrary;
+        }
+    }
+    private event Action<ActionContext, ActionResult> OnActionResolved;
 
     public CombatManager(InputManager input, ActorManager actorManager, GameManager game)
     {
@@ -81,16 +106,52 @@ public class CombatManager : IManager
 
         return true;
     }
-    public void OnManagersInitialzied() { }
+    public void OnManagersInitialzied() 
+    {
+        m_reactiveWindow = new ReactiveWindow(PromptLibrary);
+    }
     public bool Dispose()
     {
         return true;
     }
     #endregion
+    #region Input
     private void HandleInput()
     {
-        if (m_currentActor == null || m_currentActor.IsPlayer) return;
+        if (m_currentActor == null) return;
 
+        HandleAttackerInput();
+        HandleDefenderInput();
+
+        m_reactiveWindow.Update(Time.deltaTime);
+        /*
+        if (m_activePrompt == null) return;
+        if (m_reactiveWindow.IsPlayerReactor) return;
+
+        var action = m_activePrompt.action;
+        if (action == null) 
+        {
+            return;
+        }
+
+        if (!action.WasPressedThisFrame())
+        {
+            return;
+        }
+        switch (m_activePrompt.inputType)
+        {
+            case PromptInputType.Parry:
+                m_reactiveWindow.TryActivateParry();
+                break;
+            case PromptInputType.Dodge:
+                m_reactiveWindow.TryActivateDodge();
+                break;
+            case PromptInputType.Confirm:
+                m_reactiveWindow.TryConfrim();
+                break;
+        }
+        */
+        /*
         ref var input = ref m_input.GetInputState();
 
         if (input.ParryPressedThisFrame)
@@ -101,12 +162,53 @@ public class CombatManager : IManager
         {
             m_reactiveWindow.TryActivateDodge();
         }
+        */
+
     }
+    private void HandleAttackerInput()
+    {
+        if (m_activePrompt == null) return;
+        if (m_activePrompt.action == null) return;
+        if (!m_activePrompt.action.WasPressedThisFrame()) return;
+
+        if (m_activePrompt.inputType == PromptInputType.Confirm)
+            m_reactiveWindow.TryConfirmAttacker();
+    }
+    private void HandleDefenderInput()
+    {
+        if (!m_reactiveWindow.IsOpen) return;
+        if (!m_reactiveWindow.IsPlayerReactor) return;
+
+        for (int i = 0; i < m_reactiveWindow.DefenderPrompts.Count; i++)
+        {
+            InputPrompt prompt = m_reactiveWindow.DefenderPrompts[i];
+
+            if (prompt.action == null)
+            {
+                Debug.LogWarning("Prompt Action Is NULL");
+                return;
+            }
+            if (!prompt.action.WasPressedThisFrame())
+            {
+                return;
+            }
+
+            switch (prompt.inputType)
+            {
+                case PromptInputType.Parry:
+                    m_reactiveWindow.TryActivateParry();
+                    break;
+                case PromptInputType.Dodge:
+                    m_reactiveWindow.TryActivateDodge();
+                    break;
+            }
+        }
+    }
+    #endregion
     public void Update(float dt)
     {
         if (m_state == CombatState.None) return;
         HandleInput();
-        m_reactiveWindow.Update(dt);
 
         switch (m_state)
         {
@@ -221,8 +323,7 @@ public class CombatManager : IManager
         {
             m_waitingForResolve = false;
         });
-    }
-    private event Action<ActionContext, ActionResult> OnActionResolved;
+    }    
     private void ResolveAction(ActionContext ctx)
     {
         if (ctx == null || ctx.Action == null)
@@ -230,10 +331,16 @@ public class CombatManager : IManager
             Debug.LogWarning("Cannot Resolve Action. Ctx is NULL");
             return;
         }
+        ReactionType attackerReaction = m_reactiveWindow.ConsumeAttackerReaction();
+        ReactionType defenderReaction = m_reactiveWindow.ConsumeDefenderReaction();
 
-        ReactionType reaction = m_reactiveWindow.ConsumeReaction();
+        if (attackerReaction == ReactionType.Confirm) 
+        {
+            ctx.Action.OnConfirmed(ctx);
+        }
+
         ActionResult result = ActionResult.Hit;
-        switch (reaction)
+        switch (defenderReaction) 
         {
             case ReactionType.Parry:
                 result = ActionResult.Parried;
@@ -241,7 +348,7 @@ public class CombatManager : IManager
             case ReactionType.Dodge:
                 result = ActionResult.Dodged;
                 break;
-        }        
+        }
         ctx.Action.ResolveResult(ctx, result);
         OnActionResolved?.Invoke(ctx, result);
     }
@@ -342,13 +449,33 @@ public class CombatManager : IManager
         m_partyCombatActors.Clear();
     }
 
+    public event Action<ActionContext> OnWindowOpened;
+    public event Action<ActionContext> OnWindowClosed;
+
     public void OpenReactiveWindow(ActionContext ctx)
     {
-        m_reactiveWindow.Open();
+        m_activePrompt = PromptLibrary.Get(ctx.PromptKey);        
+        if (m_activePrompt?.action != null)
+        {
+            m_activePrompt.action.Enable();
+            ctx.Prompt = m_activePrompt;
+        }
+
+        m_reactiveWindow.Open(ctx);
+
+        OnWindowOpened?.Invoke(ctx);
     }
     public void CloseReactiveWindow(ActionContext ctx)
     {
+        if (m_activePrompt?.action != null)
+        {
+            m_activePrompt.action.Disable();
+
+            ctx.Prompt = m_activePrompt;
+        }
         ResolveAction(ctx);
         m_reactiveWindow.Reset();
+
+        OnWindowClosed?.Invoke(ctx);
     }
 }

@@ -56,10 +56,11 @@ public abstract class CombatAction : ScriptableObject
                 break;
             case ActionResult.Parried:
                 OnParried(ctx);
-                break;
+                break;            
         }
     } 
     protected virtual void OnHit(ActionContext ctx) { }
     protected virtual void OnDodged(ActionContext ctx) { }
     protected virtual void OnParried(ActionContext ctx) { }
+    public virtual void OnConfirmed(ActionContext ctx) { }
 }

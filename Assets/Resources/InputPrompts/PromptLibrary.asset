@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dbb00cb4f241c324e82a1b37bb5cc1c0, type: 3}
+  m_Name: PromptLibrary
+  m_EditorClassIdentifier: Assembly-CSharp::InputPromptLibrary
+  entries:
+  - key: confirm_a
+    prompt: {fileID: 11400000, guid: 4ca5173fbaeec6344836ea1fb13ad8ef, type: 2}
+  - key: ParryPrompt
+    prompt: {fileID: 11400000, guid: 1504a205ba5b3d5489f4011457d1d6bc, type: 2}
+  - key: DodgePrompt
+    prompt: {fileID: 11400000, guid: 4ea9c8688616d9a45a98ccf20651ab10, type: 2}

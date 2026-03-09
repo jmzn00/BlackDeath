@@ -18,7 +18,7 @@ public class InventoryUI : UIComponentBase
     public override void Initialize()
     {
         m_actorManager.OnActorControlChanged += OnActorControlChanged;
-        m_view.Init(m_actorManager.CurrentControlled);
+        //m_view.Init(m_actorManager.CurrentControlled);
     }
     public override void Dispose()
     {

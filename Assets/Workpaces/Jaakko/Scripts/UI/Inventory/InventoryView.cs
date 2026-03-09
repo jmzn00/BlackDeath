@@ -13,10 +13,10 @@ public class InventoryView : MonoBehaviour, IUIComponentView
     [SerializeField] private Button m_closeButton;
 
     private InventoryComponent m_inventory;
-    public void Init(Actor actor) 
+    public void Init() 
     {
-        m_inventory = actor.Get<InventoryComponent>();
-        OnActorChanged(actor);
+        //m_inventory = actor.Get<InventoryComponent>();
+        //OnActorChanged(actor);
     }    
     public void OnActorChanged(Actor actor) 
     {

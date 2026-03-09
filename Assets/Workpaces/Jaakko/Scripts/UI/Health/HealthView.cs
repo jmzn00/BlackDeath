@@ -4,7 +4,7 @@ using UnityEngine.UI;
 public class HealthView : MonoBehaviour, IUIComponentView
 {
     [SerializeField] private Slider m_healthSlider;
-    public void Init(Actor actor) 
+    public void Init() 
     {
         m_healthSlider.interactable = false;
     }

@@ -21,10 +21,25 @@ public struct InputState
     public bool ParryPressedThisFrame;
     public bool DodgePressedThisFrame;
 }
+public struct UIInputState 
+{
+    public Vector2 InputDirection;
+
+    public bool NavigateUpPressed;
+    public bool NavigateDownPressed;
+    public bool NavigateLeftPressed;
+    public bool NavigateRightPressed;
+
+    internal bool _verticalUsedLastFrame;
+    internal bool _horizontalUsedLastFrame;
+
+}
 public class InputManager : IManager
 {
     private bool m_active;
     private InputState m_inputState;
+    private UIInputState m_uiInputState;
+
     private InputSystem_Actions m_inputActions;
     public InputSystem_Actions InputActions => m_inputActions;
 
@@ -38,6 +53,10 @@ public class InputManager : IManager
     public ref InputState GetInputState() 
     {
         return ref m_inputState;
+    }
+    public ref UIInputState GetUIInputState() 
+    {
+        return ref m_uiInputState;
     }
     public void Update(float dt) 
     {
@@ -70,11 +89,60 @@ public class InputManager : IManager
 
         m_inputState.DodgePressedThisFrame =
             m_inputActions.Combat.Dodge.WasPressedThisFrame();
+        
 
         if (m_inputActions.UI.OpenInventory.WasPressedThisFrame())
             OnUIInputAction?.Invoke(UIInputAction.Inventory);
 
+        HandleUIInput();
 
+
+    }
+    private void HandleUIInput() 
+    {
+        Vector2 raw = m_inputActions.UI.Navigate.ReadValue<Vector2>();
+        m_uiInputState.InputDirection = raw;
+
+        // edge detection
+        if (raw.y > 0.5f)
+        {
+            m_uiInputState.NavigateUpPressed = !m_uiInputState._verticalUsedLastFrame;
+            m_uiInputState.NavigateDownPressed = false;
+            m_uiInputState._verticalUsedLastFrame = true;
+        }
+        else if (raw.y < -0.5f)
+        {
+            m_uiInputState.NavigateDownPressed = !m_uiInputState._verticalUsedLastFrame;
+            m_uiInputState.NavigateUpPressed = false;
+            m_uiInputState._verticalUsedLastFrame = true;
+        }
+        else
+        {
+            // reset flag when input returns to neutral
+            m_uiInputState.NavigateUpPressed = false;
+            m_uiInputState.NavigateDownPressed = false;
+            m_uiInputState._verticalUsedLastFrame = false;
+        }
+
+        // Horizontal edge detection
+        if (raw.x > 0.5f)
+        {
+            m_uiInputState.NavigateRightPressed = !m_uiInputState._horizontalUsedLastFrame;
+            m_uiInputState.NavigateLeftPressed = false;
+            m_uiInputState._horizontalUsedLastFrame = true;
+        }
+        else if (raw.x < -0.5f)
+        {
+            m_uiInputState.NavigateLeftPressed = !m_uiInputState._horizontalUsedLastFrame;
+            m_uiInputState.NavigateRightPressed = false;
+            m_uiInputState._horizontalUsedLastFrame = true;
+        }
+        else
+        {
+            m_uiInputState.NavigateRightPressed = false;
+            m_uiInputState.NavigateLeftPressed = false;
+            m_uiInputState._horizontalUsedLastFrame = false;
+        }
     }
     public void OnManagersInitialzied()
     {

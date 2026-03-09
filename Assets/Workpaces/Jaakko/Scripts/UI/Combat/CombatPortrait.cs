@@ -54,7 +54,8 @@ public class CombatPortrait : MonoBehaviour
         m_button.onClick.AddListener(() =>
         {
             m_onClick?.Invoke(m_actor);
-        });           
+        });
+        name = "CombatPortrait " + m_actor.name;
     }
     public void Dispose()
     {
@@ -70,6 +71,22 @@ public class CombatPortrait : MonoBehaviour
         m_healthSlider.onValueChanged.RemoveAllListeners();
 
         Destroy(gameObject);
+    }
+    public void UpdateData(CombatActor actor) 
+    {
+        m_actor = actor;
+
+        // Update health
+        m_healthSlider.maxValue = actor.Health.MaxHealth;
+        m_healthSlider.value = actor.Health.GetHealth();
+
+        // Update name and sprite
+        m_actorName.text = actor.name;
+        if (actor.Actor.actorSprite != null)
+            m_actorSprite.sprite = actor.Actor.actorSprite;
+
+        // Update status effects
+        UpdateStatusEffects(actor.StatusEffects);
     }
     void UpdateStatusEffects(List<ActorStatusEffect> effects)
     {

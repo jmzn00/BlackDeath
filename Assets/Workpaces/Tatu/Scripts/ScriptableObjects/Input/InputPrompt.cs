@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 /// <summary>
 /// Defines a single input prompt: which button to watch for, what label and icon to show.
@@ -16,6 +17,7 @@ public class InputPrompt : ScriptableObject
     [Header("Input")]
     [Tooltip("Which input to listen for during the window.")]
     public PromptInputType inputType = PromptInputType.Confirm;
+    public InputAction action;
 }
 
 public enum PromptInputType
