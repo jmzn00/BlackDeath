@@ -44,30 +44,23 @@ public class CombatView : MonoBehaviour, IUIComponentView
     {
         ClearButtons();
         m_currentActor = ctx.CurrentActor;
-        if (!ctx.CurrentActor.IsPlayer || ctx.CurrentActor.IsDead)
-        {
-            // hide action selection
-            // dispose any existing portraits safely and clear list
-            foreach (var p in m_portraits.ToList())
-            {
-                if (p != null)
-                    p.Dispose();
-            }
-            m_portraits.Clear();
-            return;
-        }
-        var Actions = ctx.CurrentActor.Actions;
-        var AttackActions = Actions.OfType<AttackAction>().ToList<CombatAction>();
-        var SkillActions = Actions.OfType<SkillAction>().ToList<CombatAction>();
 
-        if (AttackActions.Count > 0)
+        if (m_currentActor.IsPlayer) 
         {
-            CreateButtonType("Attacks", AttackActions);
+            var Actions = ctx.CurrentActor.Actions;
+            var AttackActions = Actions.OfType<AttackAction>().ToList<CombatAction>();
+            var SkillActions = Actions.OfType<SkillAction>().ToList<CombatAction>();
+
+            if (AttackActions.Count > 0)
+            {
+                CreateButtonType("Attacks", AttackActions);
+            }
+            if (SkillActions.Count > 0)
+            {
+                CreateButtonType("Skills", SkillActions);
+            }
         }
-        if (SkillActions.Count > 0)
-        {
-            CreateButtonType("Skills", SkillActions);
-        }
+        
 
         // dispose previous portraits safely and clear list
         foreach (var p in m_portraits.ToList())
@@ -78,10 +71,11 @@ public class CombatView : MonoBehaviour, IUIComponentView
         m_portraits.Clear();
 
         // fixed filter: select non-player, non-dead actors
-        List<CombatActor> aliveEnemies = ctx.Actors.Where(a => !a.IsPlayer && !a.IsDead).ToList();
-        foreach (var e in aliveEnemies)
+        //List<CombatActor> aliveEnemies = ctx.Actors.Where(a => !a.IsPlayer && !a.IsDead).ToList();
+        List<CombatActor> actors = ctx.Actors.Where(a => !a.IsDead).ToList();
+        foreach (var a in actors)
         {
-            CreateTargetButton(e);
+            CreateTargetButton(a);
         }
     }
     public void OnActorChanged(Actor actor)

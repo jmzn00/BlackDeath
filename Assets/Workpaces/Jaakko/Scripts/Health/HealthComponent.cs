@@ -4,9 +4,12 @@ using UnityEngine;
 public class HealthComponent : MonoBehaviour, IDamageable, IActorComponent
 {
     [SerializeField] private float m_maxHealth = 5f;
+    public float MaxHealth => m_maxHealth;
 
     public event Action<float> OnHealthChanged;
     private float m_currentHealth;
+
+    public float CurrentHealth;
     public bool Initialize(GameManager game) 
     {
         SetHealth(m_maxHealth);
@@ -49,6 +52,7 @@ public class HealthComponent : MonoBehaviour, IDamageable, IActorComponent
     private void SetHealth(float value) 
     {        
         m_currentHealth = value;
+        CurrentHealth = value;
         OnHealthChanged?.Invoke(m_currentHealth);
     }
 }

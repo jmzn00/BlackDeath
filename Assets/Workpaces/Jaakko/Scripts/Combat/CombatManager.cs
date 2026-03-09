@@ -61,6 +61,8 @@ public class CombatManager : IManager
 
     private CombatArea m_currentArea;
 
+    public Action<CombatContext> OnContextChanged;
+
     public CombatManager(InputManager input, ActorManager actorManager, GameManager game)
     {
         m_input = input;
@@ -141,6 +143,8 @@ public class CombatManager : IManager
             CurrentActor = m_currentActor,
             TurnIndex = m_turnIndex
         };
+        OnContextChanged?.Invoke(context);
+
         foreach (var a in m_combatActors)
             a.OnCombatContextChanged(context);
     }
@@ -173,6 +177,10 @@ public class CombatManager : IManager
     }
     private void ProcessTurn()
     {
+        if (CheckBattleEnd()) 
+        {
+            EndBattle();
+        }
         if (m_currentActor == null || m_currentActor.IsDead)
         {
             AdvanceTurn();
@@ -214,6 +222,7 @@ public class CombatManager : IManager
             m_waitingForResolve = false;
         });
     }
+    private event Action<ActionContext, ActionResult> OnActionResolved;
     private void ResolveAction(ActionContext ctx)
     {
         if (ctx == null || ctx.Action == null)
@@ -232,12 +241,9 @@ public class CombatManager : IManager
             case ReactionType.Dodge:
                 result = ActionResult.Dodged;
                 break;
-        }
-        /*
-        Debug.Log($"{ctx.Source.name} Performed {ctx.Action.actionName}" +
-            $" On {ctx.Target.name}. Result: {result}");
-        */
+        }        
         ctx.Action.ResolveResult(ctx, result);
+        OnActionResolved?.Invoke(ctx, result);
     }
 
     public void StartBattle(CombatPreferences prefs)

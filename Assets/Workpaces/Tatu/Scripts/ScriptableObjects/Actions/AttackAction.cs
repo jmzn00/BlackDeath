@@ -20,6 +20,7 @@ public class AttackAction : CombatAction
     }
     protected override void OnHit(ActionContext ctx)
     {
+        Debug.Log($"Attack from {ctx.Source.name} Hit");
         ctx.Target.Health.ApplyDamage(damage);
         foreach(var e in AppliedEffects) 
         {
@@ -30,10 +31,11 @@ public class AttackAction : CombatAction
     }
     protected override void OnDodged(ActionContext ctx)
     {
-        ctx.Target.Health.ApplyDamage(damage / 2);
+        Debug.Log($"Attack from {ctx.Source.name} Dodged");
     }    
     protected override void OnParried(ActionContext ctx)
     {
+        Debug.Log($"Attack from {ctx.Source.name} Parried");
         ctx.Source.Health.ApplyDamage(damage);
         base.OnParried(ctx);
     }

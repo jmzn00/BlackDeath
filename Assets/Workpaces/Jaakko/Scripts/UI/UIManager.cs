@@ -15,13 +15,19 @@ public class UIManager : IManager
     }
     public bool Dispose()
     {
+        if (m_uiController)
+            m_uiController.Dispose();
+
         return true;
     }
     public void OnManagersInitialzied() 
     {
         m_uiController = GameObject.FindFirstObjectByType<UIController>();
         if (m_uiController)
-            m_uiController.Inject(m_game);
+            m_uiController.Initialize(m_game);
+        else
+            Debug.LogWarning("No UIController Found in Scene");
+
         m_game.OnStateChanged += OnGameStateChanged;
         OnGameStateChanged(m_game.State);
     }

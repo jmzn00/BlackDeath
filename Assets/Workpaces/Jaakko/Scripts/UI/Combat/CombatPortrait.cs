@@ -1,6 +1,7 @@
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -12,6 +13,7 @@ public class CombatPortrait : MonoBehaviour
     [SerializeField] private Image m_actorSprite;
     [SerializeField] private TMP_Text m_actorName;
     [SerializeField] private TMP_Text m_statusEffectsText;
+    [SerializeField] private Slider m_healthSlider;
 
     private Button m_button;
 
@@ -22,14 +24,18 @@ public class CombatPortrait : MonoBehaviour
     public void Initialize(CombatActor actor, Action<CombatActor> onClick)
     {
         m_actor = actor;
-        m_onClick = onClick;
+        m_onClick = onClick;        
 
         m_button = GetComponent<Button>();
-        m_button.onClick.RemoveAllListeners();
-        m_button.onClick.AddListener(() =>
+
+        HealthComponent health = actor.Health;
+        m_healthSlider.maxValue = health.MaxHealth;
+        m_healthSlider.onValueChanged.AddListener(value =>
         {
-            m_onClick?.Invoke(m_actor);
+            m_healthSlider.value = value;
         });
+        m_healthSlider.value = health.GetHealth();
+
         m_actorName.text = m_actor.name;
         if (m_actor.Actor.actorSprite != null)
         {
@@ -37,11 +43,21 @@ public class CombatPortrait : MonoBehaviour
         }
         UpdateStatusEffects(m_actor.StatusEffects);
         m_actor.OnStatusEffectsChanged += UpdateStatusEffects;
+
+        if (m_actor.IsPlayer)
+        {
+            m_button.interactable = false;
+            return;
+        }
+
+        m_button.onClick.RemoveAllListeners();
+        m_button.onClick.AddListener(() =>
+        {
+            m_onClick?.Invoke(m_actor);
+        });           
     }
     public void Dispose()
     {
-        // If the Unity object was already destroyed, the overloaded == operator
-        // will return true — bail out to avoid accessing gameObject or other properties.
         if (this == null)
             return;
 
@@ -50,6 +66,8 @@ public class CombatPortrait : MonoBehaviour
 
         if (m_button != null)
             m_button.onClick.RemoveAllListeners();
+
+        m_healthSlider.onValueChanged.RemoveAllListeners();
 
         Destroy(gameObject);
     }
@@ -64,5 +82,5 @@ public class CombatPortrait : MonoBehaviour
             }
         }
         m_statusEffectsText.text = text;
-    }
+    }    
 }

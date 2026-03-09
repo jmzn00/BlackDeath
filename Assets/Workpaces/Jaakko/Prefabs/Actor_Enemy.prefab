@@ -266,7 +266,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d49067907496b884aa91ef2b8c6f15bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CombatActor
-  m_initiative: 0
   m_actions:
   - {fileID: 11400000, guid: dfdad7663ecea414698ac367f47a6981, type: 2}
   m_visual: {fileID: 1251749698081068059}
@@ -282,7 +281,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80c1c75e03f205d42aab4767c478f87e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthComponent
-  m_maxHealth: 10
+  m_maxHealth: 5
+  CurrentHealth: 0
 --- !u!1 &1251749698081068059
 GameObject:
   m_ObjectHideFlags: 0

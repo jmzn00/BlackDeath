@@ -1,7 +1,7 @@
 public interface IUIComponent
 {
-    void Initialize(Actor actor);
+    void Initialize();
     void Dispose();
-    void OnActorChanged(Actor actor);
     void Toggle(bool show);
+    bool IsVisible();
 }

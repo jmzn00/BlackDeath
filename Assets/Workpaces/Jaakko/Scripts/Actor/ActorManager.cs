@@ -5,19 +5,15 @@ using UnityEngine;
 public class ActorManager : IManager
 {
     private bool m_active;
-
-    private List<IActor> m_actors;
-
-    private Actor m_player = null;
-    public Actor Player => m_player;
-
+    
     private GameManager m_game;
 
+    private List<IActor> m_actors;
     private List<Actor> m_party = new List<Actor>();
-    private Actor m_currentControlled;
-
-    public Actor CurrentControlled => m_currentControlled;
     public IReadOnlyList<Actor> Party => m_party;
+
+    private Actor m_currentControlled;
+    public Actor CurrentControlled => m_currentControlled;    
 
     public event Action<Actor> OnActorControlChanged;
 

@@ -26,7 +26,7 @@ public class AIActionProvider : IActionProvider
 
         yield return new WaitForSeconds(m_waitTime);
 
-        CombatActor target = participants.Find(a => a.IsPlayer);
+        CombatActor target = participants.Find(a => a.IsPlayer && !a.IsDead);
 
         CombatAction action = actor.Actions[0];
 

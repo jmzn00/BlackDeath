@@ -12,36 +12,27 @@ public class InventoryView : MonoBehaviour, IUIComponentView
     [Header("Panel")]
     [SerializeField] private Button m_closeButton;
 
-    private InventoryComponent m_inventoryComponent;
-
-    private Actor m_currentActor;
-
+    private InventoryComponent m_inventory;
     public void Init(Actor actor) 
     {
-        m_actorNameText.text = actor.name;
-        m_actorImage.sprite = actor.actorSprite;
-
-        m_inventoryComponent = actor.Get<InventoryComponent>();
-
-        m_closeButton.onClick.AddListener(() => Hide());
-    }
-    public void View() 
-    {
-        gameObject.SetActive(true);
-    }
-    public void Hide() 
-    {
-        gameObject.SetActive(false);
-    }
+        m_inventory = actor.Get<InventoryComponent>();
+        OnActorChanged(actor);
+    }    
     public void OnActorChanged(Actor actor) 
     {
-        m_currentActor = actor;
-
+        if (actor.actorSprite != null) 
+        {
+            m_actorImage.sprite = actor.actorSprite;
+        }
         m_actorNameText.text = actor.name;
-        m_actorImage.sprite = actor.actorSprite;
-        m_inventoryComponent = actor.Get<InventoryComponent>();
-
-        OnInventoryItemsChanged(m_inventoryComponent.InventoryItems);
+        if (m_inventory != null) 
+        {
+            m_inventory.OnItemsChanged -= OnInventoryItemsChanged;
+            m_inventory = null;
+        }
+        m_inventory = actor.Get<InventoryComponent>();        
+        m_inventory.OnItemsChanged += OnInventoryItemsChanged;
+        OnInventoryItemsChanged(m_inventory.InventoryItems);
     }
     public void OnInventoryItemsChanged(string[] text) 
     {
@@ -52,5 +43,13 @@ public class InventoryView : MonoBehaviour, IUIComponentView
             ItemDefinition def = Services.Get<ItemManager>().GetItemDefinition(item);
             m_inventoryItemsText.text += def.DisplayName + "\n";
         }
+    }
+    public void View()
+    {
+        gameObject.SetActive(true);
+    }
+    public void Hide()
+    {
+        gameObject.SetActive(false);
     }
 }

@@ -18,12 +18,14 @@ public class HealthView : MonoBehaviour, IUIComponentView
     }
     public void OnActorChanged(Actor actor) 
     {
-        
+        HealthComponent health = actor.Get<HealthComponent>();
+        m_healthSlider.maxValue = health.MaxHealth;
+
+        health.OnHealthChanged += OnHealthChanged;        
+        m_healthSlider.value = health.GetHealth();
     }
     public void OnHealthChanged(float newHealth) 
     {
-        if (m_healthSlider == null) return;
-
         m_healthSlider.value = newHealth;
     }
 }

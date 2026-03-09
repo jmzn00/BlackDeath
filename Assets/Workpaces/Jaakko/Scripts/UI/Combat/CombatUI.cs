@@ -1,30 +1,23 @@
+using System.Runtime.InteropServices;
 using UnityEngine;
-[UIFor(typeof(CombatActor), typeof(CombatView))]
+[UIComponent(typeof(CombatView))]
 public class CombatUI : UIComponentBase
 {
-    private Actor m_actor;
-    private CombatActor m_combatActor;
     private CombatView m_view;
+    private CombatManager m_combatManager;
 
-    public CombatUI(CombatActor combatActor, CombatView view) 
+    public CombatUI(GameManager game, CombatView view) : base(game) 
     {
-        m_combatActor = combatActor;
+        m_combatManager = game.Resolve<CombatManager>();
         m_view = view;
-    }
-    private void OnContextChanged(CombatContext ctx) 
-    {
-        m_view.OnContextChanged(ctx);
-    }
-    public override void Initialize(Actor actor) 
-    {
-        m_actor = actor;
-        m_view.Init(actor);
-
-        m_combatActor.OnContextChanged += OnContextChanged;
+    }   
+    public override void Initialize() 
+    {        
+        m_combatManager.OnContextChanged += m_view.OnContextChanged;
     }
     public override void Dispose()
     {
-        m_combatActor.OnContextChanged -= OnContextChanged;
+        m_combatManager.OnContextChanged -= m_view.OnContextChanged;
     }
     public override void Toggle(bool show) 
     {
@@ -33,9 +26,8 @@ public class CombatUI : UIComponentBase
         else
             m_view.Hide();
     }
-    public override void OnActorChanged(Actor actor)
+    public override bool IsVisible()
     {
-        m_view.OnActorChanged(actor);
+        return m_view.gameObject.activeInHierarchy;
     }
-
 }

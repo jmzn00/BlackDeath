@@ -2,45 +2,40 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 [RequireComponent(typeof(Actor))]
 public class CombatActor : MonoBehaviour, IActorComponent
 {
-    [SerializeField] private int m_initiative = 0;
-    [SerializeField] private List<CombatAction> m_actions;
-    public int Initiative => m_initiative;
-
     public bool IsDead { get; private set; }
     public bool IsPlayer { get; private set; }
-
     private Actor m_actor;
     public Actor Actor => m_actor;
-    private CombatManager m_combatManager;
-    public List<CombatAction> Actions => m_actions;
 
-    public event Action<CombatContext> OnContextChanged;
+    private CombatManager m_combatManager;
 
     private IActionProvider m_actionProvider;
     public IActionProvider ActionProvider => m_actionProvider;
 
+    [SerializeField] private List<CombatAction> m_actions;
+    public List<CombatAction> Actions => m_actions;
+    private Action m_onActionComplete;
+    private Coroutine m_actionTimeout;
+    public event Action OnActionFinished;
+
+    private List<ActorStatusEffect> m_statusEffects = new List<ActorStatusEffect>();
+    public List<ActorStatusEffect> StatusEffects => m_statusEffects;
+    public event Action<List<ActorStatusEffect>> OnStatusEffectsChanged;
+
+    private ActionContext m_currentContext;
+    public event Action<CombatContext> OnContextChanged;    
+
     private HealthComponent m_health;
     public HealthComponent Health => m_health;
 
-    private UIController m_uiController;
 
-    private ActionContext m_currentContext;
-    private Action m_onActionComplete;
-    private AnimationController m_animationController;
-    private Coroutine m_actionTimeout;
-
+    private UIController m_uiController; // temp
+    private AnimationController m_animationController; // temp
     [SerializeField] private GameObject m_visual; // temp 
-
-    private List<ActorStatusEffect> m_statusEffects = new List<ActorStatusEffect>();
-    public List<ActorStatusEffect> StatusEffects => m_statusEffects;    
-    public event Action<List<ActorStatusEffect>> OnStatusEffectsChanged;
-
-    public event Action OnActionFinished;
 
 
     #region IActorComponent
@@ -70,8 +65,9 @@ public class CombatActor : MonoBehaviour, IActorComponent
         {
             IsDead = true;
             m_combatManager.OnActorDied(this);
-            if (m_visual)
-                m_visual.SetActive(false);
+
+            if (m_visual) // temp
+                m_visual.SetActive(false); // temp
         }
     }
     public bool Dispose()
@@ -134,6 +130,9 @@ public class CombatActor : MonoBehaviour, IActorComponent
             Destroy(effect);
 
         m_statusEffects.Clear();
+
+        if (m_visual)
+            m_visual.SetActive(true);
 
         // have combatmanager handle obj destruction
         if (!IsPlayer)

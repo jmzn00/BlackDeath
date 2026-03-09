@@ -8,6 +8,7 @@ public class InventoryAdd : MonoBehaviour
     [SerializeField] private GameObject m_buttonPrefab;
     private void Start()
     {        
+        /*
         var itemManager = Services.Get<ItemManager>();        
 
         foreach (var item in itemManager.GetAllItems())
@@ -21,5 +22,6 @@ public class InventoryAdd : MonoBehaviour
                 .Get<InventoryComponent>().TryAddItem(item.ItemID);
             });
         }
+        */
     }
 }
