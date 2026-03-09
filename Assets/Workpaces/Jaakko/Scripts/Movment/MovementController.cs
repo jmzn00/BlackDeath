@@ -76,10 +76,10 @@ public class MovementController : MonoBehaviour, IActorComponent
 
         AddModule(new WalkRunModule(this));
 
-        AddModule(new JumpModule(this));
+        //AddModule(new JumpModule(this));
 
         AddModule(new GroundFrictionModule(this));
-        AddModule(new GravityModule(this));     
+        //AddModule(new GravityModule(this));     
        
 
         return true;

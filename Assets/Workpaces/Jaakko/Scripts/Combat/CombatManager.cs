@@ -186,11 +186,11 @@ public class CombatManager : IManager
             if (prompt.action == null)
             {
                 Debug.LogWarning("Prompt Action Is NULL");
-                return;
+                continue;
             }
             if (!prompt.action.WasPressedThisFrame())
             {
-                return;
+                continue;
             }
 
             switch (prompt.inputType)
