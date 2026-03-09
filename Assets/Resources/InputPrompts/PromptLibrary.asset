@@ -13,8 +13,10 @@ MonoBehaviour:
   m_Name: PromptLibrary
   m_EditorClassIdentifier: Assembly-CSharp::InputPromptLibrary
   entries:
-  - key: confirm_a
+  - key: Confirm_X
     prompt: {fileID: 11400000, guid: 4ca5173fbaeec6344836ea1fb13ad8ef, type: 2}
+  - key: Confirm_O
+    prompt: {fileID: 11400000, guid: 421605df8edcc4742b193e9bb273922d, type: 2}
   - key: ParryPrompt
     prompt: {fileID: 11400000, guid: 1504a205ba5b3d5489f4011457d1d6bc, type: 2}
   - key: DodgePrompt

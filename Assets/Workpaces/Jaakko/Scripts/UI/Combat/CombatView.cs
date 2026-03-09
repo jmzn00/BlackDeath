@@ -3,6 +3,7 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.UI;
 
 
@@ -33,7 +34,7 @@ public class CombatView : MonoBehaviour, IUIComponentView
     private Dictionary<CombatActor, CombatPortrait> m_actorPortraits = new();
 
     private Dictionary<string, Button> m_actionTypeButtons = new();
-    private Dictionary<CombatAction, Button> m_actionButtons = new();
+    private Dictionary<CombatAction, Button> m_actionButtons = new();    
 
     public void Initialize(CombatManager combatManager, UIManager uiManager)
     {
@@ -43,12 +44,66 @@ public class CombatView : MonoBehaviour, IUIComponentView
         m_combatManager.OnWindowOpened += OnWindowOpened;
         m_combatManager.OnWindowClosed += OnWindowClosed;
 
+        m_combatManager.ReactiveWindow.OnParryWindowOpened += OnParryWindowOpened;
+        m_combatManager.ReactiveWindow.OnDodgeWindowOpened += OnDodgeWindowOpened;
+
+        m_dodgeImage.gameObject.SetActive(false);
+        m_parryImage.gameObject.SetActive(false);
+        m_confirmImage.gameObject.SetActive(false);
+    }
+    private void OnParryWindowOpened(bool value) 
+    {
+        if (m_currentActor.IsPlayer)
+        {
+            return;
+        }
+        if (value) 
+        {
+            m_parryImage.gameObject.SetActive(true);
+        }
+        else 
+        {
+            m_parryImage.gameObject.SetActive(false);
+        }
+    }
+    private void OnDodgeWindowOpened(bool value) 
+    {
+        if (m_currentActor.IsPlayer)
+        {
+            return;
+        }
+        if (value) 
+        {
+            m_dodgeImage.gameObject.SetActive(true);
+        }
+        else 
+        {
+            m_dodgeImage.gameObject.SetActive(false);
+        }
+    }
+    public void OnWindowOpened(ActionContext ctx)
+    {
+        SetAllButtonsInteractable(false);
+
+        if (ctx.Source.IsPlayer)
+        {
+            m_confirmImage.gameObject.SetActive(true);
+            m_confirmImage.sprite = ctx.Prompt.icon;
+            // show confirm indication
+        }
+        
+    }
+    public void OnWindowClosed(ActionContext ctx)
+    {
+        SetAllButtonsInteractable(true);
+
         m_dodgeImage.gameObject.SetActive(false);
         m_parryImage.gameObject.SetActive(false);
         m_confirmImage.gameObject.SetActive(false);
     }
     public void OnContextChanged(CombatContext ctx)
     {
+        
         var aliveActors = ctx.Actors.Where(a => !a.IsDead).ToList();
 
         // Remove dead portraits
@@ -210,33 +265,6 @@ public class CombatView : MonoBehaviour, IUIComponentView
     public void Init()
     {
         
-    }
-    public void OnWindowOpened(ActionContext ctx) 
-    {
-        SetAllButtonsInteractable(false);
-
-        if (ctx.Source.IsPlayer) 
-        {
-            m_confirmImage.gameObject.SetActive(true);
-            m_confirmImage.sprite = ctx.Prompt.icon;
-            // show confirm indication
-        }
-        else 
-        {
-            m_dodgeImage.gameObject.SetActive(true);
-            m_parryImage.gameObject.SetActive(true);
-
-
-            // show parry / dodge indication
-        }
-    }
-    public void OnWindowClosed(ActionContext ctx) 
-    {
-        SetAllButtonsInteractable(true);
-
-        m_dodgeImage.gameObject.SetActive(false);
-        m_parryImage.gameObject.SetActive(false);
-        m_confirmImage.gameObject.SetActive(false);
     }  
     public void View()
     {

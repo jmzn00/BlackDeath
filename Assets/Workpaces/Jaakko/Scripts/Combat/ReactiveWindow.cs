@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using UnityEngine;
 
 public enum ReactionType 
@@ -12,7 +14,7 @@ public class ReactiveWindow
 {
     private bool m_windowOpen = false;
 
-    private float m_parryWindow = 0.4f;
+    private float m_parryWindow = 0.3f;
     private float m_dodgeWindow = 0.7f;
 
     private float m_parryCooldownTimer;
@@ -48,6 +50,14 @@ public class ReactiveWindow
 
     private ReactionType m_attackerReaction;
     private ReactionType m_defenderReaction;
+
+    public event Action<bool> OnParryWindowOpened;
+    public event Action<bool> OnDodgeWindowOpened;
+    public event Action<bool> OnConfirmWindowOpened;
+
+    private bool m_parryAvailable;
+    private bool m_dodgeAvailable;
+    
 
     public ReactiveWindow(InputPromptLibrary promptLibrary) 
     {
@@ -87,6 +97,12 @@ public class ReactiveWindow
         {
             prompt.action.Enable();
         }
+
+        m_parryAvailable = true;
+        m_dodgeAvailable = true;
+
+        OnParryWindowOpened?.Invoke(m_parryAvailable);
+        OnDodgeWindowOpened?.Invoke(m_dodgeAvailable);
     }
 
     public void TryActivateParry() 
@@ -121,7 +137,6 @@ public class ReactiveWindow
     {
         ReactionType result = m_defenderReaction;
         m_defenderReaction = ReactionType.None;
-        m_time = 0f;        
         return result;
     }
     public ReactionType ConsumeAttackerReaction()
@@ -157,5 +172,16 @@ public class ReactiveWindow
         if (!m_windowOpen) return;
         m_time += dt;
         m_confirmTime += dt;
+
+        if (m_parryAvailable && m_time > m_parryWindow) 
+        {
+            m_parryAvailable = false;
+            OnParryWindowOpened?.Invoke(m_parryAvailable);
+        }
+        if (m_dodgeAvailable && m_time > m_dodgeWindow) 
+        {
+            m_dodgeAvailable = false;
+            OnDodgeWindowOpened?.Invoke(m_dodgeAvailable);
+        }
     }
 }

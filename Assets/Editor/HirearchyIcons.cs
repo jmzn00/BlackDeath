@@ -16,7 +16,8 @@ public static class HirearchyIcons
     // ICONS https://github.com/rythwh/unity-editor-icons
     static Dictionary<Type, (Color color, string icon)> typeSettings = new()
     {
-        { typeof(Actor), (new Color(0f, 0f, 1f, 0.2f), "Avatar Icon") },
+        { typeof(Actor_Player), (new Color(0f, 0f, 1f, 0.2f), "Avatar Icon") },
+        { typeof(AiActor), (new Color(0f, 1f, 0f, 0.2f), "Avatar Icon") },
         { typeof(CombatArea), (new Color(1f, 0f, 0f, 0.2f), "d_AimConstraint Icon") }
 
     };

@@ -24,14 +24,6 @@ MonoBehaviour:
     m_Interactions: 
     m_SingletonActionBindings:
     - m_Name: 
-      m_Id: d766a22d-142a-4e9e-a69e-2538adbb9b70
-      m_Path: <Keyboard>/g
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Action
-      m_Flags: 0
-    - m_Name: 
       m_Id: fe0f9b3e-fb99-447d-a23a-fe9089aa4b89
       m_Path: <Gamepad>/buttonWest
       m_Interactions: 

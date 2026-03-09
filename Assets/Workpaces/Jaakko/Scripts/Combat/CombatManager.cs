@@ -55,7 +55,6 @@ public class CombatManager : IManager
     public Actor Actor => m_actor;
 
     private CombatActor m_currentActor;
-    private CombatActor m_playerActor;
 
     private List<CombatActor> m_partyCombatActors;
     private List<CombatArea> m_combatAreas = new List<CombatArea>();
@@ -87,6 +86,9 @@ public class CombatManager : IManager
         }
     }
     private event Action<ActionContext, ActionResult> OnActionResolved;
+
+    public event Action<ActionContext> OnWindowOpened;
+    public event Action<ActionContext> OnWindowClosed;
 
     public CombatManager(InputManager input, ActorManager actorManager, GameManager game)
     {
@@ -124,46 +126,6 @@ public class CombatManager : IManager
         HandleDefenderInput();
 
         m_reactiveWindow.Update(Time.deltaTime);
-        /*
-        if (m_activePrompt == null) return;
-        if (m_reactiveWindow.IsPlayerReactor) return;
-
-        var action = m_activePrompt.action;
-        if (action == null) 
-        {
-            return;
-        }
-
-        if (!action.WasPressedThisFrame())
-        {
-            return;
-        }
-        switch (m_activePrompt.inputType)
-        {
-            case PromptInputType.Parry:
-                m_reactiveWindow.TryActivateParry();
-                break;
-            case PromptInputType.Dodge:
-                m_reactiveWindow.TryActivateDodge();
-                break;
-            case PromptInputType.Confirm:
-                m_reactiveWindow.TryConfrim();
-                break;
-        }
-        */
-        /*
-        ref var input = ref m_input.GetInputState();
-
-        if (input.ParryPressedThisFrame)
-        {
-            m_reactiveWindow.TryActivateParry();
-        }
-        if (input.DodgePressedThisFrame)
-        {
-            m_reactiveWindow.TryActivateDodge();
-        }
-        */
-
     }
     private void HandleAttackerInput()
     {
@@ -408,7 +370,6 @@ public class CombatManager : IManager
 
         m_combatActors = participants;
         m_turnIndex = 0;
-        m_playerActor = participants.Find(p => p.IsPlayer);
 
         m_state = CombatState.Starting;
     }
@@ -448,10 +409,6 @@ public class CombatManager : IManager
         m_combatActors.Clear();
         m_partyCombatActors.Clear();
     }
-
-    public event Action<ActionContext> OnWindowOpened;
-    public event Action<ActionContext> OnWindowClosed;
-
     public void OpenReactiveWindow(ActionContext ctx)
     {
         m_activePrompt = PromptLibrary.Get(ctx.PromptKey);        

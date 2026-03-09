@@ -24,14 +24,6 @@ MonoBehaviour:
     m_Interactions: 
     m_SingletonActionBindings:
     - m_Name: 
-      m_Id: ae743ae9-8353-46d4-9703-c24ef5fb079a
-      m_Path: <Keyboard>/q
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Action
-      m_Flags: 0
-    - m_Name: 
       m_Id: bf329027-a0ed-4675-a2b5-8c411bbb200b
       m_Path: <Gamepad>/buttonSouth
       m_Interactions: 

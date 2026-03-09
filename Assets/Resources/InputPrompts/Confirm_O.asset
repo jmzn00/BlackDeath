@@ -10,22 +10,22 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c609d5da670925c4795fe66a411b44c7, type: 3}
-  m_Name: ParryPrompt
+  m_Name: Confirm_O
   m_EditorClassIdentifier: Assembly-CSharp::InputPrompt
   label: PRESS!
-  icon: {fileID: 21300000, guid: f47c48434acdaa94e8765a5872c015ad, type: 3}
-  inputType: 1
+  icon: {fileID: 21300000, guid: 3b2af38b273c060449f5931fdb9c7c1e, type: 3}
+  inputType: 0
   action:
     m_Name: Action
     m_Type: 0
     m_ExpectedControlType: 
-    m_Id: 6599f078-774e-476e-ab4e-94a59dbb8c38
+    m_Id: c516d21d-8390-4108-b42d-b6aa5e3f5768
     m_Processors: 
     m_Interactions: 
     m_SingletonActionBindings:
     - m_Name: 
-      m_Id: a3b4f510-cc52-4d8f-8d1b-5807b2e08162
-      m_Path: <Gamepad>/buttonNorth
+      m_Id: 3646ee3b-3781-43f8-b64d-6bdf1e340638
+      m_Path: <Gamepad>/buttonEast
       m_Interactions: 
       m_Processors: 
       m_Groups: 

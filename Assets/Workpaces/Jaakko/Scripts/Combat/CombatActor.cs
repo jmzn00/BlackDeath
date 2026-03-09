@@ -137,6 +137,8 @@ public class CombatActor : MonoBehaviour, IActorComponent
         // have combatmanager handle obj destruction
         if (!IsPlayer)
             Destroy(gameObject); // add pooling?
+        if(IsDead)
+            IsDead = false;
     }
     public bool SetActionContext(ActionContext ctx)
     {
