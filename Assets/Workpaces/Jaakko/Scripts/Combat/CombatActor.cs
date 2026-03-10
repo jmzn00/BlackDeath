@@ -27,7 +27,7 @@ public class CombatActor : MonoBehaviour, IActorComponent
     public event Action<List<ActorStatusEffect>> OnStatusEffectsChanged;
 
     private ActionContext m_currentContext;
-    public event Action<CombatContext> OnContextChanged;    
+    public event Action<CombatContext> OnContextChanged;
 
     private HealthComponent m_health;
     public HealthComponent Health => m_health;
@@ -58,7 +58,7 @@ public class CombatActor : MonoBehaviour, IActorComponent
             SetActionProvider(new AIActionProvider());
         }
         return true;
-    }     
+    }
     void OnHealthChanged(float value)
     {
         if (value <= 0f)
@@ -95,19 +95,21 @@ public class CombatActor : MonoBehaviour, IActorComponent
     }
     #endregion
     #region Combat
-    public void OnTurnStart() 
+    public void OnTurnStart()
     {
+        if (m_statusEffects == null || m_statusEffects.Count == 0) return;
+
         foreach (var e in m_statusEffects)
             e.TurnStart();
     }
-    public void OnTurnEnd() 
+    public void OnTurnEnd()
     {
-        for (int i = m_statusEffects.Count - 1; i >= 0; i--) 
+        for (int i = m_statusEffects.Count - 1; i >= 0; i--)
         {
             var effect = m_statusEffects[i];
             effect.TurnEnd();
 
-            if (effect.TickDuration()) 
+            if (effect.TickDuration())
             {
                 effect.Expire();
                 m_statusEffects.RemoveAt(i);
@@ -137,7 +139,7 @@ public class CombatActor : MonoBehaviour, IActorComponent
         // have combatmanager handle obj destruction
         if (!IsPlayer)
             Destroy(gameObject); // add pooling?
-        if(IsDead)
+        if (IsDead)
             IsDead = false;
     }
     public bool SetActionContext(ActionContext ctx)
@@ -175,13 +177,13 @@ public class CombatActor : MonoBehaviour, IActorComponent
     // called by animation clip
     public void Anim_CloseWindow()
     {
-        m_combatManager.CloseReactiveWindow(m_currentContext);
+        m_combatManager.ReactiveWindow.Close(m_currentContext);
     }
     // called by animator
     public void Anim_OpenWindow(string promptKey)
     {
         m_currentContext.PromptKey = promptKey;
-        m_combatManager.OpenReactiveWindow(m_currentContext);
+        m_combatManager.ReactiveWindow.Open(m_currentContext);
     }
     // called by animation clip
     public void Anim_AttackFinished()
@@ -217,22 +219,36 @@ public class CombatActor : MonoBehaviour, IActorComponent
     }
     #endregion
     #region StatusEffect
-    public void ApplyStatus(ActorStatusEffect effect) 
+    public void ApplyStatus(ActorStatusEffect effect)
     {
-        foreach (var e in m_statusEffects) 
-        {
-            if (e.GetType() == effect.GetType()) 
-            {
-                e.AddDuration(effect.duration);
-                OnStatusEffectsChanged?.Invoke(m_statusEffects);
-                return;
-            }
-        }
+        Debug.Log($"Add {effect}");
+        // Always instantiate a new instance to avoid shared ScriptableObject state
         ActorStatusEffect instance = Instantiate(effect);
         instance.Initialize(this);
+
+        // Try to find an existing effect of the same type AND same display name.
+        // This allows different assets that share the same concrete class
+        // (e.g. TickStatusEffect) but represent different effects (Burn vs Poison)
+        // to coexist separately.
+        var existing = m_statusEffects.Find(e =>
+            e.GetType() == instance.GetType() &&
+            e.displayName == instance.displayName);
+
+        if (existing != null)
+        {
+            if (effect.IsStackable)
+            {
+                existing.AddDuration(instance.duration);
+                OnStatusEffectsChanged?.Invoke(m_statusEffects);
+            }
+            // if not stackable, do nothing
+            return;
+        }
+
+        // If no existing effect, add the new instance
         m_statusEffects.Add(instance);
         OnStatusEffectsChanged?.Invoke(m_statusEffects);
-    }        
+    }
     #endregion
 
 }

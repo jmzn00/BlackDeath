@@ -7,7 +7,8 @@ public enum ActionResult
 {
     Hit,
     Dodged,
-    Parried
+    Parried,
+    Confirmed
 }
 
 /// <summary>
@@ -31,6 +32,9 @@ public abstract class CombatAction : ScriptableObject
     public bool isReactive = true;
     [Tooltip("Grant 1 AP to the user on use.")]
     public bool grantsApOnUse = false;
+
+    public float baseDamage = 1;
+    public float confirmDamageMultipler = 1.2f;
 
     public List<ActorStatusEffect> AppliedEffects = new List<ActorStatusEffect>();
 
@@ -56,11 +60,31 @@ public abstract class CombatAction : ScriptableObject
                 break;
             case ActionResult.Parried:
                 OnParried(ctx);
-                break;            
+                break;
+            case ActionResult.Confirmed:
+                OnConfirmed(ctx);
+                break;
         }
     } 
-    protected virtual void OnHit(ActionContext ctx) { }
-    protected virtual void OnDodged(ActionContext ctx) { }
-    protected virtual void OnParried(ActionContext ctx) { }
-    public virtual void OnConfirmed(ActionContext ctx) { }
+    protected virtual void OnHit(ActionContext ctx) 
+    {
+        ctx.Target.Health.ApplyDamage(baseDamage);        
+    }
+    protected virtual void OnDodged(ActionContext ctx) 
+    {
+        
+    }
+    protected virtual void OnParried(ActionContext ctx) 
+    {
+        ctx.Source.Health.ApplyDamage(baseDamage);
+    }
+    public virtual void OnConfirmed(ActionContext ctx) 
+    {
+        ctx.Target.Health.ApplyDamage(baseDamage * confirmDamageMultipler);
+
+        foreach (var e in AppliedEffects)
+        {
+            ctx.Target.ApplyStatus(e);
+        }
+    }
 }

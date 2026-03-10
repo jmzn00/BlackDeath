@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ab7a988b895ede04e8f4a0ffc4dc52cd, type: 3}
-  m_Name: BurnEffect
-  m_EditorClassIdentifier: Assembly-CSharp::BurnEffect
+  m_Name: PoisonEffect
+  m_EditorClassIdentifier: Assembly-CSharp::TickStatusEffect
   duration: 2
-  displayName: Burn
-  m_isStackable: 1
-  tickDamage: 1
+  displayName: Poison
+  m_isStackable: 0
+  tickDamage: 3

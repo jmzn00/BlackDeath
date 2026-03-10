@@ -1,7 +1,7 @@
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Actor/StatusEffects/BurnEffect")]
-public class BurnEffect : ActorStatusEffect
+[CreateAssetMenu(menuName = "Actor/StatusEffects/TickStatusEffect")]
+public class TickStatusEffect : ActorStatusEffect
 {
     public float tickDamage = 2f;
     protected override void OnApply()

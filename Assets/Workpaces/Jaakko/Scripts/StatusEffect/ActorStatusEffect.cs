@@ -4,9 +4,11 @@ public abstract class ActorStatusEffect : ScriptableObject
 {
     public int duration = 1;
     public string displayName;
+    [SerializeField] private bool m_isStackable = false;
 
     public CombatActor Owner {  get; private set; }
     public int RemainingTurns { get; protected set; }
+    public bool IsStackable => m_isStackable;
     public void AddDuration(int amount) 
     {
         RemainingTurns += amount;

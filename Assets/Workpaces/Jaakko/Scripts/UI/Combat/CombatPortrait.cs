@@ -1,7 +1,5 @@
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Security.Cryptography;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -17,16 +15,15 @@ public class CombatPortrait : MonoBehaviour
 
     private Button m_button;
 
-    private Action<CombatActor> m_onClick;
-
     private CombatActor m_actor;
+    public event Action<CombatActor> OnClick;
 
-    public void Initialize(CombatActor actor, Action<CombatActor> onClick)
+    public void Initialize(CombatActor actor)
     {
-        m_actor = actor;
-        m_onClick = onClick;        
+        m_actor = actor;    
 
         m_button = GetComponent<Button>();
+        
 
         HealthComponent health = actor.Health;
         m_healthSlider.maxValue = health.MaxHealth;
@@ -53,15 +50,16 @@ public class CombatPortrait : MonoBehaviour
         m_button.onClick.RemoveAllListeners();
         m_button.onClick.AddListener(() =>
         {
-            m_onClick?.Invoke(m_actor);
+            OnClick?.Invoke(m_actor);
         });
         name = "CombatPortrait " + m_actor.name;
     }
+    public Selectable GetSelectable() 
+    {
+        return m_button;
+    }
     public void Dispose()
     {
-        if (this == null)
-            return;
-
         if (m_actor != null)
             m_actor.OnStatusEffectsChanged -= UpdateStatusEffects;
 

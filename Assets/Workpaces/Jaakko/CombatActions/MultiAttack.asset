@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 96d9e96d290a56b4e8357d28e7a18676, type: 3}
-  m_Name: BigAttack
+  m_Name: MultiAttack
   m_EditorClassIdentifier: Assembly-CSharp::AttackAction
   actionName: MultiAttack
   description: 
@@ -18,7 +18,8 @@ MonoBehaviour:
   animationClip: {fileID: 7400000, guid: c105fac2c4171c54390d8e9111a5c889, type: 2}
   isReactive: 1
   grantsApOnUse: 0
-  AppliedEffects:
-  - {fileID: 11400000, guid: 49f52cc500f44b14dbd658d71c5d7625, type: 2}
+  baseDamage: 1
+  confirmDamageMultipler: 1.5
+  AppliedEffects: []
   damage: 1
-  bonusDamageOnSuccess: 1
+  bonusDamageOnSuccess: 2

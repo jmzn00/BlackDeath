@@ -15,14 +15,47 @@ public class CombatUI : UIComponentBase
     }
     public override void Initialize()
     {
-        m_combatManager.OnContextChanged += m_view.OnContextChanged;
+        m_view.Initialize(m_uiManager);
+        if (m_combatManager == null) 
+        {
+            Debug.LogWarning("CombatManager is NULL");
+            return;
+        }
+        if (m_combatManager.ReactiveWindow == null) 
+        {
+            Debug.LogWarning("Reactive Window is NULL");
+            return;
+        }
 
-        m_view.Initialize(m_combatManager, m_uiManager);
-        
+        m_combatManager.OnContextChanged
+            += m_view.OnContextChanged;
+
+        m_combatManager.ReactiveWindow.OnConfirmWindowOpened
+            += m_view.OnConfirmWindowOpened;
+        m_combatManager.ReactiveWindow.OnDodgeWindowOpened
+            += m_view.OnDodgeWindowOpened;
+        m_combatManager.ReactiveWindow.OnParryWindowOpened
+            += m_view.OnParryWindowOpened;
+        m_combatManager.ReactiveWindow.OnWindowOpened
+            += m_view.OnWindowOpened;
+        m_combatManager.OnCombatStarted += m_view.OnCombatStarted;
+
     }
+
     public override void Dispose()
     {
-        m_combatManager.OnContextChanged -= m_view.OnContextChanged;
+        m_combatManager.OnContextChanged
+            -= m_view.OnContextChanged;
+
+        m_combatManager.ReactiveWindow.OnConfirmWindowOpened
+            -= m_view.OnConfirmWindowOpened;
+        m_combatManager.ReactiveWindow.OnDodgeWindowOpened
+            -= m_view.OnDodgeWindowOpened;
+        m_combatManager.ReactiveWindow.OnParryWindowOpened
+            -= m_view.OnParryWindowOpened;
+        m_combatManager.ReactiveWindow.OnWindowOpened
+            -= m_view.OnWindowOpened;
+        m_combatManager.OnCombatStarted -= m_view.OnCombatStarted;
     }
     public override void Toggle(bool show) 
     {

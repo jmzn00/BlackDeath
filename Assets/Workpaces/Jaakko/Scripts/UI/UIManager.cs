@@ -1,10 +1,16 @@
-using NUnit.Framework;
+using Mono.Cecil;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+
+public enum UIInputMode 
+{
+    None,
+    Navigation,
+    Combat
+}
 
 public class UIManager : IManager 
 {
@@ -13,11 +19,14 @@ public class UIManager : IManager
     public UIController Controller => m_uiController;
     private UIControllerNavigation m_navigation;
     public UIControllerNavigation Navigation => m_navigation;
+
+    private UIInputMode m_inputMode;
     public UIManager(GameManager game) 
     {
         m_game = game;
     }
-    public bool Init() 
+    #region IManager
+    public bool Init()
     {
         m_navigation = new UIControllerNavigation(m_game.Resolve<InputManager>());
         return true;
@@ -27,10 +36,11 @@ public class UIManager : IManager
         if (m_uiController)
             m_uiController.Dispose();
 
+        m_game.OnStateChanged -= OnGameStateChanged;
         m_navigation.Dispose();
         return true;
     }
-    public void OnManagersInitialzied() 
+    public void OnManagersInitialzied()
     {
         m_uiController = GameObject.FindFirstObjectByType<UIController>();
         if (m_uiController)
@@ -41,6 +51,7 @@ public class UIManager : IManager
         m_game.OnStateChanged += OnGameStateChanged;
         OnGameStateChanged(m_game.State);
     }
+    #endregion    
     private void OnGameStateChanged(GameState state) 
     {
         if (m_uiController == null) return;
@@ -55,9 +66,36 @@ public class UIManager : IManager
                 break;            
         }
     }
+    public void SetInputMode(UIInputMode mode) 
+    {
+        if (mode == m_inputMode) 
+        {
+            return;
+        }
+        m_inputMode = mode;
+
+        Debug.Log($"Input Mode {m_inputMode}");
+        switch (m_inputMode) 
+        {
+            case UIInputMode.None:
+
+                break;
+            case UIInputMode.Navigation:
+
+                break;
+            case UIInputMode.Combat:
+                EventSystem.current.SetSelectedGameObject(null);
+                break;
+        }
+    }
+    protected bool IsNavigationEnabled() 
+    {
+        return m_inputMode == UIInputMode.Navigation;
+    }
     public void Update(float dt) 
     {
-        m_navigation.UpdateNavigation();
+        if (IsNavigationEnabled())
+            m_navigation.UpdateNavigation();
     }
 }
 public class UIControllerNavigation 
@@ -86,11 +124,15 @@ public class UIControllerNavigation
                 .SetSelectedGameObject(m_selectables[0].gameObject);
         }
     }
+    public void RemoveSelectable(Selectable s) 
+    {
+        if (m_selectables.Contains(s))
+            m_selectables.Remove(s);
+    }
     public void UpdateButtons(IEnumerable<Selectable> buttons, GameObject currentSelected)
     {
         m_selectables = new List<Selectable>(buttons);
 
-        // Try to keep selection
         if (currentSelected != null && m_selectables.Any(s => s.gameObject == currentSelected))
         {
             EventSystem.current.SetSelectedGameObject(currentSelected);
