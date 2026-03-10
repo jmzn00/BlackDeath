@@ -99,8 +99,13 @@ public class CombatActor : MonoBehaviour, IActorComponent
     {
         if (m_statusEffects == null || m_statusEffects.Count == 0) return;
 
-        foreach (var e in m_statusEffects)
-            e.TurnStart();
+        List<ActorStatusEffect> effects = new List<ActorStatusEffect> (m_statusEffects);
+        foreach (var e in effects) 
+        {
+            if (e == null) return;
+                e.TurnStart();
+        }
+            
     }
     public void OnTurnEnd()
     {
@@ -141,6 +146,7 @@ public class CombatActor : MonoBehaviour, IActorComponent
             Destroy(gameObject); // add pooling?
         if (IsDead)
             IsDead = false;
+        Health.ApplyHealth(Health.MaxHealth);
     }
     public bool SetActionContext(ActionContext ctx)
     {
@@ -221,7 +227,6 @@ public class CombatActor : MonoBehaviour, IActorComponent
     #region StatusEffect
     public void ApplyStatus(ActorStatusEffect effect)
     {
-        Debug.Log($"Add {effect}");
         // Always instantiate a new instance to avoid shared ScriptableObject state
         ActorStatusEffect instance = Instantiate(effect);
         instance.Initialize(this);

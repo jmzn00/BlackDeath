@@ -28,6 +28,8 @@ public class CombatView : MonoBehaviour, IUIComponentView
     private CombatActor m_currentTarget;
     private UIManager m_ui;
 
+    private bool m_actionSet;
+
     private Dictionary<CombatActor, CombatPortrait> m_portraits;
     
     #region IUIComponentView
@@ -111,8 +113,12 @@ public class CombatView : MonoBehaviour, IUIComponentView
 
         m_currentActor = ctx.CurrentActor;
 
-        if (m_currentActor.IsPlayer)
+        if (m_currentActor.IsPlayer) 
+        {
+            m_actionSet = false;
             m_currentTarget = null;
+        }
+            
 
         foreach (var a in ctx.Actors) 
         {
@@ -202,11 +208,18 @@ public class CombatView : MonoBehaviour, IUIComponentView
     }
     private void OnActionSelected(CombatAction action)
     {
+        if (m_actionSet) 
+        {
+            Debug.LogWarning("CV: Action Already Set");
+            return;
+        }
+
         ActionContext ctx = new ActionContext()
         {
             Action = action,
             Target = m_currentTarget
         };
+        m_actionSet = true;
         m_currentActor.SetActionContext(ctx);
     }
     private void ClearActionTypeButtons() 

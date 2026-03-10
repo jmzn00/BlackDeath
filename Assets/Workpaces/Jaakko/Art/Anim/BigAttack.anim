@@ -117,14 +117,14 @@ AnimationClip:
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 0.5833333
+  - time: 0.6666667
     functionName: Anim_OpenWindow
     data: Confirm_O
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 1
+  - time: 1.1666666
     functionName: Anim_CloseWindow
     data: 
     objectReferenceParameter: {fileID: 0}

@@ -41,6 +41,7 @@ public class HealthComponent : MonoBehaviour, IDamageable, IActorComponent
     }
     public void ApplyDamage(float amount, Actor attacker = null) 
     {
+        //Debug.Log($"{amount} damage applied to {name}");
         float newHealth = Mathf.Max(0, m_currentHealth - amount);
         SetHealth(newHealth);
     }

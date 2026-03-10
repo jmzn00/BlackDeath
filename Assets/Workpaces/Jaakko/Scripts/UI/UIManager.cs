@@ -188,7 +188,6 @@ public class UIControllerNavigation
         var current = EventSystem.current.currentSelectedGameObject;
         if (current == null) return;
 
-        // Find next selectable to the right based on position
         var next = m_selectables
             .Where(s => s.gameObject != current)
             .OrderBy(s => s.transform.position.x)
@@ -207,7 +206,6 @@ public class UIControllerNavigation
         var current = EventSystem.current.currentSelectedGameObject;
         if (current == null) return;
 
-        // Find next selectable to the left based on position
         var next = m_selectables
             .Where(s => s.gameObject != current)
             .OrderByDescending(s => s.transform.position.x)

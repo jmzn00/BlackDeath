@@ -23,9 +23,9 @@ public class ReactiveWindow
     private float m_dodgeCooldownTimer;
     private float m_confirmCooldownTimer;   
 
-    private float m_parryCooldown = 0.1f;
-    private float m_dodgeCooldown = 0.1f;
-    private float m_confirmCooldown = 0.1f;
+    private float m_parryCooldown = 0.2f;
+    private float m_dodgeCooldown = 0.2f;
+    private float m_confirmCooldown = 0.2f;
 
 
     private float m_attackerTime;
@@ -83,8 +83,8 @@ public class ReactiveWindow
     public void Open(ActionContext ctx)
     {
         Reset();
-
-        m_context = ctx;        
+        m_context = ctx;   
+        m_skipFirstFrame = true;
 
         m_prompt = PromptLibrary.Get(ctx.PromptKey);
         m_prompt.action.Enable();
@@ -117,6 +117,8 @@ public class ReactiveWindow
         OnDodgeWindowOpened?.Invoke(false);
         OnConfirmWindowOpened?.Invoke(false);
         OnWindowOpened?.Invoke(m_prompt);
+
+        OnConfirmWindowOpened?.Invoke(false);
     }
     #region DefenderPrompts
     public void SetDefenderPrompts()
@@ -193,8 +195,14 @@ public class ReactiveWindow
         }
     }
     #endregion
+    private bool m_skipFirstFrame;    
     public void Update(float dt)
     {
+        if (m_skipFirstFrame == true) 
+        {
+            m_skipFirstFrame = false;
+            return;
+        }
         if (!m_windowOpen) return;
         HandleInput();
 
@@ -212,8 +220,6 @@ public class ReactiveWindow
             OnParryWindowOpened?.Invoke(false);
         if (!CanDodge)
             OnDodgeWindowOpened?.Invoke(false);
-        if (!CanConfirm)
-            OnConfirmWindowOpened?.Invoke(false);
     }
 
     public void TryActivateParry() 
@@ -239,15 +245,17 @@ public class ReactiveWindow
     }
 
     public ReactionType ConsumeDefenderReaction() 
-    {
+    {        
         ReactionType result = m_defenderReaction;
         m_defenderReaction = ReactionType.None;
+        //Debug.Log($"Consumed Defender Reaction {result}");
         return result;
     }
     public ReactionType ConsumeAttackerReaction()
     {
         var result = m_attackerReaction;
         m_attackerReaction = ReactionType.None;
+        //Debug.Log($"Consumed Attacker Reaction {result}");
         return result;
     }   
 }
