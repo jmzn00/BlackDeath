@@ -14,22 +14,6 @@ public enum ReactionType
 public class ReactiveWindow
 {
     private bool m_windowOpen = false;
-
-    public readonly float m_parryWindow = 0.3f;
-    public readonly float m_dodgeWindow = 0.5f;
-    public readonly float m_confirmWindow = 0.5f;
-
-    private float m_parryCooldownTimer;
-    private float m_dodgeCooldownTimer;
-    private float m_confirmCooldownTimer;   
-
-    private float m_parryCooldown = 0.2f;
-    private float m_dodgeCooldown = 0.2f;
-    private float m_confirmCooldown = 0.2f;
-
-
-    private float m_attackerTime;
-    private float m_defenderTime;
   
     private ReactionType m_attackerReaction;
     private ReactionType m_defenderReaction;
@@ -39,13 +23,6 @@ public class ReactiveWindow
     public event Action<bool> OnConfirmWindowOpened;
 
     public event Action<ActionContext> OnWindowClosed;
-
-    private bool CanParry => (m_defenderTime <= m_parryWindow)
-        && m_parryCooldownTimer <= 0f;
-    private bool CanDodge => (m_defenderTime <= m_dodgeWindow)
-        && m_dodgeCooldownTimer <= 0f;
-    private bool CanConfirm => m_attackerTime <= m_confirmWindow
-        && m_confirmCooldownTimer <= 0f;
 
     private ActionContext m_context;
 
@@ -78,9 +55,6 @@ public class ReactiveWindow
     {
         m_attackerReaction = ReactionType.None;
         m_defenderReaction = ReactionType.None;
-
-        m_defenderTime = 0f;
-        m_attackerTime = 0f;
     }
     public void Open(ActionContext ctx)
     {
@@ -165,56 +139,31 @@ public class ReactiveWindow
                 m_context.Target.ReactionProvider.TryReact(this, m_defenderPrompts[i]);
             }
         }        
-        m_attackerTime += dt;
-        m_defenderTime += dt;
-
-        if (m_parryCooldownTimer >= 0f)
-            m_parryCooldownTimer -= dt;
-        if (m_dodgeCooldownTimer >= 0f)
-            m_dodgeCooldownTimer -= dt;
-        if (m_confirmCooldownTimer >= 0f)
-            m_confirmCooldownTimer -= dt;
-
-        if (!CanParry)
-            OnParryWindowOpened?.Invoke(false);
-        if (!CanDodge)
-            OnDodgeWindowOpened?.Invoke(false);
     }
 
     public void TryActivateParry() 
     {
-        if (!CanParry) return;
-
         m_defenderReaction = ReactionType.Parry;
-        m_parryCooldownTimer = m_parryCooldown;
     }
     public void TryActivateDodge() 
     {
-        if (!CanDodge) return;
-
         m_defenderReaction = ReactionType.Dodge;
-        m_dodgeCooldownTimer = m_dodgeCooldown;
     }
     public void TryActivateConfirm()
     {
-        if (!CanConfirm) return;
-
         m_attackerReaction = ReactionType.Confirm;
-        m_confirmCooldownTimer = m_confirmCooldown;
     }
 
     public ReactionType ConsumeDefenderReaction() 
     {        
         ReactionType result = m_defenderReaction;
         m_defenderReaction = ReactionType.None;
-        //Debug.Log($"Consumed Defender Reaction {result}");
         return result;
     }
     public ReactionType ConsumeAttackerReaction()
     {
         var result = m_attackerReaction;
         m_attackerReaction = ReactionType.None;
-        //Debug.Log($"Consumed Attacker Reaction {result}");
         return result;
     }   
 }

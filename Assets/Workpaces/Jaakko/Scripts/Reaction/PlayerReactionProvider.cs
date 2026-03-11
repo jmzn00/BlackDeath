@@ -1,9 +1,19 @@
-using Mono.Cecil;
+using UnityEngine;
 
 public class PlayerReactionProvider : IReactionProvider
 {
+    private CombatActor m_actor;
+    public PlayerReactionProvider(CombatActor actor) 
+    {
+        m_actor = actor;
+    }
     public void TryReact(ReactiveWindow window, InputPrompt prompt) 
     {
+        if (m_actor.DefensiveAnimationPlaying) 
+        {
+            return;
+        }
+
         if (!prompt.action.WasPressedThisFrame()) return;
 
         switch (prompt.inputType) 

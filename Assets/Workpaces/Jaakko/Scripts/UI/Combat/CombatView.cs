@@ -167,6 +167,7 @@ public class CombatView : MonoBehaviour, IUIComponentView
 
         var attackActions = actions.OfType<AttackAction>().Cast<CombatAction>().ToList();
         var skillActions = actions.OfType<SkillAction>().Cast<CombatAction>().ToList();
+        var skipActions = actions.OfType<SkipTurnAction>().Cast<CombatAction>().ToList();
 
         if (attackActions.Count > 0)
         {
@@ -175,6 +176,10 @@ public class CombatView : MonoBehaviour, IUIComponentView
         if (skillActions.Count > 0)
         {
             CreateActionTypeButton("Skill", skillActions);
+        }
+        if (skipActions.Count > 0) 
+        {
+            CreateActionTypeButton("Skip", skipActions);
         }
     }
     private void CreateActionTypeButton(string label, List<CombatAction> actions)

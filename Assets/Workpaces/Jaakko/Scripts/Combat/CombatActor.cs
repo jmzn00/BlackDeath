@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.iOS;
 
 [Serializable]
 public class AiReactionSettings 
@@ -23,6 +25,7 @@ public class CombatActor : MonoBehaviour, IActorComponent
     public Actor Actor => m_actor;
 
     private CombatManager m_combatManager;
+    private InputManager m_input;
 
     private IActionProvider m_actionProvider;
     public IActionProvider ActionProvider => m_actionProvider;
@@ -54,6 +57,9 @@ public class CombatActor : MonoBehaviour, IActorComponent
     [Header("AI")]
     [SerializeField] private AiReactionSettings m_reactionSettings;
 
+    private bool m_defensiveAnimationPlaying;
+    public bool DefensiveAnimationPlaying => m_defensiveAnimationPlaying;
+
 
     #region IActorComponent
     public bool Initialize(GameManager game)
@@ -62,6 +68,12 @@ public class CombatActor : MonoBehaviour, IActorComponent
 
         m_combatManager = game.Resolve<CombatManager>();
         m_uiController = game.Resolve<UIManager>().Controller;
+        m_input = game.Resolve<InputManager>();
+
+        m_input.InputActions.Combat.Parry.performed
+            += OnParryPerformed; 
+        m_input.InputActions.Combat.Dodge.performed
+            += OnDodgePerformed;
 
         IsPlayer = m_actor.IsPlayable;
 
@@ -69,7 +81,7 @@ public class CombatActor : MonoBehaviour, IActorComponent
         {
             SetActionProvider(new PlayerActionProvider(m_combatManager,
                 m_uiController));
-            SetReactionProvider(new PlayerReactionProvider());            
+            SetReactionProvider(new PlayerReactionProvider(this));            
         }
         else
         {
@@ -79,7 +91,7 @@ public class CombatActor : MonoBehaviour, IActorComponent
         return true;
     }
     void OnHealthChanged(float value)
-    {
+    {        
         if (value <= 0f)
         {
             IsDead = true;
@@ -91,6 +103,11 @@ public class CombatActor : MonoBehaviour, IActorComponent
     }
     public bool Dispose()
     {
+        m_input.InputActions.Combat.Parry.performed
+            -= OnParryPerformed;
+        m_input.InputActions.Combat.Dodge.performed
+            -= OnDodgePerformed;
+        m_animationController.OnDefensiveAnimationPlaying -= OnDefensiveAnimationPlaying;
         return true;
     }
     public void OnActorComponentsInitialized(Actor actor)
@@ -99,6 +116,7 @@ public class CombatActor : MonoBehaviour, IActorComponent
         m_health.OnHealthChanged += OnHealthChanged;
 
         m_animationController = GetComponent<AnimationController>();
+        m_animationController.OnDefensiveAnimationPlaying += OnDefensiveAnimationPlaying;
     }
     public void SetInputSource(IInputSource source)
     {
@@ -114,6 +132,24 @@ public class CombatActor : MonoBehaviour, IActorComponent
     }
     #endregion
     #region Combat
+    void OnParryPerformed(InputAction.CallbackContext ctx)
+    {
+        if (!Actor.IsControlled) return;
+
+        m_defensiveAnimationPlaying = true;
+        m_animationController?.PlayDefensiveAnimation(AnimationType.Parry);
+    }
+    void OnDodgePerformed(InputAction.CallbackContext ctx) 
+    {
+        if (!Actor.IsControlled) return;
+
+        m_defensiveAnimationPlaying = true;
+        m_animationController?.PlayDefensiveAnimation(AnimationType.Dodge);
+    }
+    void OnDefensiveAnimationPlaying(bool value) 
+    {
+        m_defensiveAnimationPlaying = value;
+    }
     public void OnTurnStart()
     {
         if (m_statusEffects == null || m_statusEffects.Count == 0) return;
