@@ -278,8 +278,10 @@ public class CombatManager : IManager
         int spawns = 0;
         foreach (var t in prefs.m_enemySpawnPoints)
         {
+            int enemyIndex = spawns % prefs.m_enemies.Length;
+
             Actor a =
-                GameObject.Instantiate(prefs.m_enemies[0], t.position, t.rotation);
+                GameObject.Instantiate(prefs.m_enemies[enemyIndex], t.position, t.rotation);
             a.gameObject.name += spawns.ToString();
             spawns++;
 
