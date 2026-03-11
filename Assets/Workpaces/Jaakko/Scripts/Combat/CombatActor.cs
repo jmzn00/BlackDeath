@@ -3,29 +3,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.iOS;
-
-[Serializable]
-public class AiReactionSettings 
-{
-    [Range(0, 100)]
-    public int dodgePercentage;
-    [Range(0, 100)]
-    public int parryPercentage;
-    [Range(0, 100)]
-    public int confirmPercentage;
-}
 
 [RequireComponent(typeof(Actor))]
 public class CombatActor : MonoBehaviour, IActorComponent
 {    
-    public bool IsDead { get; private set; }
+    public bool IsDead { get; protected set; }
     public bool IsPlayer { get; private set; }
     private Actor m_actor;
     public Actor Actor => m_actor;
 
-    private CombatManager m_combatManager;
-    private InputManager m_input;
+    protected CombatManager m_combatManager;
 
     private IActionProvider m_actionProvider;
     public IActionProvider ActionProvider => m_actionProvider;
@@ -49,46 +36,40 @@ public class CombatActor : MonoBehaviour, IActorComponent
     private HealthComponent m_health;
     public HealthComponent Health => m_health;
 
-
-    private UIController m_uiController; // temp
     private AnimationController m_animationController; // temp
-    [SerializeField] private GameObject m_visual; // temp 
+    [SerializeField] protected GameObject m_visual; // temp 
 
-    [Header("AI")]
-    [SerializeField] private AiReactionSettings m_reactionSettings;
-
-    private bool m_defensiveAnimationPlaying;
+    protected bool m_defensiveAnimationPlaying;
     public bool DefensiveAnimationPlaying => m_defensiveAnimationPlaying;
 
-
+    protected bool m_currentlyTargeted;
+    public event Action<CombatActor, CombatActor, CombatAction> OnTargeted;
+    public event Action<CombatActor, CombatActor, CombatAction> OnNoLongerTargeted;
+    public void NotifyTargeted(CombatActor source, CombatAction action) 
+    {
+        OnTargeted?.Invoke(source, this, action);
+    }
+    public void NotifyNoLongerTargeted(CombatActor source, CombatAction action) 
+    {
+        OnNoLongerTargeted?.Invoke(source, this, action);
+    }
     #region IActorComponent
     public bool Initialize(GameManager game)
     {
         m_actor = GetComponent<Actor>();
-
-        m_combatManager = game.Resolve<CombatManager>();
-        m_uiController = game.Resolve<UIManager>().Controller;
-        m_input = game.Resolve<InputManager>();
-
-        m_input.InputActions.Combat.Parry.performed
-            += OnParryPerformed; 
-        m_input.InputActions.Combat.Dodge.performed
-            += OnDodgePerformed;
-
         IsPlayer = m_actor.IsPlayable;
 
-        if (IsPlayer)
-        {
-            SetActionProvider(new PlayerActionProvider(m_combatManager,
-                m_uiController));
-            SetReactionProvider(new PlayerReactionProvider(this));            
-        }
-        else
-        {
-            SetActionProvider(new AIActionProvider());
-            SetReactionProvider(new AIReactionProvider(m_reactionSettings, this));
-        }
+        m_combatManager = game.Resolve<CombatManager>();      
+        OnInitliazed(game);
         return true;
+    }
+    protected virtual void OnInitliazed(GameManager game) 
+    {
+
+    }   
+    protected virtual void OnDispose() 
+    {
+        
     }
     void OnHealthChanged(float value)
     {        
@@ -103,11 +84,8 @@ public class CombatActor : MonoBehaviour, IActorComponent
     }
     public bool Dispose()
     {
-        m_input.InputActions.Combat.Parry.performed
-            -= OnParryPerformed;
-        m_input.InputActions.Combat.Dodge.performed
-            -= OnDodgePerformed;
         m_animationController.OnDefensiveAnimationPlaying -= OnDefensiveAnimationPlaying;
+        OnDispose();
         return true;
     }
     public void OnActorComponentsInitialized(Actor actor)
@@ -132,25 +110,13 @@ public class CombatActor : MonoBehaviour, IActorComponent
     }
     #endregion
     #region Combat
-    public void AI_Parry() 
+    public void OnParryPerformed()
     {
-        m_animationController?.PlayDefensiveAnimation(AnimationType.Parry);
-    }
-    public void AI_Dodge() 
-    {
-        m_animationController?.PlayDefensiveAnimation(AnimationType.Dodge);
-    }
-    void OnParryPerformed(InputAction.CallbackContext ctx)
-    {
-        if (!Actor.IsControlled) return;
-
         m_defensiveAnimationPlaying = true;
         m_animationController?.PlayDefensiveAnimation(AnimationType.Parry);
     }
-    void OnDodgePerformed(InputAction.CallbackContext ctx) 
+    public void OnDodgePerformed() 
     {
-        if (!Actor.IsControlled) return;
-
         m_defensiveAnimationPlaying = true;
         m_animationController?.PlayDefensiveAnimation(AnimationType.Dodge);
     }
@@ -194,22 +160,12 @@ public class CombatActor : MonoBehaviour, IActorComponent
     {
 
     }
-    public void OnCombatFinished()
+    public virtual void OnCombatFinished()
     {
         foreach (var effect in m_statusEffects)
             Destroy(effect);
 
         m_statusEffects.Clear();
-
-        if (m_visual)
-            m_visual.SetActive(true);
-
-        // have combatmanager handle obj destruction
-        if (!IsPlayer)
-            Destroy(gameObject); // add pooling?
-        if (IsDead)
-            IsDead = false;
-        Health.ApplyHealth(Health.MaxHealth);
     }
     public bool SetActionContext(ActionContext ctx)
     {
@@ -218,11 +174,11 @@ public class CombatActor : MonoBehaviour, IActorComponent
         m_combatManager.SubmitAction(ctx);
         return false;
     }
-    private void SetActionProvider(IActionProvider provider)
+    protected void SetActionProvider(IActionProvider provider)
     {
         m_actionProvider = provider;
     }
-    private void SetReactionProvider(IReactionProvider provider) 
+    protected void SetReactionProvider(IReactionProvider provider) 
     {
         m_reactionProvider = provider;
     }

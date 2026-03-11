@@ -155,7 +155,11 @@ public class CombatManager : IManager
             m_state = CombatState.Ending;
             return;
         }
-        m_currentActor.OnTurnEnd();
+        m_lastResolvedContext.Target
+            .NotifyNoLongerTargeted(m_lastResolvedContext.Source
+            , m_lastResolvedContext.Action);
+
+        m_currentActor.OnTurnEnd();        
         int attempts = 0;
         do
         {
@@ -213,11 +217,13 @@ public class CombatManager : IManager
             Debug.Log("Context Target is NULL");
             return;
         }
-        m_uiManager.SetInputMode(UIInputMode.Combat);
+        m_uiManager.SetInputMode(UIInputMode.Combat);        
         ExecuteAction(ctx);
     }
     private void ExecuteAction(ActionContext ctx)
     {
+        ctx.Target.NotifyTargeted(ctx.Source, ctx.Action);
+
         m_state = CombatState.ResolvingAction;
         m_waitingForResolve = true;
 
@@ -225,7 +231,8 @@ public class CombatManager : IManager
         {
             m_waitingForResolve = false;
         });
-    }    
+    }
+    private ActionContext m_lastResolvedContext;
     private void ResolveAction(ActionContext ctx)
     {
         if (ctx == null || ctx.Action == null)
@@ -250,12 +257,12 @@ public class CombatManager : IManager
         if (attackerReaction == ReactionType.Confirm && result == ActionResult.Hit) 
         {
             result = ActionResult.Confirmed;
-        }
-
-        Debug.Log($"Action Result: {result}");
-
+        }        
+        m_lastResolvedContext = ctx;
         ctx.Action.ResolveResult(ctx, result);
         OnActionResolved?.Invoke(ctx, result);
+
+        Debug.Log($"Action Result: {result}");
     }
 
     public void StartBattle(CombatPreferences prefs)

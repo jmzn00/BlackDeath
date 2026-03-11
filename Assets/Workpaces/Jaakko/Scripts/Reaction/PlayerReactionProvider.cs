@@ -9,12 +9,17 @@ public class PlayerReactionProvider : IReactionProvider
     }
     public void TryReact(ReactiveWindow window, InputPrompt prompt) 
     {
+        /*
         if (m_actor.DefensiveAnimationPlaying) 
+        {
+            Debug.Log("PR: DefensiveAnimPlaying");
+            return;
+        }
+        */
+        if (!prompt.action.WasPressedThisFrame()) 
         {
             return;
         }
-
-        if (!prompt.action.WasPressedThisFrame()) return;
 
         switch (prompt.inputType) 
         {

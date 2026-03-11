@@ -45,7 +45,7 @@ public class AIReactionProvider : IReactionProvider
         if (m_rolledPrompts.Contains(prompt)) return;
 
         float roll = Random.value * 100f;
-        Debug.Log($"[AIReactionProvider] Roll {roll:0.00} for prompt {prompt.name} ({prompt.inputType})");
+        //Debug.Log($"[AIReactionProvider] Roll {roll:0.00} for prompt {prompt.name} ({prompt.inputType})");
 
         switch (prompt.inputType)
         {
@@ -53,14 +53,14 @@ public class AIReactionProvider : IReactionProvider
                 if (roll < parryPercentage) 
                 {
                     window.TryActivateParry();
-                    m_actor.AI_Parry();
+                    m_actor.OnDodgePerformed();
                 }                
                 break;
             case PromptInputType.Dodge:
                 if (roll < dodgePercentage) 
                 {
                     window.TryActivateDodge();
-                    m_actor.AI_Dodge();
+                    m_actor.OnParryPerformed();
                 }
                 
                 break;

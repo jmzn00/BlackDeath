@@ -806,8 +806,8 @@ GameObject:
   - component: {fileID: 150782661}
   - component: {fileID: 150782659}
   - component: {fileID: 150782660}
-  - component: {fileID: 150782665}
   - component: {fileID: 150782666}
+  - component: {fileID: 150782667}
   m_Layer: 0
   m_Name: Actor_Alt
   m_TagString: Untagged
@@ -958,27 +958,6 @@ Transform:
   - {fileID: 1977871390}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &150782665
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 150782658}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d49067907496b884aa91ef2b8c6f15bd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CombatActor
-  m_actions:
-  - {fileID: 11400000, guid: 87f5263f686512649bd4cd039a07cb55, type: 2}
-  - {fileID: 11400000, guid: d3d655d88e677bd4e9f2c90c59737ebb, type: 2}
-  - {fileID: 11400000, guid: 4f242df511265bf4eb90ed3d4a7fb590, type: 2}
-  m_visual: {fileID: 1029693520}
-  m_reactionSettings:
-    dodgePercentage: 0
-    parryPercentage: 0
-    confirmPercentage: 0
 --- !u!114 &150782666
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -993,6 +972,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HealthComponent
   m_maxHealth: 10
   CurrentHealth: 0
+--- !u!114 &150782667
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 150782658}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 349e3151c7991cf4e8a035e713c06cae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerCombatActor
+  m_actions:
+  - {fileID: 11400000, guid: 87f5263f686512649bd4cd039a07cb55, type: 2}
+  - {fileID: 11400000, guid: dfdad7663ecea414698ac367f47a6981, type: 2}
+  - {fileID: 11400000, guid: 4f242df511265bf4eb90ed3d4a7fb590, type: 2}
+  m_visual: {fileID: 1029693520}
 --- !u!1 &211047576
 GameObject:
   m_ObjectHideFlags: 0
@@ -5904,10 +5900,10 @@ GameObject:
   - component: {fileID: 1957921809137096914}
   - component: {fileID: 6923989823571581363}
   - component: {fileID: 6923989823571581364}
-  - component: {fileID: 6923989823571581362}
   - component: {fileID: 6923989823571581361}
-  - component: {fileID: 6923989823571581365}
+  - component: {fileID: 6923989823571581362}
   - component: {fileID: 6923989823571581366}
+  - component: {fileID: 6923989823571581367}
   m_Layer: 0
   m_Name: Actor_Main
   m_TagString: Player
@@ -6044,27 +6040,6 @@ MonoBehaviour:
     SecondWallJumpStaminaCost: 0
     WallJumpStaminaCost: 0
     ConsecutiveWallJumpStaminaCostMultiplier: 0
---- !u!114 &6923989823571581365
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5691792979182146048}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d49067907496b884aa91ef2b8c6f15bd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CombatActor
-  m_actions:
-  - {fileID: 11400000, guid: dfdad7663ecea414698ac367f47a6981, type: 2}
-  - {fileID: 11400000, guid: 87f5263f686512649bd4cd039a07cb55, type: 2}
-  - {fileID: 11400000, guid: 4f242df511265bf4eb90ed3d4a7fb590, type: 2}
-  m_visual: {fileID: 1992347720}
-  m_reactionSettings:
-    dodgePercentage: 0
-    parryPercentage: 0
-    confirmPercentage: 0
 --- !u!114 &6923989823571581366
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6079,6 +6054,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HealthComponent
   m_maxHealth: 15
   CurrentHealth: 0
+--- !u!114 &6923989823571581367
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5691792979182146048}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 349e3151c7991cf4e8a035e713c06cae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerCombatActor
+  m_actions:
+  - {fileID: 11400000, guid: 87f5263f686512649bd4cd039a07cb55, type: 2}
+  - {fileID: 11400000, guid: d3d655d88e677bd4e9f2c90c59737ebb, type: 2}
+  - {fileID: 11400000, guid: 4f242df511265bf4eb90ed3d4a7fb590, type: 2}
+  m_visual: {fileID: 1992347720}
 --- !u!1001 &7480100165545062637
 PrefabInstance:
   m_ObjectHideFlags: 0

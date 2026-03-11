@@ -51,24 +51,24 @@ public class Actor : MonoBehaviour, IActor
 
         return false;
     }
-#endif    
-    public void SetControl(bool controlled) 
+#endif
+    public void SetControl(bool controlled)
     {
         if (IsControlled == controlled)
             return;
 
         IsControlled = controlled;
 
-        if (controlled) 
+        if (controlled)
         {
             ChangeComponentInputSource(m_playerInputSource);
         }
-        else 
+        else
         {
             ChangeComponentInputSource(m_aiInputSource);
         }
     }
-    void ChangeComponentInputSource(IInputSource source) 
+    void ChangeComponentInputSource(IInputSource source)
     {
         foreach (var comp in m_components.Values)
         {
@@ -108,12 +108,12 @@ public class Actor : MonoBehaviour, IActor
         {
             comp.Initialize(game);
             m_components[comp.GetType()] = comp;
-        }        
+        }
         OnActorComponentsInitialized();
         m_playerInputSource = new PlayerInputSource(game.Resolve<InputManager>());
-        m_aiInputSource = new AIInputSource();        
+        m_aiInputSource = new AIInputSource();
     }
-    public virtual void OnActorComponentsInitialized() 
+    public virtual void OnActorComponentsInitialized()
     {
         foreach (var comp in m_components.Values)
             comp.OnActorComponentsInitialized(this);
@@ -127,7 +127,7 @@ public class Actor : MonoBehaviour, IActor
     }
 
     private void LoadActorComponentData(ActorSaveData data)
-    {
+    {   
         foreach (var comp in m_components.Values)
             comp.LoadData(data);
     }
@@ -149,8 +149,17 @@ public class Actor : MonoBehaviour, IActor
     // Get a component by generic type
     public T Get<T>() where T : class, IActorComponent
     {
+        // Try exact-type lookup first
         if (m_components.TryGetValue(typeof(T), out var comp))
             return comp as T;
+
+        // Fallback: return the first stored component that is assignable to T
+        foreach (var kv in m_components)
+        {
+            if (kv.Value is T matched)
+                return matched;
+        }
+
         return null;
     }
 
@@ -159,6 +168,13 @@ public class Actor : MonoBehaviour, IActor
     {
         if (m_components.TryGetValue(type, out var comp))
             return comp;
+
+        // Fallback: find any stored component whose concrete type is assignable to requested type
+        foreach (var kv in m_components)
+        {
+            if (type.IsAssignableFrom(kv.Key))
+                return kv.Value;
+        }
         return null;
     }
 }
