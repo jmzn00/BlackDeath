@@ -10,8 +10,12 @@ public class AIReactionProvider : IReactionProvider
     private readonly HashSet<InputPrompt> m_rolledPrompts = new();
 
     private bool m_subscribed = false;
-    public AIReactionProvider(AiReactionSettings settings)
+
+    private CombatActor m_actor;
+    public AIReactionProvider(AiReactionSettings settings, CombatActor actor)
     {
+        m_actor = actor;
+
         if (settings == null)
         {
             Debug.LogWarning("[AIReactionProvider] settings is null — using zero chances.");
@@ -46,12 +50,19 @@ public class AIReactionProvider : IReactionProvider
         switch (prompt.inputType)
         {
             case PromptInputType.Parry:
-                if (roll < parryPercentage)
+                if (roll < parryPercentage) 
+                {
                     window.TryActivateParry();
+                    m_actor.AI_Parry();
+                }                
                 break;
             case PromptInputType.Dodge:
-                if (roll < dodgePercentage)
+                if (roll < dodgePercentage) 
+                {
                     window.TryActivateDodge();
+                    m_actor.AI_Dodge();
+                }
+                
                 break;
             case PromptInputType.Confirm:
                 if (roll < confirmPercentage)

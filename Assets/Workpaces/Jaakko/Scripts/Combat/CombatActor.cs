@@ -86,7 +86,7 @@ public class CombatActor : MonoBehaviour, IActorComponent
         else
         {
             SetActionProvider(new AIActionProvider());
-            SetReactionProvider(new AIReactionProvider(m_reactionSettings));
+            SetReactionProvider(new AIReactionProvider(m_reactionSettings, this));
         }
         return true;
     }
@@ -132,6 +132,14 @@ public class CombatActor : MonoBehaviour, IActorComponent
     }
     #endregion
     #region Combat
+    public void AI_Parry() 
+    {
+        m_animationController?.PlayDefensiveAnimation(AnimationType.Parry);
+    }
+    public void AI_Dodge() 
+    {
+        m_animationController?.PlayDefensiveAnimation(AnimationType.Dodge);
+    }
     void OnParryPerformed(InputAction.CallbackContext ctx)
     {
         if (!Actor.IsControlled) return;

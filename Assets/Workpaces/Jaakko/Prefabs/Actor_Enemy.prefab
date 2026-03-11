@@ -168,6 +168,8 @@ MonoBehaviour:
   m_spriteRenderer: {fileID: 5093997064220521558}
   m_idleAnim: {fileID: 7400000, guid: 514bc794587bf3348b66f7b318109bac, type: 2}
   m_runAnim: {fileID: 7400000, guid: 63e02d32969e3b7438060ca2da476b80, type: 2}
+  m_dodgeAnim: {fileID: 7400000, guid: f38ee071d7c3e804b8828547a025f7f6, type: 2}
+  m_parryAnim: {fileID: 7400000, guid: 6237323bf1378af43a63e6523222f8f8, type: 2}
 --- !u!143 &7519845105093333698
 CharacterController:
   m_ObjectHideFlags: 0
@@ -270,9 +272,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: dfdad7663ecea414698ac367f47a6981, type: 2}
   m_visual: {fileID: 1251749698081068059}
   m_reactionSettings:
-    dodgePercentage: 15
+    dodgePercentage: 20
     parryPercentage: 5
-    confirmPercentage: 40
+    confirmPercentage: 30
 --- !u!114 &6752013568241414850
 MonoBehaviour:
   m_ObjectHideFlags: 0
