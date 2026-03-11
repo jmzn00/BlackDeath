@@ -269,6 +269,10 @@ MonoBehaviour:
   m_actions:
   - {fileID: 11400000, guid: dfdad7663ecea414698ac367f47a6981, type: 2}
   m_visual: {fileID: 1251749698081068059}
+  m_reactionSettings:
+    dodgePercentage: 15
+    parryPercentage: 5
+    confirmPercentage: 40
 --- !u!114 &6752013568241414850
 MonoBehaviour:
   m_ObjectHideFlags: 0

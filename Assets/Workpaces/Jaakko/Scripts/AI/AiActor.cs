@@ -1,3 +1,4 @@
+[System.Serializable]
 public class AiActor : Actor
 {
     public override void Init(GameManager game)

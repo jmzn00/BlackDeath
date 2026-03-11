@@ -972,6 +972,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 87f5263f686512649bd4cd039a07cb55, type: 2}
   - {fileID: 11400000, guid: d3d655d88e677bd4e9f2c90c59737ebb, type: 2}
   m_visual: {fileID: 1029693520}
+  m_reactionSettings:
+    dodgePercentage: 0
+    parryPercentage: 0
 --- !u!114 &150782666
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6051,6 +6054,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: dfdad7663ecea414698ac367f47a6981, type: 2}
   - {fileID: 11400000, guid: 87f5263f686512649bd4cd039a07cb55, type: 2}
   m_visual: {fileID: 1992347720}
+  m_reactionSettings:
+    dodgePercentage: 0
+    parryPercentage: 0
 --- !u!114 &6923989823571581366
 MonoBehaviour:
   m_ObjectHideFlags: 0

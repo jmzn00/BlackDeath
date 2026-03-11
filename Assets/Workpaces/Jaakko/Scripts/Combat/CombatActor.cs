@@ -3,9 +3,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[Serializable]
+public class AiReactionSettings 
+{
+    [Range(0, 100)]
+    public int dodgePercentage;
+    [Range(0, 100)]
+    public int parryPercentage;
+    [Range(0, 100)]
+    public int confirmPercentage;
+}
+
 [RequireComponent(typeof(Actor))]
 public class CombatActor : MonoBehaviour, IActorComponent
-{
+{    
     public bool IsDead { get; private set; }
     public bool IsPlayer { get; private set; }
     private Actor m_actor;
@@ -15,6 +26,9 @@ public class CombatActor : MonoBehaviour, IActorComponent
 
     private IActionProvider m_actionProvider;
     public IActionProvider ActionProvider => m_actionProvider;
+
+    private IReactionProvider m_reactionProvider;
+    public IReactionProvider ReactionProvider => m_reactionProvider;
 
     [SerializeField] private List<CombatAction> m_actions;
     public List<CombatAction> Actions => m_actions;
@@ -37,6 +51,9 @@ public class CombatActor : MonoBehaviour, IActorComponent
     private AnimationController m_animationController; // temp
     [SerializeField] private GameObject m_visual; // temp 
 
+    [Header("AI")]
+    [SerializeField] private AiReactionSettings m_reactionSettings;
+
 
     #region IActorComponent
     public bool Initialize(GameManager game)
@@ -52,10 +69,12 @@ public class CombatActor : MonoBehaviour, IActorComponent
         {
             SetActionProvider(new PlayerActionProvider(m_combatManager,
                 m_uiController));
+            SetReactionProvider(new PlayerReactionProvider());            
         }
         else
         {
             SetActionProvider(new AIActionProvider());
+            SetReactionProvider(new AIReactionProvider(m_reactionSettings));
         }
         return true;
     }
@@ -158,6 +177,10 @@ public class CombatActor : MonoBehaviour, IActorComponent
     private void SetActionProvider(IActionProvider provider)
     {
         m_actionProvider = provider;
+    }
+    private void SetReactionProvider(IReactionProvider provider) 
+    {
+        m_reactionProvider = provider;
     }
 
     // called by CombatManager

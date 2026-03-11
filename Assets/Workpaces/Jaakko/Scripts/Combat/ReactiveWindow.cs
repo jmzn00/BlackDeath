@@ -48,7 +48,10 @@ public class ReactiveWindow
         && m_confirmCooldownTimer <= 0f;
 
     private ActionContext m_context;
+
     private List<InputPrompt> m_defenderPrompts = new();
+    private InputPrompt m_attackerPrompt;
+
     private InputPromptLibrary m_promptLibrary;
     private InputPromptLibrary PromptLibrary
     {
@@ -64,8 +67,7 @@ public class ReactiveWindow
             return m_promptLibrary;
         }
     }
-
-    private InputPrompt m_prompt;
+    
 
     public event Action<InputPrompt> OnWindowOpened;
     public ReactiveWindow()
@@ -86,8 +88,8 @@ public class ReactiveWindow
         m_context = ctx;   
         m_skipFirstFrame = true;
 
-        m_prompt = PromptLibrary.Get(ctx.PromptKey);
-        m_prompt.action.Enable();
+        m_attackerPrompt = PromptLibrary.Get(ctx.PromptKey);
+        m_attackerPrompt.action.Enable();
         foreach (var dp in m_defenderPrompts)
         {
             dp.action.Enable();
@@ -96,7 +98,7 @@ public class ReactiveWindow
         OnParryWindowOpened?.Invoke(true);
         OnDodgeWindowOpened?.Invoke(true);
         OnConfirmWindowOpened?.Invoke(true);
-        OnWindowOpened?.Invoke(m_prompt);
+        OnWindowOpened?.Invoke(m_attackerPrompt);
 
         m_windowOpen = true;
     }
@@ -107,8 +109,8 @@ public class ReactiveWindow
 
         Reset();
         m_context = ctx;
-        m_prompt = PromptLibrary.Get(ctx.PromptKey);
-        m_prompt.action.Disable();
+        m_attackerPrompt = PromptLibrary.Get(ctx.PromptKey);
+        m_attackerPrompt.action.Disable();
         foreach (var dp in m_defenderPrompts)
         {
             dp.action.Disable();
@@ -116,7 +118,7 @@ public class ReactiveWindow
         OnParryWindowOpened?.Invoke(false);
         OnDodgeWindowOpened?.Invoke(false);
         OnConfirmWindowOpened?.Invoke(false);
-        OnWindowOpened?.Invoke(m_prompt);
+        OnWindowOpened?.Invoke(m_attackerPrompt);
 
         OnConfirmWindowOpened?.Invoke(false);
     }
@@ -143,69 +145,26 @@ public class ReactiveWindow
         }
     }
     #endregion
-    #region Input
-    private void HandleInput()
-    {
-        HandleAttackerInput();
-        HandleDefensiveInput();
-    }
-    private void HandleAttackerInput() 
-    {
-        if (m_context == null) 
-        {
-            Debug.Log("RW: Context is NULL");
-            return;
-        }
-        if (!m_context.Source.IsPlayer) return;
-
-        if (m_prompt.action.WasPressedThisFrame()) 
-        {
-            switch (m_prompt.inputType) 
-            {
-                case PromptInputType.Confirm:
-                    TryActivateConfirm();
-                    break;
-            }
-        }
-    }
-    private void HandleDefensiveInput() 
-    {
-        if (m_context == null)
-        {
-            Debug.Log("RW: Context is NULL");
-            return;
-        }
-        if (m_context.Source.IsPlayer) return;
-
-        for (int i = 0; i < m_defenderPrompts.Count; i++) 
-        {
-            InputPrompt p = m_defenderPrompts[i];
-            if (p.action.WasPressedThisFrame()) 
-            {
-                switch (p.inputType) 
-                {
-                    case PromptInputType.Dodge:
-                        TryActivateDodge();
-                        break;
-                    case PromptInputType.Parry:
-                        TryActivateParry();
-                        break;
-                }
-            }
-        }
-    }
-    #endregion
     private bool m_skipFirstFrame;    
     public void Update(float dt)
-    {
-        if (m_skipFirstFrame == true) 
+    {        
+        if (!m_windowOpen) return;
+
+        if (m_skipFirstFrame == true)
         {
             m_skipFirstFrame = false;
             return;
         }
-        if (!m_windowOpen) return;
-        HandleInput();
 
+        if (m_attackerReaction == ReactionType.None)
+            m_context.Source.ReactionProvider.TryReact(this, m_attackerPrompt);
+        if (m_defenderReaction == ReactionType.None) 
+        {
+            for (int i = 0; i < m_defenderPrompts.Count; i++)
+            {
+                m_context.Target.ReactionProvider.TryReact(this, m_defenderPrompts[i]);
+            }
+        }        
         m_attackerTime += dt;
         m_defenderTime += dt;
 

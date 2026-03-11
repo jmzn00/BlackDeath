@@ -74,7 +74,6 @@ public class UIManager : IManager
         }
         m_inputMode = mode;
 
-        Debug.Log($"Input Mode {m_inputMode}");
         switch (m_inputMode) 
         {
             case UIInputMode.None:
