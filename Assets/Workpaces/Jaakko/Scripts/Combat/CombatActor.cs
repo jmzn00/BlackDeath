@@ -58,8 +58,12 @@ public class CombatActor : MonoBehaviour, IActorComponent
     {
         m_actor = GetComponent<Actor>();
         IsPlayer = m_actor.IsPlayable;
+        m_combatManager = game.Resolve<CombatManager>();
 
-        m_combatManager = game.Resolve<CombatManager>();      
+        CombatEvents.OnCombatStarted += CombatStarted;
+        CombatEvents.OnCombatEnded += CombatEnded;
+        CombatEvents.OnTurnStarted += TurnStart;
+        CombatEvents.OnTurnEnded += TurnEnd;
         OnInitliazed(game);
         return true;
     }
@@ -76,8 +80,8 @@ public class CombatActor : MonoBehaviour, IActorComponent
         if (value <= 0f)
         {
             IsDead = true;
-            m_combatManager.OnActorDied(this);
-
+            //m_combatManager.OnActorDied(this);
+            CombatEvents.ActorDied(this);
             if (m_visual) // temp
                 m_visual.SetActive(false); // temp
         }
@@ -124,54 +128,48 @@ public class CombatActor : MonoBehaviour, IActorComponent
     {
         m_defensiveAnimationPlaying = value;
     }
-    public void OnTurnStart()
+    public void TurnStart(CombatActor actor)
     {
-        if (m_statusEffects == null || m_statusEffects.Count == 0) return;
-
-        List<ActorStatusEffect> effects = new List<ActorStatusEffect> (m_statusEffects);
-        foreach (var e in effects) 
+        if (actor != this) 
         {
-            if (e == null) return;
-                e.TurnStart();
+            return;
         }
-            
+        HandleStatusEffectsTurnStart();        
     }
-    public void OnTurnEnd()
+    public void TurnEnd(CombatActor actor) 
     {
-        for (int i = m_statusEffects.Count - 1; i >= 0; i--)
+        if (actor != this) 
         {
-            var effect = m_statusEffects[i];
-            effect.TurnEnd();
-
-            if (effect.TickDuration())
-            {
-                effect.Expire();
-                m_statusEffects.RemoveAt(i);
-                Destroy(effect);
-            }
+            return;
         }
-        OnStatusEffectsChanged?.Invoke(m_statusEffects);
+        HandleStatusEffectsTurnEnd();
     }
     public void OnCombatContextChanged(CombatContext ctx)
     {
         OnContextChanged?.Invoke(ctx);
     }
-    public void OnCombatStarted()
+    private void CombatStarted()
     {
 
     }
-    public virtual void OnCombatFinished()
+    protected virtual void CombatEnded(CombatResult result) 
     {
-        foreach (var effect in m_statusEffects)
-            Destroy(effect);
-
-        m_statusEffects.Clear();
+        ClearStatusEffects();
+    }
+    public void SubmitAction(CombatActor source,
+        CombatActor target, CombatAction action)
+    {
+        m_combatManager.Action.SubmitAction(source,
+            target, action);
     }
     public bool SetActionContext(ActionContext ctx)
     {
         ctx.Source = this;
-
-        m_combatManager.SubmitAction(ctx);
+        m_combatManager.
+            Action.
+            SubmitAction(ctx.Source,
+            ctx.Target, ctx.Action);
+        
         return false;
     }
     protected void SetActionProvider(IActionProvider provider)
@@ -191,7 +189,7 @@ public class CombatActor : MonoBehaviour, IActorComponent
 
         if (ctx.Source == ctx.Target) 
         {
-            InvokeAndClearOnComplete();
+            Anim_ActionFinished();
             return;
         }
         if (ctx.Action.animationClip == null) 
@@ -215,18 +213,22 @@ public class CombatActor : MonoBehaviour, IActorComponent
     // called by animation clip
     public void Anim_CloseWindow()
     {
-        m_combatManager.ReactiveWindow.Close(m_currentContext);
+        //m_combatManager.ReactiveWindow.Close(m_currentContext);
+        m_combatManager.Action.ClosePrompt();
     }
     // called by animator
     public void Anim_OpenWindow(string promptKey)
     {
-        m_currentContext.PromptKey = promptKey;
-        m_combatManager.ReactiveWindow.Open(m_currentContext);
+        //m_currentContext.PromptKey = promptKey;
+        //m_combatManager.ReactiveWindow.Open(m_currentContext);
+        m_combatManager.Action.OpenPrompt(promptKey);
+        
     }
     // called by animation clip
-    public void Anim_AttackFinished()
+    public void Anim_ActionFinished()
     {
-        InvokeAndClearOnComplete();
+        //InvokeAndClearOnComplete();
+        m_combatManager.Action.NotifyActionFinished(this);
     }
     private void InvokeAndClearOnComplete()
     {
@@ -241,8 +243,6 @@ public class CombatActor : MonoBehaviour, IActorComponent
         }
         finally
         {
-
-
             m_onActionComplete = null;
             m_currentContext = null;
         }
@@ -259,6 +259,48 @@ public class CombatActor : MonoBehaviour, IActorComponent
     }
     #endregion
     #region StatusEffect
+    private void HandleStatusEffectsTurnStart()
+    {
+        if (m_statusEffects == null || m_statusEffects.Count == 0) return;
+
+        List<ActorStatusEffect> effects = new List<ActorStatusEffect>(m_statusEffects);
+        foreach (var e in effects)
+        {
+            if (e == null) return;
+            e.TurnStart();
+        }
+        if (IsDead)
+        {
+            CombatEvents.ActorDied(this);
+        }
+    }
+    private void HandleStatusEffectsTurnEnd()
+    {
+        for (int i = m_statusEffects.Count - 1; i >= 0; i--)
+        {
+            var effect = m_statusEffects[i];
+            effect.TurnEnd();
+
+            if (effect.TickDuration())
+            {
+                effect.Expire();
+                m_statusEffects.RemoveAt(i);
+                Destroy(effect);
+            }
+        }
+        if (IsDead)
+        {
+            CombatEvents.ActorDied(this);
+        }
+        OnStatusEffectsChanged?.Invoke(m_statusEffects);
+    }
+    private void ClearStatusEffects() 
+    {
+        foreach (var effect in m_statusEffects)
+            Destroy(effect);
+
+        m_statusEffects.Clear();
+    }
     public void ApplyStatus(ActorStatusEffect effect)
     {
         // Always instantiate a new instance to avoid shared ScriptableObject state

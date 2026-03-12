@@ -1,4 +1,4 @@
 public interface IReactionProvider
 {
-    void TryReact(ReactiveWindow window, InputPrompt prompt);    
+    void TryReact(ReactionSystem reactionSystem, InputPrompt prompt);    
 }

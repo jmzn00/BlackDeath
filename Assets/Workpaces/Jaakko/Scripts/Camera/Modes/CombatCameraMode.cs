@@ -19,12 +19,12 @@ public class CombatCameraMode : ICameraMode
     }
     public void Enter() 
     {
-        OnActorChanged(m_combatManager.Actor);
-        m_combatManager.OnCurrentActorChanged += OnActorChanged;        
+        //OnActorChanged(m_combatManager.Actor);
+        //m_combatManager.OnCurrentActorChanged += OnActorChanged;        
     }
     public void Exit() 
     {
-        m_combatManager.OnCurrentActorChanged -= OnActorChanged;
+        //m_combatManager.OnCurrentActorChanged -= OnActorChanged;
     }
     public void Update(float dt) 
     {

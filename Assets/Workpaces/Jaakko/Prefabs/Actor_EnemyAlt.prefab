@@ -255,7 +255,7 @@ MonoBehaviour:
   m_actorID: d3abb613-3a78-45bd-9af5-7b11ac8963af
   m_playable: 0
   m_trackingTarget: {fileID: 1092603015612332266}
-  actorSprite: {fileID: 21300000, guid: c4c595114fe8b434492146fc9f50cadf, type: 3}
+  actorSprite: {fileID: 21300000, guid: 6dfd3d2ce8edea243879eeac37c43512, type: 3}
 --- !u!114 &8098921205275610837
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -64,6 +64,13 @@ public class MovementController : MonoBehaviour, IActorComponent
         transform.position = data.Position;
         m_controller.enabled = true;
     }
+    public void MoveTo(Transform t) 
+    {
+        m_controller.enabled = false;
+        transform.position = t.position;
+        transform.rotation = t.rotation;
+        m_controller.enabled = true;
+    }
     public void SaveData(ActorSaveData data)
     {
 

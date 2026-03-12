@@ -13,7 +13,7 @@ public class PlayerCombatActor : CombatActor
         m_input.InputActions.Combat.Parry.performed += HandleParry;
         m_input.InputActions.Combat.Dodge.performed += HandleDodge;
 
-        SetActionProvider(new PlayerActionProvider(m_combatManager, m_ui.Controller));
+        SetActionProvider(new PlayerActionProvider());
         SetReactionProvider(new PlayerReactionProvider(this));
 
         OnTargeted += OnActorTargeted;
@@ -45,25 +45,29 @@ public class PlayerCombatActor : CombatActor
 
     private void HandleParry(InputAction.CallbackContext ctx) 
     {
+        /*
         if (m_combatManager.State == CombatState.None
             && !Actor.IsControlled) return;
         if (m_defensiveAnimationPlaying) return;
         if (!m_currentlyTargeted) return;
 
         OnParryPerformed();
+        */
     }
     private void HandleDodge(InputAction.CallbackContext ctx) 
     {
+        /*
         if (m_combatManager.State == CombatState.None
             && !Actor.IsControlled) return;
         if (m_defensiveAnimationPlaying) return;
         if (!m_currentlyTargeted) return;
 
         OnDodgePerformed();
+        */
     }
-    public override void OnCombatFinished()
+    protected override void CombatEnded(CombatResult result)
     {
-        base.OnCombatFinished();
+        base.CombatEnded(result);
 
         if (IsDead)
             IsDead = false;

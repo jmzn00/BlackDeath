@@ -7,9 +7,7 @@ public class AIReactionProvider : IReactionProvider
     private int parryPercentage;
     private int confirmPercentage;
 
-    private readonly HashSet<InputPrompt> m_rolledPrompts = new();
 
-    private bool m_subscribed = false;
 
     private CombatActor m_actor;
     public AIReactionProvider(AiReactionSettings settings, CombatActor actor)
@@ -28,47 +26,33 @@ public class AIReactionProvider : IReactionProvider
             confirmPercentage = Mathf.Clamp(settings.confirmPercentage, 0, 100);
         }
     }
-
-    public void TryReact(ReactiveWindow window, InputPrompt prompt)
+    public void TryReact(ReactionSystem reactionSystem, InputPrompt prompt)
     {
-        if (window == null || prompt == null) return;
-
-        if (!m_subscribed)
-        {
-            window.OnWindowClosed += ctx =>
-            {
-                m_rolledPrompts.Clear();
-            };
-            m_subscribed = true;
-        }
-
-        if (m_rolledPrompts.Contains(prompt)) return;
-
+        if (reactionSystem == null || prompt == null) return;
+        /*
         float roll = Random.value * 100f;
-        //Debug.Log($"[AIReactionProvider] Roll {roll:0.00} for prompt {prompt.name} ({prompt.inputType})");
 
         switch (prompt.inputType)
         {
             case PromptInputType.Parry:
                 if (roll < parryPercentage) 
                 {
-                    window.TryActivateParry();
+                    reactionSystem.ReceiveReaction(m_actor, prompt);
                     m_actor.OnDodgePerformed();
                 }                
                 break;
             case PromptInputType.Dodge:
                 if (roll < dodgePercentage) 
                 {
-                    window.TryActivateDodge();
+                    reactionSystem.ReceiveReaction(m_actor, prompt);
                     m_actor.OnParryPerformed();
-                }
-                
+                }                
                 break;
             case PromptInputType.Confirm:
                 if (roll < confirmPercentage)
-                    window.TryActivateConfirm();
+                    reactionSystem.ReceiveReaction(m_actor, prompt);
                 break;
-        }
-        m_rolledPrompts.Add(prompt);
+        }   
+        */
     }
 }

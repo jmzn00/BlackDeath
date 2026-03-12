@@ -96,7 +96,7 @@ public class AnimationController : MonoBehaviour
     public void OnActionAnimationFinished() 
     {
         m_actionAnimationPlaying = false;
-
+        m_combatActor.Anim_ActionFinished();
         m_animator.Play(m_idleAnim.name, 0, 0f);
     }
 }

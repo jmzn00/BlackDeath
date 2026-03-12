@@ -1,5 +1,3 @@
-using UnityEngine;
-
 public class PlayerReactionProvider : IReactionProvider
 {
     private CombatActor m_actor;
@@ -7,31 +5,12 @@ public class PlayerReactionProvider : IReactionProvider
     {
         m_actor = actor;
     }
-    public void TryReact(ReactiveWindow window, InputPrompt prompt) 
+    public void TryReact(ReactionSystem reactionSystem, InputPrompt prompt) 
     {
-        /*
-        if (m_actor.DefensiveAnimationPlaying) 
-        {
-            Debug.Log("PR: DefensiveAnimPlaying");
-            return;
-        }
-        */
         if (!prompt.action.WasPressedThisFrame()) 
         {
             return;
         }
-
-        switch (prompt.inputType) 
-        {
-            case PromptInputType.Confirm:
-                window.TryActivateConfirm();
-                break;
-            case PromptInputType.Dodge:
-                window.TryActivateDodge();
-                break;
-            case PromptInputType.Parry:
-                window.TryActivateParry();
-                break;
-        }
+        reactionSystem.ReceiveReaction(m_actor, prompt);        
     }
 }

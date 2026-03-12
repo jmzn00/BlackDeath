@@ -1,3 +1,5 @@
+using Mono.Cecil;
+using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -16,31 +18,84 @@ public class CombatArea : MonoBehaviour
 {
     [SerializeField] private CombatPreferences m_combatPreferences;
     private CombatManager m_combatManager;
+    private ActorManager m_actorManager;
     private BoxCollider m_boxCollider;
     private bool m_areaCompleted;
+    private bool m_spawned;
 
-    public void SetCompleted(bool value) 
+    public void Initialize(GameManager game) 
     {
-        m_areaCompleted = value;
+        m_combatManager = game.Resolve<CombatManager>();
+        m_actorManager = game.Resolve<ActorManager>();
+        m_spawned = false;
+
+        CombatEvents.OnCombatEnded += AreaFinished;
     }
-    public void Initialize(CombatManager combatManager) 
+    private void AreaFinished(CombatResult result) 
     {
-        m_combatManager = combatManager;        
+        switch (result) 
+        {
+            case CombatResult.Won:
+                m_areaCompleted = true;
+                break;
+            case CombatResult.Lost:
+
+                break;
+        }
     }
-    public void StartBattle() 
+    public void StartBattle()
     {
-        if (m_combatPreferences.m_enemies[0] == null) 
+        if (m_combatPreferences.m_enemies[0] == null)
         {
             Debug.LogWarning("CombatArea Enemy Prefab NULL");
             return;
         }
+
         CombatPreferences prefs = m_combatPreferences;
         prefs.m_area = this;
-        m_combatManager.StartBattle(prefs);
+
+        List<CombatActor> combatActors = new List<CombatActor>();
+        int setIndex = 0;
+        foreach (Actor a in m_actorManager.Party)
+        {
+            CombatActor ca = a.Get<CombatActor>();
+            if (ca != null)
+            {
+                combatActors.Add(ca);                
+            }
+            a.Get<MovementController>().
+                MoveTo(prefs.m_partySpawnPoints[setIndex]);
+
+            setIndex++;
+        }
+
+        int enemyCount = prefs.m_enemies.Length;
+        int spawnPoints = prefs.m_enemySpawnPoints.Length;
+
+        for (int i = 0; i < spawnPoints; i++)
+        {
+            int index = i % enemyCount;
+
+            ActorSpawnPreferences asp = new ActorSpawnPreferences
+            {
+                prefab = prefs.m_enemies[index],
+                position = prefs.m_enemySpawnPoints[i].position,
+                rotation = prefs.m_enemySpawnPoints[i].rotation
+            };
+            Actor enemy = m_actorManager.Spawn(asp);
+            if (enemy != null)
+            {
+                CombatActor ca = enemy.Get<CombatActor>();
+                if (ca != null)
+                    combatActors.Add(ca);
+            }
+        }
+        m_spawned = true;
+        m_combatManager.StartCombat(combatActors);
     }
     private void OnTriggerEnter(Collider other)
     {
-        if (m_areaCompleted) return;
+        if (m_areaCompleted || m_spawned) return;
 
         if (other.CompareTag("Player")) 
         {
@@ -54,7 +109,7 @@ public class CombatArea : MonoBehaviour
             m_boxCollider = GetComponent<BoxCollider>();
         }
         Gizmos.color = Color.red;
-        Gizmos.DrawCube(transform.position, m_boxCollider.size);
+        Gizmos.DrawCube(transform.position + m_boxCollider.center, m_boxCollider.size);
     }
 }
 

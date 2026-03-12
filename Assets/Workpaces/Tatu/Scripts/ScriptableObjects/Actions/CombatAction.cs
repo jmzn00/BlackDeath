@@ -49,6 +49,8 @@ public abstract class CombatAction : ScriptableObject
 
     public virtual void ResolveResult(ActionContext ctx,  ActionResult result) 
     {
+        Debug.Log($"Resolved: {result}");
+
         switch (result) 
         {
             case ActionResult.Hit:
@@ -80,7 +82,7 @@ public abstract class CombatAction : ScriptableObject
     {
         ctx.Source.Health.ApplyDamage(baseDamage);
     }
-    public virtual void OnConfirmed(ActionContext ctx) 
+    protected virtual void OnConfirmed(ActionContext ctx) 
     {
         ctx.Target.Health.ApplyDamage(baseDamage * confirmDamageMultipler);
 
