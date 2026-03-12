@@ -87,7 +87,8 @@ public class CombatView : MonoBehaviour, IUIComponentView
     }
     public void OnWindowOpened(InputPrompt prompt) 
     {
-        m_confirmImage.sprite = prompt.icon;
+        if (prompt != null)
+            m_confirmImage.sprite = prompt.icon;
     }
     #endregion    
     public void OnCombatStarted(bool started) 

@@ -6,8 +6,9 @@ public class SkipTurnAction : CombatAction
 {
     public override bool Resolve(ActionContext context, Action OnComplete)
     {
-        OnComplete?.Invoke();
+        context.Target = context.Source;
 
+        context.Source.PlayAction(context, OnComplete);
         return true;
     }
 }

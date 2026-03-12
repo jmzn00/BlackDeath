@@ -30,14 +30,14 @@ public class PlayerCombatActor : CombatActor
     }
     private void OnActorTargeted(CombatActor source, CombatActor target, CombatAction action) 
     {
-        if (target == this) 
+        if (target == this && source != this) 
         {
             m_currentlyTargeted = true;
         }
     }
     private void OnActorNoLongerTargeted(CombatActor source, CombatActor target, CombatAction action) 
     {
-        if (target == this) 
+        if (target == this && source != this) 
         {
             m_currentlyTargeted = false;
         }

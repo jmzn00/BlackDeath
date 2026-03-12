@@ -24,6 +24,8 @@ public class InputPromptLibrary : ScriptableObject
     /// <summary>Returns the prompt for the given key, or null if not found.</summary>
     public InputPrompt Get(string key)
     {
+        if (key == null) return null;
+
         if (m_lookup == null) BuildLookup();
         m_lookup.TryGetValue(key, out var prompt);
         return prompt;

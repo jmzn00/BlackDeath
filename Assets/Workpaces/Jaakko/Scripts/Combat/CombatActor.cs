@@ -189,17 +189,26 @@ public class CombatActor : MonoBehaviour, IActorComponent
         m_currentContext = ctx;
         m_onActionComplete = onComplete;
 
-        if (m_animationController == null || ctx.Action?.animationClip == null)
+        if (ctx.Source == ctx.Target) 
         {
-            Debug.LogWarning($"PlayAction: On {name} Animator or Clip is NULL");
             InvokeAndClearOnComplete();
             return;
         }
-        m_animationController?.PlayActionAnimation(ctx.Action.animationClip);
+        if (ctx.Action.animationClip == null) 
+        {
+            Debug.LogWarning("AnimationClip is NULL");
+            Anim_CloseWindow();
+            InvokeAndClearOnComplete();
+            return;
+        }
+
+
+        m_animationController.PlayActionAnimation(ctx.Action.animationClip);
 
         // fallback if the animator never calls Anim_AttackFinished
         if (m_actionTimeout != null)
             StopCoroutine(m_actionTimeout);
+
         float clipLength = ctx.Action.animationClip.length;
         m_actionTimeout = StartCoroutine(ActionTimeout(clipLength + 0.75f));
     }
@@ -232,6 +241,8 @@ public class CombatActor : MonoBehaviour, IActorComponent
         }
         finally
         {
+
+
             m_onActionComplete = null;
             m_currentContext = null;
         }

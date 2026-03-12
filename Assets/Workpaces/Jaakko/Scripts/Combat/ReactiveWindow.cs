@@ -77,18 +77,24 @@ public class ReactiveWindow
         m_windowOpen = true;
     }
     public void Close(ActionContext ctx)
-    {
+    {        
         m_windowOpen = false;
         OnWindowClosed?.Invoke(ctx);
 
         Reset();
         m_context = ctx;
-        m_attackerPrompt = PromptLibrary.Get(ctx.PromptKey);
-        m_attackerPrompt.action.Disable();
-        foreach (var dp in m_defenderPrompts)
+
+        // band-aid fix for skip action
+        if (m_context.PromptKey != null && ctx.Prompt != null) 
         {
-            dp.action.Disable();
+            m_attackerPrompt = PromptLibrary.Get(ctx.PromptKey);
+            m_attackerPrompt.action.Disable();
+            foreach (var dp in m_defenderPrompts)
+            {
+                dp.action.Disable();
+            }
         }
+        
         OnParryWindowOpened?.Invoke(false);
         OnDodgeWindowOpened?.Invoke(false);
         OnConfirmWindowOpened?.Invoke(false);

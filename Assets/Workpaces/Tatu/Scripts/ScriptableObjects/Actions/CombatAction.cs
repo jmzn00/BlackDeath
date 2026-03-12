@@ -1,5 +1,3 @@
-using Mono.Cecil;
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,7 +6,8 @@ public enum ActionResult
     Hit,
     Dodged,
     Parried,
-    Confirmed
+    Confirmed,
+    None
 }
 
 /// <summary>
@@ -64,11 +63,14 @@ public abstract class CombatAction : ScriptableObject
             case ActionResult.Confirmed:
                 OnConfirmed(ctx);
                 break;
+            case ActionResult.None:
+                OnNone(ctx);
+                break;
         }
     } 
     protected virtual void OnHit(ActionContext ctx) 
     {
-        ctx.Target.Health.ApplyDamage(baseDamage);        
+        ctx.Target.Health.ApplyDamage(baseDamage);          
     }
     protected virtual void OnDodged(ActionContext ctx) 
     {
@@ -86,5 +88,9 @@ public abstract class CombatAction : ScriptableObject
         {
             ctx.Target.ApplyStatus(e);
         }
+    }
+    protected virtual void OnNone(ActionContext ctx) 
+    {
+    
     }
 }

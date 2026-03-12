@@ -58,8 +58,8 @@ public class CombatManager : IManager
     private List<CombatArea> m_combatAreas = new List<CombatArea>();
     private List<CombatActor> m_combatActors = new List<CombatActor>();
 
-    private Actor m_actor;
-    public Actor Actor => m_actor;
+    private Actor m_actor; 
+    public Actor Actor => m_actor; // CameraManager uses this for tracking
     private CombatActor m_currentActor;
         
     private ReactiveWindow m_reactiveWindow;
@@ -68,7 +68,6 @@ public class CombatManager : IManager
     public event Action<Actor> OnCurrentActorChanged;
     public Action<CombatContext> OnContextChanged;
     public event Action<bool> OnCombatStarted;
-    private event Action<ActionContext, ActionResult> OnActionResolved;
 
     public CombatManager(GameManager game)
     {
@@ -127,7 +126,7 @@ public class CombatManager : IManager
     public void OnActorDied(CombatActor actor)
     {
         if (!m_combatActors.Contains(actor)) return;
-
+        
         if (actor == m_currentActor)
         {
             AdvanceTurn();
@@ -152,12 +151,16 @@ public class CombatManager : IManager
     {
         if (m_combatActors == null || m_combatActors.Count == 0)
         {
+            Debug.Log("Ending Combat due to no combat actors");
             m_state = CombatState.Ending;
             return;
         }
-        m_lastResolvedContext.Target
-            .NotifyNoLongerTargeted(m_lastResolvedContext.Source
-            , m_lastResolvedContext.Action);
+        if (m_lastResolvedContext.Source != m_lastResolvedContext.Target) 
+        {
+            m_lastResolvedContext.Target
+                .NotifyNoLongerTargeted(m_lastResolvedContext.Source
+                , m_lastResolvedContext.Action);
+        }        
 
         m_currentActor.OnTurnEnd();        
         int attempts = 0;
@@ -192,12 +195,19 @@ public class CombatManager : IManager
         if (m_currentActor.IsPlayer)
             m_uiManager.SetInputMode(UIInputMode.Navigation);
 
+        m_actionSubmitted = false;
         m_currentActor.
             ActionProvider.
             RequestAction(m_currentActor, m_combatActors);
     }
+    private bool m_actionSubmitted;
     public void SubmitAction(ActionContext ctx)
     {
+        if (m_actionSubmitted) 
+        {
+            Debug.LogWarning("SubmitAction Blocked: Action already submitted");
+            return;
+        }
         if (m_state == CombatState.ResolvingAction)
         {
             Debug.LogWarning("Action blocked: already resolving another action");
@@ -217,12 +227,14 @@ public class CombatManager : IManager
             Debug.Log("Context Target is NULL");
             return;
         }
+        m_actionSubmitted = true;
         m_uiManager.SetInputMode(UIInputMode.Combat);        
         ExecuteAction(ctx);
     }
     private void ExecuteAction(ActionContext ctx)
     {
-        ctx.Target.NotifyTargeted(ctx.Source, ctx.Action);
+        if (ctx.Target != ctx.Source)
+            ctx.Target.NotifyTargeted(ctx.Source, ctx.Action);
 
         m_state = CombatState.ResolvingAction;
         m_waitingForResolve = true;
@@ -257,10 +269,15 @@ public class CombatManager : IManager
         if (attackerReaction == ReactionType.Confirm && result == ActionResult.Hit) 
         {
             result = ActionResult.Confirmed;
-        }        
+        }
+        if (ctx.Source == ctx.Target) 
+        {
+            m_reactiveWindow.Close(ctx);
+            result = ActionResult.None;
+        }
+        
         m_lastResolvedContext = ctx;
         ctx.Action.ResolveResult(ctx, result);
-        OnActionResolved?.Invoke(ctx, result);
 
         Debug.Log($"Action Result: {result}");
     }
@@ -269,6 +286,7 @@ public class CombatManager : IManager
     {
         if (m_state != CombatState.None)
             return;
+
         m_currentArea = prefs.m_area;
         m_input.ToggleInput(false);
 
@@ -280,6 +298,8 @@ public class CombatManager : IManager
         {
             int enemyIndex = spawns % prefs.m_enemies.Length;
 
+            // delegate actor spawning to ActorManager
+            // have ActorManager return the spawned Actor
             Actor a =
                 GameObject.Instantiate(prefs.m_enemies[enemyIndex], t.position, t.rotation);
             a.gameObject.name += spawns.ToString();
@@ -301,7 +321,7 @@ public class CombatManager : IManager
                 }
                 participants.Add(ca);
             }
-        }
+        } // Spawn Enemies
         List<Actor> partyActors = m_actorManager.Party.ToList();
         int spawnIndex = 0;
         m_partyCombatActors = new List<CombatActor>();

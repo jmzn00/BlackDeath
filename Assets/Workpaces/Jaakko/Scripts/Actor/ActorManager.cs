@@ -2,6 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+public class ActorSpawnPreferences 
+{
+    public Actor prefab;
+    public Vector3 position;
+    public Quaternion rotation;
+}
 public class ActorManager : IManager
 {
     private bool m_active;
@@ -140,5 +146,24 @@ public class ActorManager : IManager
         actor.Dispose();
         m_actors.Remove(actor);
         return true;    
+    }
+    public Actor Spawn(ActorSpawnPreferences prefs) 
+    {
+        if (prefs.prefab == null) 
+        {
+            Debug.LogWarning("AM: Trying To Spawn Actor With Null Prefab");
+            return null;
+        }
+
+        Actor a = GameObject.Instantiate(prefs.prefab, prefs.position, prefs.rotation);
+        a.Init(m_game);
+        IActor ia = a.GetComponent<IActor>();
+        if (ia != null) 
+        {
+            Register(ia, m_game);
+            return a;
+        }
+        Debug.LogWarning("IAcor is NULL while spawning Actor");
+        return null;        
     }
 }
