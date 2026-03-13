@@ -49,7 +49,7 @@ public abstract class CombatAction : ScriptableObject
 
     public virtual void ResolveResult(ActionContext ctx,  ActionResult result) 
     {
-        Debug.Log($"Resolved: {result}");
+        //Debug.Log($"Resolved: {result}");
 
         switch (result) 
         {

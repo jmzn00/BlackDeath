@@ -21,6 +21,7 @@ public static class CombatEvents
     
     public static event Action<ActionContext> OnActionFinished;
     public static event Action<List<CombatActor>> OnCombatActorsChanged;
+
     public static void CombatStarted() 
     {
         OnCombatStarted?.Invoke();

@@ -1,3 +1,5 @@
+using UnityEngine;
+
 public class PlayerReactionProvider : IReactionProvider
 {
     private CombatActor m_actor;

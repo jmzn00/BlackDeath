@@ -19,16 +19,12 @@ public class ReactiveWindow
 
     public event Action<ActionContext> OnWindowClosed;
 
-    public void Open(ActionContext ctx,
-        InputPrompt attackerPrompt, List<InputPrompt> defenderPrompts)
+    public void Open()
     {
-
         m_attackerReaction = ReactionType.None;
         m_defenderReaction = ReactionType.None;
 
         m_windowOpen = true;
-
-        // enable prompts
     }
 
     public void Close(ActionContext ctx)
@@ -36,13 +32,6 @@ public class ReactiveWindow
         m_windowOpen = false;
         OnWindowClosed?.Invoke(ctx);
     }
-
-    public void Update(float dt)
-    {
-        if (!m_windowOpen)
-            return;
-    }
-
     public void TryActivateParry()
     {
         m_defenderReaction = ReactionType.Parry;

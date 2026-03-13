@@ -1,18 +1,17 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Actor))]
 public class CombatActor : MonoBehaviour, IActorComponent
-{    
+{
+    private CombatManager m_combatManager;
     public bool IsDead { get; protected set; }
     public bool IsPlayer { get; private set; }
+    protected bool m_defensiveAnimationPlaying;
+    public bool DefensiveAnimationPlaying => m_defensiveAnimationPlaying;
     private Actor m_actor;
     public Actor Actor => m_actor;
-
-    protected CombatManager m_combatManager;
 
     private IActionProvider m_actionProvider;
     public IActionProvider ActionProvider => m_actionProvider;
@@ -20,39 +19,26 @@ public class CombatActor : MonoBehaviour, IActorComponent
     private IReactionProvider m_reactionProvider;
     public IReactionProvider ReactionProvider => m_reactionProvider;
 
-    [SerializeField] private List<CombatAction> m_actions;
-    public List<CombatAction> Actions => m_actions;
-    private Action m_onActionComplete;
-    private Coroutine m_actionTimeout;
-    public event Action OnActionFinished;
-
     private List<ActorStatusEffect> m_statusEffects = new List<ActorStatusEffect>();
     public List<ActorStatusEffect> StatusEffects => m_statusEffects;
     public event Action<List<ActorStatusEffect>> OnStatusEffectsChanged;
-
-    private ActionContext m_currentContext;
-    public event Action<CombatContext> OnContextChanged;
-
     private HealthComponent m_health;
     public HealthComponent Health => m_health;
+    private AnimationController m_animationController;
+    [SerializeField] protected GameObject m_visual;
+    [SerializeField] private List<CombatAction> m_actions;
+    public List<CombatAction> Actions => m_actions;
 
-    private AnimationController m_animationController; // temp
-    [SerializeField] protected GameObject m_visual; // temp 
-
-    protected bool m_defensiveAnimationPlaying;
-    public bool DefensiveAnimationPlaying => m_defensiveAnimationPlaying;
-
-    protected bool m_currentlyTargeted;
-    public event Action<CombatActor, CombatActor, CombatAction> OnTargeted;
-    public event Action<CombatActor, CombatActor, CombatAction> OnNoLongerTargeted;
-    public void NotifyTargeted(CombatActor source, CombatAction action) 
+    #region IActionProvider
+    protected void SetActionProvider(IActionProvider provider)
     {
-        OnTargeted?.Invoke(source, this, action);
+        m_actionProvider = provider;
     }
-    public void NotifyNoLongerTargeted(CombatActor source, CombatAction action) 
+    protected void SetReactionProvider(IReactionProvider provider)
     {
-        OnNoLongerTargeted?.Invoke(source, this, action);
+        m_reactionProvider = provider;
     }
+    #endregion
     #region IActorComponent
     public bool Initialize(GameManager game)
     {
@@ -74,17 +60,6 @@ public class CombatActor : MonoBehaviour, IActorComponent
     protected virtual void OnDispose() 
     {
         
-    }
-    void OnHealthChanged(float value)
-    {        
-        if (value <= 0f)
-        {
-            IsDead = true;
-            //m_combatManager.OnActorDied(this);
-            CombatEvents.ActorDied(this);
-            if (m_visual) // temp
-                m_visual.SetActive(false); // temp
-        }
     }
     public bool Dispose()
     {
@@ -128,6 +103,20 @@ public class CombatActor : MonoBehaviour, IActorComponent
     {
         m_defensiveAnimationPlaying = value;
     }
+    void OnHealthChanged(float value)
+    {
+        if (IsDead) return;
+
+        if (value <= 0f)
+        {            
+            IsDead = true;
+            CombatEvents.ActorDied(this);
+            if (m_visual) // temp
+                m_visual.SetActive(false); // temp
+        }
+    }
+
+
     public void TurnStart(CombatActor actor)
     {
         if (actor != this) 
@@ -144,10 +133,6 @@ public class CombatActor : MonoBehaviour, IActorComponent
         }
         HandleStatusEffectsTurnEnd();
     }
-    public void OnCombatContextChanged(CombatContext ctx)
-    {
-        OnContextChanged?.Invoke(ctx);
-    }
     private void CombatStarted()
     {
 
@@ -159,34 +144,11 @@ public class CombatActor : MonoBehaviour, IActorComponent
     public void SubmitAction(CombatActor source,
         CombatActor target, CombatAction action)
     {
-        m_combatManager.Action.SubmitAction(source,
+        m_combatManager.Action.SubmitAction(this,
             target, action);
     }
-    public bool SetActionContext(ActionContext ctx)
-    {
-        ctx.Source = this;
-        m_combatManager.
-            Action.
-            SubmitAction(ctx.Source,
-            ctx.Target, ctx.Action);
-        
-        return false;
-    }
-    protected void SetActionProvider(IActionProvider provider)
-    {
-        m_actionProvider = provider;
-    }
-    protected void SetReactionProvider(IReactionProvider provider) 
-    {
-        m_reactionProvider = provider;
-    }
-
-    // called by CombatManager
     public void PlayAction(ActionContext ctx, Action onComplete)
     {
-        m_currentContext = ctx;
-        m_onActionComplete = onComplete;
-
         if (ctx.Source == ctx.Target) 
         {
             Anim_ActionFinished();
@@ -195,67 +157,25 @@ public class CombatActor : MonoBehaviour, IActorComponent
         if (ctx.Action.animationClip == null) 
         {
             Debug.LogWarning("AnimationClip is NULL");
-            Anim_CloseWindow();
-            InvokeAndClearOnComplete();
+            Anim_ActionFinished();
             return;
         }
-
-
         m_animationController.PlayActionAnimation(ctx.Action.animationClip);
-
-        // fallback if the animator never calls Anim_AttackFinished
-        if (m_actionTimeout != null)
-            StopCoroutine(m_actionTimeout);
-
-        float clipLength = ctx.Action.animationClip.length;
-        m_actionTimeout = StartCoroutine(ActionTimeout(clipLength + 0.75f));
     }
-    // called by animation clip
     public void Anim_CloseWindow()
     {
-        //m_combatManager.ReactiveWindow.Close(m_currentContext);
-        m_combatManager.Action.ClosePrompt();
+        m_combatManager.Action.ClosePrompt(this);
     }
     // called by animator
     public void Anim_OpenWindow(string promptKey)
     {
-        //m_currentContext.PromptKey = promptKey;
-        //m_combatManager.ReactiveWindow.Open(m_currentContext);
-        m_combatManager.Action.OpenPrompt(promptKey);
+        m_combatManager.Action.OpenPrompt(this, promptKey);
         
     }
     // called by animation clip
     public void Anim_ActionFinished()
     {
-        //InvokeAndClearOnComplete();
         m_combatManager.Action.NotifyActionFinished(this);
-    }
-    private void InvokeAndClearOnComplete()
-    {
-        try
-        {
-            m_onActionComplete?.Invoke();
-            OnActionFinished?.Invoke();
-        }
-        catch (Exception ex)
-        {
-            Debug.LogError($"{name} PlayAction: Exception while invoking completion: {ex}");
-        }
-        finally
-        {
-            m_onActionComplete = null;
-            m_currentContext = null;
-        }
-    }
-    private IEnumerator ActionTimeout(float time)
-    {
-        yield return new WaitForSeconds(time);
-
-        if (m_onActionComplete != null)
-        {
-            Debug.LogWarning($"{name} Action timeout fallback triggered");
-            InvokeAndClearOnComplete();
-        }
     }
     #endregion
     #region StatusEffect
@@ -303,14 +223,9 @@ public class CombatActor : MonoBehaviour, IActorComponent
     }
     public void ApplyStatus(ActorStatusEffect effect)
     {
-        // Always instantiate a new instance to avoid shared ScriptableObject state
         ActorStatusEffect instance = Instantiate(effect);
         instance.Initialize(this);
 
-        // Try to find an existing effect of the same type AND same display name.
-        // This allows different assets that share the same concrete class
-        // (e.g. TickStatusEffect) but represent different effects (Burn vs Poison)
-        // to coexist separately.
         var existing = m_statusEffects.Find(e =>
             e.GetType() == instance.GetType() &&
             e.displayName == instance.displayName);
@@ -322,14 +237,11 @@ public class CombatActor : MonoBehaviour, IActorComponent
                 existing.AddDuration(instance.duration);
                 OnStatusEffectsChanged?.Invoke(m_statusEffects);
             }
-            // if not stackable, do nothing
             return;
         }
 
-        // If no existing effect, add the new instance
         m_statusEffects.Add(instance);
         OnStatusEffectsChanged?.Invoke(m_statusEffects);
     }
     #endregion
-
 }

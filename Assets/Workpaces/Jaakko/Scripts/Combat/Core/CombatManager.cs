@@ -4,7 +4,12 @@ using UnityEngine;
 public enum CombatState
 {
     Active,
-    Inactive
+    Inactive,
+    Starting,
+    NextTurn,
+    WaitingForAction,
+    TurnStarting,
+    Resolving,
 }
 public enum CombatResult 
 {
@@ -17,15 +22,12 @@ public class CombatManager : IManager
     public CombatState State => m_state;
 
     private GameManager m_game;
-
+    
     private CombatContext m_context;
     private TurnSystem m_turnSystem;
-    private ReactiveWindow m_window;
-    private ReactionSystem m_reaction;
+    private ReactionSystem m_reaction;    
     private ActionSystem m_action;
     public ActionSystem Action => m_action;
-
-    private List<CombatActor> m_actors;
 
     public CombatManager(GameManager game)
     {
@@ -39,15 +41,7 @@ public class CombatManager : IManager
         m_reaction.Update(dt);
     }
     public bool Init()
-    {
-        m_context = new CombatContext();
-        m_turnSystem = new TurnSystem();
-        m_window = new ReactiveWindow();
-        m_reaction = new ReactionSystem();
-        m_action = new ActionSystem();
-
-        CombatEvents.OnActorDied += ActorDied;
-
+    {        
         return true;
     }
     public void OnManagersInitialzied() 
@@ -64,29 +58,61 @@ public class CombatManager : IManager
     }
     public bool Dispose()
     {
-        CombatEvents.OnActorDied -= ActorDied;
         return true;
     }
     #endregion
-    public void StartCombat(List<CombatActor> actors) 
+    public void StartCombat(List<CombatActor> actors)
     {
         if (m_state != CombatState.Inactive) return;
 
-        m_state = CombatState.Active;
-        m_actors = actors;
-
-        m_context.Initialize(actors);
-        m_turnSystem.Initialize(actors, m_context);
-
-        m_reaction.Initialize(m_window);
-        m_action.Initialize(m_context,
-            m_turnSystem,
-            m_reaction);        
         CombatEvents.CombatStarted();
-        CombatEvents.CombatActorsChanged(actors);        
+        CombatEvents.CombatActorsChanged(actors);
 
-        CombatActor first = m_turnSystem.Start();
-        m_context.SetCurrentActor(first);     
+        m_state = CombatState.Active;        
+
+        m_context = new CombatContext(actors);
+        m_turnSystem = new TurnSystem(m_context);
+        m_reaction = new ReactionSystem();
+        m_action = new ActionSystem(m_context, m_reaction);
+
+        m_action.OnActionFinished += ActionFinished;
+
+        StartNextTurn();
+    }
+    private void ActionFinished(ActionContext aCtx) 
+    {
+        ActionResult result = m_reaction.ResolveResults();
+        aCtx.Action.ResolveResult(aCtx, result);
+
+        if (CheckEnd()) 
+        {
+            EndCombat();
+        }
+        else 
+        {
+            StartNextTurn();
+        }
+    }
+    private void StartNextTurn() 
+    {
+        CombatActor actor = m_turnSystem.Next();
+        if (actor == null) 
+        {
+            EndCombat();
+            return;
+        }
+        CombatEvents.TurnEnded(m_context.CurrentActor);
+        CombatEvents.TurnStarted(actor);
+
+        m_context.SetCurrentActor(actor);
+        m_context.AdvanceTurn();
+        m_action.TurnStarted();
+    }
+    private bool CheckEnd()
+    {
+        List<CombatActor> actors = m_context.Actors.ToList();
+        return !actors.Exists(a => a.IsPlayer && !a.IsDead)
+            || !actors.Exists(e => !e.IsPlayer && !e.IsDead);
     }
     private void EndCombat()
     {
@@ -95,24 +121,4 @@ public class CombatManager : IManager
         CombatEvents.CombatEnded(CombatResult.Won);
         m_state = CombatState.Inactive;
     }
-    private void ActorDied(CombatActor actor) 
-    {
-        if (CheckEnd()) 
-        {
-            EndCombat();
-        }
-    }
-    private bool CheckEnd() 
-    {
-        if (!m_actors.Exists(a => a.IsPlayer && !a.IsDead)) 
-        {
-            return true;
-        }
-        if (!m_actors.Exists(a => !a.IsPlayer && !a.IsDead)) 
-        {
-            return true;
-        }
-        return false;
-    }
-
 }

@@ -22,7 +22,7 @@ public class HealthView : MonoBehaviour, IUIComponentView
         m_healthSlider.maxValue = health.MaxHealth;
 
         health.OnHealthChanged += OnHealthChanged;        
-        m_healthSlider.value = health.GetHealth();
+        m_healthSlider.value = health.CurrentHealth;
     }
     public void OnHealthChanged(float newHealth) 
     {

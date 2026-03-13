@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 public class ReactionSystem
@@ -22,22 +23,21 @@ public class ReactionSystem
 
     private List<InputPrompt> m_defensivePrompts = new();
 
-    public void Initialize(ReactiveWindow window)
+    public ReactionSystem() 
     {
-        m_window = window;
-        m_window.OnWindowClosed += HandleWindowClosed;
+        m_window = new ReactiveWindow();
 
         InputPrompt parryPrompt = Library.Get("ParryPrompt");
         InputPrompt dodgePrompt = Library.Get("DodgePrompt");
 
-        if (!m_defensivePrompts.Contains(parryPrompt)) 
+        if (!m_defensivePrompts.Contains(parryPrompt))
         {
-            m_defensivePrompts.Add(parryPrompt);            
+            m_defensivePrompts.Add(parryPrompt);
         }
-        if (!m_defensivePrompts.Contains(dodgePrompt)) 
+        if (!m_defensivePrompts.Contains(dodgePrompt))
         {
             m_defensivePrompts.Add((dodgePrompt));
-        }        
+        }
     }
     public void Open(ActionContext ctx)
     {
@@ -50,12 +50,11 @@ public class ReactionSystem
         InputPrompt attackerPrompt = Library.Get(ctx.PromptKey);
         m_context.Prompt = attackerPrompt;
 
-
-        attackerPrompt.action.Enable();
+        m_context.Prompt.action.Enable();
         foreach (var p in m_defensivePrompts)
             p.action.Enable();        
 
-        m_window.Open(ctx, m_context.Prompt, m_defensivePrompts);
+        m_window.Open();
         CombatEvents.ReactionWindowOpened(ctx);
     }
     public void Close() 
@@ -110,16 +109,11 @@ public class ReactionSystem
                 break;            
         }
     }
-    private void HandleWindowClosed(ActionContext ctx)
-    {
-        ActionResult result = ResolveResults();
-
-        CombatEvents.ReactionResolved(ctx, result);
-    }
-    private ActionResult ResolveResults()
+    public ActionResult ResolveResults()
     {
         ReactionType attacker = m_window.ConsumeAttackerReaction();
         ReactionType defender = m_window.ConsumeDefenderReaction();
+
 
         if (defender == ReactionType.Parry)
             return ActionResult.Parried;

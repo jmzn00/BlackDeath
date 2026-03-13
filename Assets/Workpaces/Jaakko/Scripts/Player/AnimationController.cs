@@ -30,14 +30,18 @@ public class AnimationController : MonoBehaviour
     private void Start()
     {
         m_combatActor = GetComponent<CombatActor>();
+        /*
         if (m_combatActor != null)
             m_combatActor.OnActionFinished += OnActionAnimationFinished;
+        */
     }
     private void OnDestroy()
     {
         m_movementController.OnMove -= OnMove;
+        /*
         if (m_combatActor != null)
             m_combatActor.OnActionFinished -= OnActionAnimationFinished;
+        */
     }
     private void OnMove(Vector3 velocity) 
     {

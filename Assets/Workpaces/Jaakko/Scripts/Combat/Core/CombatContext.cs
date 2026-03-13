@@ -1,22 +1,23 @@
 using System.Collections.Generic;
 public class CombatContext
-{
+{    
     public IReadOnlyList<CombatActor> Actors => m_actors;
     public CombatActor CurrentActor { get; private set; }
-
     public int TurnNumber { get; private set; }
     public int RoundNumber { get; private set; }
 
-    public CombatState State { get; private set; }
-
     private List<CombatActor> m_actors = new();
+    public CombatState State { get; private set; }
+    public CombatContext(List<CombatActor> actors)
+    {
+        m_actors = actors;
+    }
 
     public void Initialize(List<CombatActor> actors)
     {
         m_actors = actors;
         TurnNumber = 0;
         RoundNumber = 1;
-        State = CombatState.Active;
     }
     public void SetCurrentActor(CombatActor actor)
     {
@@ -28,8 +29,8 @@ public class CombatContext
 
         if (TurnNumber % m_actors.Count == 0)
             RoundNumber++;
-    }
-    public void SetState(CombatState state)
+    }    
+    public void ChangeState(CombatState state) 
     {
         State = state;
     }

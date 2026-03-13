@@ -5,28 +5,46 @@ using UnityEngine;
 public class ActionSystem
 {
     private ReactionSystem m_reaction;
-    private TurnSystem m_turn;
     private CombatContext m_context;
 
     private ActionContext m_currentAction;
 
-    public void OpenPrompt(string promptKey) 
+    public event Action<ActionContext> OnActionFinished;
+    public ActionSystem(CombatContext ctx,
+        ReactionSystem reaction) 
+    {
+        m_reaction = reaction;
+        m_context = ctx;
+    }
+
+    public void OpenPrompt(CombatActor actor, string promptKey) 
     {
         if (m_currentAction == null) 
         {
             Debug.LogWarning("AS: Cannot Open Prompt: Action Is NULL");
             return;
         }
+        if (actor != m_currentAction.Source) 
+        {
+            Debug.LogWarning("AS: actor != currentAction.Source");
+            return;
+        }
+
         m_currentAction.PromptKey = promptKey;
         m_reaction.Open(m_currentAction);
     }
-    public void ClosePrompt() 
+    public void ClosePrompt(CombatActor actor) 
     {
         if (m_currentAction == null) 
         {
             Debug.LogWarning("AS: Cannot Close Prompt: Action Is NULL");
             return;
         }        
+        if (actor != m_currentAction.Source) 
+        {
+            Debug.LogWarning("AS: Can not Close, Actor is not Source");
+            return;
+        }
         m_reaction.Close();
     }
     public void NotifyActionFinished(CombatActor actor) 
@@ -35,28 +53,17 @@ public class ActionSystem
             return;
         if (actor != m_currentAction.Source) 
         {
-            Debug.LogWarning("AS: Cannot Finish, Actor is not Source");
+            Debug.LogWarning("AS: Can not Finish, Actor is not Source");
             return;
         }
+        OnActionFinished?.Invoke(m_currentAction);
         CombatEvents.ActionFinished(m_currentAction);
-        
         m_currentAction = null;
     }
-
-    public void Initialize(CombatContext ctx,
-        TurnSystem turns,
-        ReactionSystem reaction)
+    public void TurnStarted() 
     {
-        m_context = ctx;
-        m_turn = turns;
-        m_reaction = reaction;
-
-        CombatEvents.OnReactionResolved += HandleReactionResolved;
-        CombatEvents.OnTurnStarted += TurnStarted;
-    }
-    private void TurnStarted(CombatActor actor) 
-    {
-        actor.ActionProvider.RequestAction(actor, m_context.Actors.ToList());
+        m_context.CurrentActor.ActionProvider.
+            RequestAction(m_context.CurrentActor, m_context.Actors.ToList());
     }
     public void SubmitAction(CombatActor source, 
         CombatActor target,
@@ -74,19 +81,8 @@ public class ActionSystem
             Target = target,
             Action = action,
         };
-        Debug.Log($"{source.name} Submitted Action: {action.actionName}");
-
-        action.Resolve(m_currentAction, TempAction);
+        action.Resolve(m_currentAction, TempAction); // REMOVE TEMP
+        CombatEvents.ActionSubmitted(m_currentAction);
     }
-    public event Action TempAction;
-    private void HandleReactionResolved(ActionContext context, ActionResult result) 
-    {
-        if (context != m_currentAction) 
-        {
-            Debug.LogWarning("AS: Cannot Resolve, context != currentAction");
-            return;
-        }
-        context.Action.ResolveResult(context, result); 
-        CombatEvents.ActionResolved(context, result);
-    }
+    public event Action TempAction; // REMOVE
 }

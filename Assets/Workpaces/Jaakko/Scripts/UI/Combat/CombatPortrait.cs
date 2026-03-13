@@ -23,30 +23,25 @@ public class CombatPortrait : MonoBehaviour
         m_actor = actor;    
 
         m_button = GetComponent<Button>();
-        
+                
+        m_healthSlider.maxValue = m_actor.Health.MaxHealth;
+        m_healthSlider.minValue = 0f;
+        m_healthSlider.value = m_actor.Health.CurrentHealth;
 
-        HealthComponent health = actor.Health;
-        m_healthSlider.maxValue = health.MaxHealth;
-        m_healthSlider.onValueChanged.AddListener(value =>
-        {
-            m_healthSlider.value = value;
-        });
-        m_healthSlider.value = health.GetHealth();
+        m_actor.Health.OnHealthChanged += HealthChanged;
+        m_actor.OnStatusEffectsChanged += UpdateStatusEffects;
 
         m_actorName.text = m_actor.name;
         if (m_actor.Actor.actorSprite != null)
         {
             m_actorSprite.sprite = m_actor.Actor.actorSprite;
-        }
-        UpdateStatusEffects(m_actor.StatusEffects);
-        m_actor.OnStatusEffectsChanged += UpdateStatusEffects;
-
+        }                
         if (m_actor.IsPlayer)
         {
             m_button.interactable = false;
             return;
         }
-
+        
         m_button.onClick.RemoveAllListeners();
         m_button.onClick.AddListener(() =>
         {
@@ -60,30 +55,22 @@ public class CombatPortrait : MonoBehaviour
     }
     public void Dispose()
     {
-        if (m_actor != null)
-            m_actor.OnStatusEffectsChanged -= UpdateStatusEffects;
+        m_actor.OnStatusEffectsChanged -= UpdateStatusEffects;
 
-        if (m_button != null)
-            m_button.onClick.RemoveAllListeners();
+        m_button.onClick.RemoveAllListeners();
 
-        m_healthSlider.onValueChanged.RemoveAllListeners();
+        m_actor.Health.OnHealthChanged -= HealthChanged;
 
         Destroy(gameObject);
     }
     public void UpdateData(CombatActor actor) 
     {
         m_actor = actor;
-
-        // Update health
-        m_healthSlider.maxValue = actor.Health.MaxHealth;
-        m_healthSlider.value = actor.Health.GetHealth();
-
-        // Update name and sprite
         m_actorName.text = actor.name;
+
         if (actor.Actor.actorSprite != null)
             m_actorSprite.sprite = actor.Actor.actorSprite;
 
-        // Update status effects
         UpdateStatusEffects(actor.StatusEffects);
     }
     void UpdateStatusEffects(List<ActorStatusEffect> effects)
@@ -98,4 +85,8 @@ public class CombatPortrait : MonoBehaviour
         }
         m_statusEffectsText.text = text;
     }    
+    void HealthChanged(float newHealth) 
+    {
+        m_healthSlider.value = newHealth;
+    }
 }
