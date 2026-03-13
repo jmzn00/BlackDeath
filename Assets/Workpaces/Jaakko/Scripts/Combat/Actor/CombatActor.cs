@@ -8,8 +8,7 @@ public class CombatActor : MonoBehaviour, IActorComponent
     private CombatManager m_combatManager;
     public bool IsDead { get; protected set; }
     public bool IsPlayer { get; private set; }
-    protected bool m_defensiveAnimationPlaying;
-    public bool DefensiveAnimationPlaying => m_defensiveAnimationPlaying;
+
     private Actor m_actor;
     public Actor Actor => m_actor;
 
@@ -22,14 +21,18 @@ public class CombatActor : MonoBehaviour, IActorComponent
     private List<ActorStatusEffect> m_statusEffects = new List<ActorStatusEffect>();
     public List<ActorStatusEffect> StatusEffects => m_statusEffects;
     public event Action<List<ActorStatusEffect>> OnStatusEffectsChanged;
+
     private HealthComponent m_health;
     public HealthComponent Health => m_health;
 
-    [SerializeField] protected GameObject m_visual;
+    [SerializeField] protected GameObject m_visual; // TEMP
+
     [SerializeField] private List<CombatAction> m_actions;
     public List<CombatAction> Actions => m_actions;
 
     private AnimatorComponent m_animator;
+    // event that m_animator listens to
+    public event Action<AnimationClip> OnPlayRequested;
 
     #region IActionProvider
     protected void SetActionProvider(IActionProvider provider)
@@ -65,6 +68,7 @@ public class CombatActor : MonoBehaviour, IActorComponent
     }
     public bool Dispose()
     {
+        m_health.OnHealthChanged -= OnHealthChanged;
         OnDispose();
         return true;
     }
@@ -131,10 +135,6 @@ public class CombatActor : MonoBehaviour, IActorComponent
         m_combatManager.Action.SubmitAction(this,
             target, action);
     }
-
-    // event that m_animator listens to
-    public event Action<AnimationClip> OnPlayRequested;
-
     public void PlayAction(ActionContext ctx, Action onComplete)
     {
         if (ctx.Source == ctx.Target) 

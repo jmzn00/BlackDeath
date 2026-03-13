@@ -29,6 +29,45 @@ public class CombatManager : IManager
     private ActionSystem m_action;
     public ActionSystem Action => m_action;
 
+    /*
+    ==================================================================COMBAT MANAGER===============================================================
+
+        Components:
+            1. CombatContext just holds context for combat such as CurrentPlayer, Actors, TurnIndex ect.. Modules may modify the context
+            2. TurnSystem advances turn based on CombatContext. Returns the NextPlayer in Actors after CurrentActor that is not dead
+            3. ActionSystem Requests an action from The CurrentPlayer and waits for submit after which it invokes the event that action is finished,
+               Note that ActionSystem also Closes And Opens the ReactionSystem for now but it will be moved to ReactionSystem
+            4. ReactionSystem handles prompts and consumes prompts from the ReactionWindow, Note that ReactionSystem owns ReactionWindow
+            
+        Flow:
+            1. CombatArea: Player Enters CombatArea (see CombatArea.cs). CombatArea calls CombatManager.StartBattle with all participants
+
+            2. CombatManager: StartCombat() is called and all systems are created. CombatManager subscribes to ActionSystem.OnActionFinished.
+                              This is because the CombatManager will resolve the final result when the action is finished
+
+            3. CombatManager: StartNextTurn() Gets the next Actor from TurnSystem and sets CombatContext.CurrentPlayer to Actor.    
+                              After this ActionSystem.TurnStart is called.
+
+            4. ActionSystem: TurnStart() will notify the Actor that an action is requested. Once the Actor submits an action
+                             ActionSystem.SubmitAction is Called. It will then resolve the action which plays the animation
+                             and opens reacion windows ect..
+
+            5. ActionSystem: NotifyActionFinished() is called by the actor whos action was being resolved. This invokes the OnActionFinished
+                             Event that the CombatManager listens to.
+
+            6. CombatManager: Once OnActionFinished is invoked CombatManager.ActionFinished() is called which will resolve the input results
+                              from ReactionSystem and then calls Action.ResolveResults(). ResolveResults() is in CombatAction and decides what
+                              should be done based on the result ie. hit, dodge, parry, confirm
+
+            7. CombatManager: Once Action.ResolveResults() has been called and damage applied ect.. then CombatManager checks if we should end
+                              combat ie. all Players or Enemies dead. If not then call CombatManager.StartNextTurn();   
+    
+        Other:
+            1. CombatEvents: If you see this you dont need to pay attention to it. It is not used for any combat logic only so external things
+                             like UI or CameraManager can know what is happening in combat
+
+    ================================================================================================================================================
+     */
     public CombatManager(GameManager game)
     {
         m_game = game;      
