@@ -15,6 +15,7 @@ public class CombatUI : UIComponentBase
     {
         CombatEvents.OnTurnStarted += TurnStarted;
         CombatEvents.OnCombatActorsChanged += ActorsChanged;
+        CombatEvents.OnCombatEnded += CombatEnded;
 
         m_view.Initialize(m_uiManager);
     }
@@ -22,6 +23,7 @@ public class CombatUI : UIComponentBase
     {
         CombatEvents.OnTurnStarted -= TurnStarted;
         CombatEvents.OnCombatActorsChanged -= ActorsChanged;
+        CombatEvents.OnCombatEnded -= CombatEnded;
     }
     private void ActorsChanged(List<CombatActor> actors) 
     {
@@ -38,6 +40,10 @@ public class CombatUI : UIComponentBase
         {
             Toggle(false);
         }
+    }
+    private void CombatEnded(CombatResult result) 
+    {
+        Toggle(false);
     }
     public override void Toggle(bool show) 
     {

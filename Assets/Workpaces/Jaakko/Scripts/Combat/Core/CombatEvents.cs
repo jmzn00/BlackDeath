@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 public static class CombatEvents
 {
+    // COMBATEVENTS IS NOT USED FOR COMBATSYSTEM
+    // DO NOT USE COMBAT EVENTS FOR COMBAT LOGIC
+
     public static event Action OnCombatStarted;
     public static event Action<CombatResult> OnCombatEnded;
 

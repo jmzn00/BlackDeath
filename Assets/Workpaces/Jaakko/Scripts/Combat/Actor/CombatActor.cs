@@ -24,10 +24,12 @@ public class CombatActor : MonoBehaviour, IActorComponent
     public event Action<List<ActorStatusEffect>> OnStatusEffectsChanged;
     private HealthComponent m_health;
     public HealthComponent Health => m_health;
-    private AnimationController m_animationController;
+
     [SerializeField] protected GameObject m_visual;
     [SerializeField] private List<CombatAction> m_actions;
     public List<CombatAction> Actions => m_actions;
+
+    private AnimatorComponent m_animator;
 
     #region IActionProvider
     protected void SetActionProvider(IActionProvider provider)
@@ -63,7 +65,6 @@ public class CombatActor : MonoBehaviour, IActorComponent
     }
     public bool Dispose()
     {
-        m_animationController.OnDefensiveAnimationPlaying -= OnDefensiveAnimationPlaying;
         OnDispose();
         return true;
     }
@@ -72,8 +73,7 @@ public class CombatActor : MonoBehaviour, IActorComponent
         m_health = m_actor.Get<HealthComponent>();
         m_health.OnHealthChanged += OnHealthChanged;
 
-        m_animationController = GetComponent<AnimationController>();
-        m_animationController.OnDefensiveAnimationPlaying += OnDefensiveAnimationPlaying;
+        m_animator = actor.Get<AnimatorComponent>();
     }
     public void SetInputSource(IInputSource source)
     {
@@ -88,21 +88,7 @@ public class CombatActor : MonoBehaviour, IActorComponent
 
     }
     #endregion
-    #region Combat
-    public void OnParryPerformed()
-    {
-        m_defensiveAnimationPlaying = true;
-        m_animationController?.PlayDefensiveAnimation(AnimationType.Parry);
-    }
-    public void OnDodgePerformed() 
-    {
-        m_defensiveAnimationPlaying = true;
-        m_animationController?.PlayDefensiveAnimation(AnimationType.Dodge);
-    }
-    void OnDefensiveAnimationPlaying(bool value) 
-    {
-        m_defensiveAnimationPlaying = value;
-    }
+    #region Combat            
     void OnHealthChanged(float value)
     {
         if (IsDead) return;
@@ -115,8 +101,6 @@ public class CombatActor : MonoBehaviour, IActorComponent
                 m_visual.SetActive(false); // temp
         }
     }
-
-
     public void TurnStart(CombatActor actor)
     {
         if (actor != this) 
@@ -147,33 +131,38 @@ public class CombatActor : MonoBehaviour, IActorComponent
         m_combatManager.Action.SubmitAction(this,
             target, action);
     }
+
+    // event that m_animator listens to
+    public event Action<AnimationClip> OnPlayRequested;
+
     public void PlayAction(ActionContext ctx, Action onComplete)
     {
         if (ctx.Source == ctx.Target) 
         {
-            Anim_ActionFinished();
+            ActionFinished();
             return;
         }
         if (ctx.Action.animationClip == null) 
         {
             Debug.LogWarning("AnimationClip is NULL");
-            Anim_ActionFinished();
+            ActionFinished();
             return;
-        }
-        m_animationController.PlayActionAnimation(ctx.Action.animationClip);
+        }        
+        OnPlayRequested?.Invoke(ctx.Action.animationClip);
     }
-    public void Anim_CloseWindow()
+    // called by m_animator
+    public void CloseWindow()
     {
         m_combatManager.Action.ClosePrompt(this);
     }
-    // called by animator
-    public void Anim_OpenWindow(string promptKey)
+    // called by m_animator
+    public void OpenWindow(string promptKey)
     {
         m_combatManager.Action.OpenPrompt(this, promptKey);
         
     }
-    // called by animation clip
-    public void Anim_ActionFinished()
+    // called by m_animator
+    public void ActionFinished()
     {
         m_combatManager.Action.NotifyActionFinished(this);
     }

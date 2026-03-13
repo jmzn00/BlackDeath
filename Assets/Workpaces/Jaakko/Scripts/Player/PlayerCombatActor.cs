@@ -44,21 +44,18 @@ public class PlayerCombatActor : CombatActor
     protected override void CombatEnded(CombatResult result)
     {
         base.CombatEnded(result);
-        Debug.Log($"{name} Combat Ended");
+
         if (IsDead)
             IsDead = false;
 
         if (m_visual) 
         {
             m_visual.SetActive(true);
-            Debug.Log($"VISUAL SET ACTIVE {name}");
         }
         else 
         {
             Debug.Log($"NO VISUAL ON {name}");
         }
-
-
-            Health.ApplyHealth(Health.MaxHealth);
+        Health.ApplyHealth(Health.MaxHealth);
     }
 }

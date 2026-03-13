@@ -50,7 +50,10 @@ public class ReactionSystem
         InputPrompt attackerPrompt = Library.Get(ctx.PromptKey);
         m_context.Prompt = attackerPrompt;
 
-        m_context.Prompt.action.Enable();
+        // this can be null if the animation calls open with an empty prompt
+        if (m_context.Prompt != null) 
+            m_context.Prompt.action.Enable();
+
         foreach (var p in m_defensivePrompts)
             p.action.Enable();        
 
@@ -61,10 +64,13 @@ public class ReactionSystem
     {
         if (!m_window.IsOpen) 
         {
-            Debug.LogWarning("Cannot Close: Window allready closed");
+            Debug.LogWarning("Cannot Close: Window Is Not Open");
             return;
         }
-        m_context.Prompt.action.Disable();
+
+        // this can be null if the animation calls open with an empty prompt
+        if (m_context.Prompt != null)
+            m_context.Prompt.action.Disable();
 
         
         foreach (var p in m_defensivePrompts)

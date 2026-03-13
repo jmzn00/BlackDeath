@@ -404,12 +404,10 @@ GameObject:
   m_Component:
   - component: {fileID: 9200920035006019682}
   - component: {fileID: 5408141083672164264}
-  - component: {fileID: 3749458055810809419}
-  - component: {fileID: -3394115276659744341}
-  - component: {fileID: -4417936627847649505}
+  - component: {fileID: 1375061356322806093}
+  - component: {fileID: 6956582757006636906}
   - component: {fileID: 2071846275302041565}
   - component: {fileID: 2743277439528510324}
-  - component: {fileID: 1375061356322806093}
   m_Layer: 0
   m_Name: EnemyRat
   m_TagString: Untagged
@@ -456,32 +454,7 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!143 &3749458055810809419
-CharacterController:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 915938188378808624}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Height: 2
-  m_Radius: 0.5
-  m_SlopeLimit: 45
-  m_StepOffset: 0.3
-  m_SkinWidth: 0.08
-  m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &-3394115276659744341
+--- !u!114 &1375061356322806093
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -490,43 +463,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 915938188378808624}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4c246a3f1bf280643b859a9da5b901e6, type: 3}
+  m_Script: {fileID: 11500000, guid: 80c1c75e03f205d42aab4767c478f87e, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MovementController
-  m_defaultLayer:
-    serializedVersion: 2
-    m_Bits: 1
-  m_visualCapsule: {fileID: 0}
-  m_playerStats:
-    WalkSpeed: 0
-    RunSpeed: 0
-    TimeToRun: 0
-    Stamina: 0
-    MaxStamina: 0
-    StaminaRegenRate: 0
-    Acceleration: 0
-    Deceleration: 0
-    TimeToStop: 0
-    SlideFactor: 0
-    BrakeFactor: 0
-    Gravity: 0
-    JumpForce: 0
-    MaxAirJumps: 0
-    MaxAirSpeed: 0
-    AirAcceleration: 0
-    AirControl: 0
-    DashDistance: 0
-    DashTime: 0
-    DashStaminaCost: 0
-    DashCooldown: 0
-    WallJumpDistance: 0
-    WallJumpInputInfluence: 0
-    WallJumpHeight: 0
-    FirstWallJumpStaminaCost: 0
-    SecondWallJumpStaminaCost: 0
-    WallJumpStaminaCost: 0
-    ConsecutiveWallJumpStaminaCostMultiplier: 0
---- !u!114 &-4417936627847649505
+  m_EditorClassIdentifier: Assembly-CSharp::HealthComponent
+  ch: 5
+  m_maxHealth: 5
+--- !u!114 &6956582757006636906
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -535,14 +477,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 915938188378808624}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e11d133ad2accc0448d76529985cbc2d, type: 3}
+  m_Script: {fileID: 11500000, guid: dfea707aeec5e624d93708b22d80ee56, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::AnimationController
-  m_spriteRenderer: {fileID: 0}
-  m_idleAnim: {fileID: 7400000, guid: 1a9927760968b9e439058d6e897659a3, type: 2}
-  m_runAnim: {fileID: 0}
-  m_dodgeAnim: {fileID: 0}
-  m_parryAnim: {fileID: 0}
+  m_EditorClassIdentifier: Assembly-CSharp::AnimatorComponent
+  m_idle: {fileID: 7400000, guid: 1a9927760968b9e439058d6e897659a3, type: 2}
+  m_walk: {fileID: 0}
+  m_parry: {fileID: 0}
+  m_dodge: {fileID: 0}
 --- !u!114 &2071846275302041565
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -558,7 +499,7 @@ MonoBehaviour:
   m_actorID: c5a4a7ce-122d-452b-b862-7027097a3cf1
   m_playable: 0
   m_trackingTarget: {fileID: 4266567595946747290}
-  actorSprite: {fileID: 0}
+  actorSprite: {fileID: 6923017139169223114, guid: 611288fb088e84b468643c90cda78c7d, type: 3}
 --- !u!114 &2743277439528510324
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -582,20 +523,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 1e5d3c0960926dc4b82c32c6a62c2363, type: 2}
   m_targetingBehaviours:
   - {fileID: 11400000, guid: cb1ef68f319351143a3f56762ecde7db, type: 2}
---- !u!114 &1375061356322806093
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 915938188378808624}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 80c1c75e03f205d42aab4767c478f87e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::HealthComponent
-  ch: 5
-  m_maxHealth: 5
 --- !u!1 &963879379829645046
 GameObject:
   m_ObjectHideFlags: 0

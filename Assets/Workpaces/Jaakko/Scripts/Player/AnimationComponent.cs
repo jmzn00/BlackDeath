@@ -87,20 +87,5 @@ public class AnimationController : MonoBehaviour
         if (clip == null) return;
 
         m_animator.Play(clip.name, 0, 0f);
-        OnDefensiveAnimationPlaying?.Invoke(true);
-        m_defensiveAnimationPlaying = true;
-    }
-    public event Action<bool> OnDefensiveAnimationPlaying;
-    public void OnDefensiveAnimationFinished() 
-    {
-        m_defensiveAnimationPlaying = false;
-        OnDefensiveAnimationPlaying?.Invoke(false);
-        m_animator.Play(m_idleAnim.name, 0, 0f);
-    }
-    public void OnActionAnimationFinished() 
-    {
-        m_actionAnimationPlaying = false;
-        m_combatActor.Anim_ActionFinished();
-        m_animator.Play(m_idleAnim.name, 0, 0f);
-    }
+    }        
 }

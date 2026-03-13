@@ -24,7 +24,7 @@ public class CombatManager : IManager
     private GameManager m_game;
     
     private CombatContext m_context;
-    private TurnSystem m_turnSystem;
+    private TurnSystem m_turn;
     private ReactionSystem m_reaction;    
     private ActionSystem m_action;
     public ActionSystem Action => m_action;
@@ -71,7 +71,7 @@ public class CombatManager : IManager
         m_state = CombatState.Active;        
 
         m_context = new CombatContext(actors);
-        m_turnSystem = new TurnSystem(m_context);
+        m_turn = new TurnSystem(m_context);
         m_reaction = new ReactionSystem();
         m_action = new ActionSystem(m_context, m_reaction);
 
@@ -83,6 +83,7 @@ public class CombatManager : IManager
     {
         ActionResult result = m_reaction.ResolveResults();
         aCtx.Action.ResolveResult(aCtx, result);
+        Debug.Log($"{aCtx.Source.name} Performed Action {aCtx.Action.actionName} on {aCtx.Target.name}. Result {result}");
 
         if (CheckEnd()) 
         {
@@ -95,9 +96,10 @@ public class CombatManager : IManager
     }
     private void StartNextTurn() 
     {
-        CombatActor actor = m_turnSystem.Next();
+        CombatActor actor = m_turn.Next();
         if (actor == null) 
         {
+            Debug.LogWarning($"Turn System Next() == NULL");
             EndCombat();
             return;
         }
@@ -110,9 +112,12 @@ public class CombatManager : IManager
     }
     private bool CheckEnd()
     {
-        List<CombatActor> actors = m_context.Actors.ToList();
-        return !actors.Exists(a => a.IsPlayer && !a.IsDead)
-            || !actors.Exists(e => !e.IsPlayer && !e.IsDead);
+        var actors = m_context.Actors.ToList();
+
+        bool playersAlive = actors.Exists(a => a.IsPlayer && !a.IsDead);
+        bool enemiesAive = actors.Exists(e => !e.IsPlayer && !e.IsDead);
+
+        return !playersAlive || !enemiesAive;            
     }
     private void EndCombat()
     {
