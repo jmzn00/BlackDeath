@@ -127,6 +127,7 @@ public class CombatManager : IManager
             EndCombat();
             return;
         }
+        CombatEvents.TurnEnded(m_context.CurrentActor);
         CombatEvents.TurnStarted(actor);
 
         m_context.SetCurrentActor(actor);
