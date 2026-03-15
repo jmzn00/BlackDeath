@@ -467,7 +467,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthComponent
   ch: 5
-  m_maxHealth: 5
+  m_maxHealth: 8
 --- !u!114 &6956582757006636906
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -475,7 +475,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 915938188378808624}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dfea707aeec5e624d93708b22d80ee56, type: 3}
   m_Name: 
@@ -496,7 +496,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7703f0d091e12574c985a35ce98fc52f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AiActor
-  m_actorID: c5a4a7ce-122d-452b-b862-7027097a3cf1
+  m_actorID: 7a01ce4c-b6a8-45c9-bdca-88364e6c94da
   m_playable: 0
   m_trackingTarget: {fileID: 4266567595946747290}
   actorSprite: {fileID: 6923017139169223114, guid: 611288fb088e84b468643c90cda78c7d, type: 3}
@@ -512,7 +512,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8931c9d27803dc488d26d7f2c67d9a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AICombatActor
-  m_visual: {fileID: 0}
+  m_visual: {fileID: 9059011711645081977}
   m_actions:
   - {fileID: 11400000, guid: 5f3da3ccbd845ad469fc6cfbf7f5107b, type: 2}
   m_reactionSettings:

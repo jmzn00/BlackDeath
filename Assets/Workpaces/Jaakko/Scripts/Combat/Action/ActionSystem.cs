@@ -46,18 +46,26 @@ public class ActionSystem
             return;
         }
         m_reaction.Close();
+
+        ActionResult res = m_reaction.ResolveResults();
+        m_currentAction.Action.ResolveResult(m_currentAction, res);
     }
+
     public void NotifyActionFinished(CombatActor actor) 
     {
         if (m_currentAction == null)
             return;
         if (actor != m_currentAction.Source) 
         {
+            // if you get this warning it may be that ui is trying to submit again 
+            // when you are confirming an attack
+
             Debug.LogWarning("AS: Can not Finish, Actor is not Source");
             return;
-        }
+        }        
         OnActionFinished?.Invoke(m_currentAction);
         CombatEvents.ActionFinished(m_currentAction);
+        CombatEvents.TurnEnded(m_currentAction.Source);
         m_currentAction = null;
     }
     public void TurnStarted() 

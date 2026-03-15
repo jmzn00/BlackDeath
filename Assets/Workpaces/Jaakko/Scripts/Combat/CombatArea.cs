@@ -45,6 +45,8 @@ public class CombatArea : MonoBehaviour
     }
     public void StartBattle()
     {
+        CombatEvents.CombatStarted();
+
         if (m_combatPreferences.m_enemies[0] == null)
         {
             Debug.LogWarning("CombatArea Enemy Prefab NULL");

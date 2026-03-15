@@ -112,7 +112,7 @@ public class ReactionSystem
                 break;
             case PromptInputType.Confirm:
                 m_window.TryActivateConfirm();
-                break;            
+                break; 
         }
     }
     public ActionResult ResolveResults()

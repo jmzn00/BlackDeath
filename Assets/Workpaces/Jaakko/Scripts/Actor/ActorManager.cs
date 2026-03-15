@@ -30,11 +30,6 @@ public class ActorManager : IManager
             Debug.LogWarning("Trying to set controlled actor that is not in party");
             return;
         }
-        if (m_currentControlled != null)        
-            m_currentControlled.SetControl(false);
-
-        actor.SetControl(true);
-
         m_currentControlled = actor;
         OnActorControlChanged?.Invoke(actor);
     }

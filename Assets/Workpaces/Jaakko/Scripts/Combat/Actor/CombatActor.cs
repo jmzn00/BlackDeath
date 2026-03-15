@@ -123,11 +123,20 @@ public class CombatActor : MonoBehaviour, IActorComponent
     }
     private void CombatStarted()
     {
-
+        MovementController c = Actor.Get<MovementController>();
+        if (c != null)
+            c.enabled = false;
     }
     protected virtual void CombatEnded(CombatResult result) 
-    {
+    {        
         ClearStatusEffects();
+
+        MovementController c = Actor.Get<MovementController>();
+        if (c != null) 
+        {
+            c.enabled = true;
+        }
+        
     }
     public void SubmitAction(CombatActor source,
         CombatActor target, CombatAction action)
