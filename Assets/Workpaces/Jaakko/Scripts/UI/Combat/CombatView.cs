@@ -132,7 +132,7 @@ public class CombatView : MonoBehaviour, IUIComponentView
     private void TargetSelected(CombatActor target) 
     {        
         m_currentTarget = target;
-
+        CombatEvents.TargetSelected(m_currentActor, m_currentTarget);
         ShowActionTypes(m_currentActor);
     }
     private void ShowActionTypes(CombatActor actor)

@@ -25,6 +25,11 @@ public static class CombatEvents
     public static event Action<ActionContext> OnActionFinished;
     public static event Action<List<CombatActor>> OnCombatActorsChanged;
 
+    // New events for camera / UI integration (previewing target selection and action execution)
+    // Note: These are for external systems (camera, UI). Combat logic should not depend on them.
+    public static event Action<CombatActor, CombatActor> OnTargetSelected;
+    public static event Action<CombatActor, CombatActor, CombatAction> OnActionExecuting;
+
     public static void CombatStarted() 
     {
         OnCombatStarted?.Invoke();
@@ -72,5 +77,16 @@ public static class CombatEvents
     public static void CombatActorsChanged(List<CombatActor> actors) 
     {
         OnCombatActorsChanged?.Invoke(actors);
+    }
+
+    // New invokers
+    public static void TargetSelected(CombatActor source, CombatActor target)
+    {
+        OnTargetSelected?.Invoke(source, target);
+    }
+
+    public static void ActionExecuting(CombatActor source, CombatActor target, CombatAction action)
+    {
+        OnActionExecuting?.Invoke(source, target, action);
     }
 }

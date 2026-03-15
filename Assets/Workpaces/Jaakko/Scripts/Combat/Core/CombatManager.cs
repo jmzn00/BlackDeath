@@ -11,7 +11,7 @@ public enum CombatState
     TurnStarting,
     Resolving,
 }
-public enum CombatResult 
+public enum CombatResult
 {
     Won,
     Lost
@@ -22,10 +22,10 @@ public class CombatManager : IManager
     public CombatState State => m_state;
 
     private GameManager m_game;
-    
+
     private CombatContext m_context;
     private TurnSystem m_turn;
-    private ReactionSystem m_reaction;    
+    private ReactionSystem m_reaction;
     private ActionSystem m_action;
     public ActionSystem Action => m_action;
 
@@ -70,7 +70,7 @@ public class CombatManager : IManager
      */
     public CombatManager(GameManager game)
     {
-        m_game = game;      
+        m_game = game;
     }
     #region IManager
     public void Update(float dt)
@@ -80,17 +80,17 @@ public class CombatManager : IManager
         m_reaction.Update(dt);
     }
     public bool Init()
-    {        
+    {
         return true;
     }
-    public void OnManagersInitialzied() 
+    public void OnManagersInitialzied()
     {
         List<CombatArea> areas =
             GameObject.
             FindObjectsByType<CombatArea>
             (FindObjectsSortMode.None).
             ToList();
-        foreach (CombatArea area in areas) 
+        foreach (CombatArea area in areas)
         {
             area.Initialize(m_game);
         }
@@ -107,7 +107,7 @@ public class CombatManager : IManager
         CombatEvents.CombatStarted();
         CombatEvents.CombatActorsChanged(actors);
 
-        m_state = CombatState.Active;        
+        m_state = CombatState.Active;
 
         m_context = new CombatContext(actors);
         m_turn = new TurnSystem(m_context);
@@ -118,31 +118,58 @@ public class CombatManager : IManager
 
         StartNextTurn();
     }
-    private void ActionFinished(ActionContext aCtx) 
+    private void ActionFinished(ActionContext aCtx)
     {
         ActionResult result = m_reaction.ResolveResults();
         aCtx.Action.ResolveResult(aCtx, result);
         Debug.Log($"{aCtx.Source.name} Performed Action {aCtx.Action.actionName} on {aCtx.Target.name}. Result {result}");
 
-        if (CheckEnd()) 
+        if (CheckEnd())
         {
             EndCombat();
         }
-        else 
+        else
         {
             StartNextTurn();
         }
     }
-    private void StartNextTurn() 
+    private void StartNextTurn()
     {
         CombatActor actor = m_turn.Next();
-        if (actor == null) 
+        if (actor == null)
         {
             Debug.LogWarning($"Turn System Next() == NULL");
             EndCombat();
             return;
         }
         CombatEvents.TurnEnded(m_context.CurrentActor);
+
+        // drive camera immediately for the upcoming turn/transition
+        var cam = m_game.Resolve<CameraManager>();
+        if (cam != null)
+        {
+            // uses preset ids you created in the director
+            string presetId = actor.IsPlayer ? "CC_PlayerTurn" : "CC_EnemyPrepare";
+            cam.TransitionToPreset(presetId, actor, null);
+        }
+
+        // Transition window
+        var transitionView = GameObject.FindFirstObjectByType<TurnTransitionView>();
+        if (transitionView != null)
+        {
+            m_state = CombatState.NextTurn;
+            transitionView.PlayTransition(actor, 4f, () =>
+            {
+                CombatEvents.TurnStarted(actor);
+                m_context.SetCurrentActor(actor);
+                m_context.AdvanceTurn();
+                m_action.TurnStarted();
+
+                m_state = CombatState.Active;
+            });
+            return;
+        }
+
         CombatEvents.TurnStarted(actor);
 
         m_context.SetCurrentActor(actor);
@@ -156,7 +183,7 @@ public class CombatManager : IManager
         bool playersAlive = actors.Exists(a => a.IsPlayer && !a.IsDead);
         bool enemiesAive = actors.Exists(e => !e.IsPlayer && !e.IsDead);
 
-        return !playersAlive || !enemiesAive;            
+        return !playersAlive || !enemiesAive;
     }
     private void EndCombat()
     {

@@ -83,6 +83,7 @@ public class ActionSystem
         };
         action.Resolve(m_currentAction, TempAction); // REMOVE TEMP
         CombatEvents.ActionSubmitted(m_currentAction);
+        CombatEvents.ActionExecuting(source, target, action);
     }
     public event Action TempAction; // REMOVE
 }

@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1eee15e428a6f0240b9e49249075cbce, type: 3}
+  m_Name: CC_PlayerTurn
+  m_EditorClassIdentifier: Assembly-CSharp::CombatCameraPreset
+  presetId: CC_PlayerTurn
+  anchor: 0
+  worldPosition: {x: 0, y: 0, z: 0}
+  offset: {x: 0, y: 0, z: 0}
+  lookAtOffset: {x: -2, y: 3, z: -5}
+  smooth: 1
+  moveSmoothTime: 0.5
+  rotationSmoothTime: 0.3
+  useFollowZoom: 1
+  followZoomFovRange: {x: 47, y: 104}
+  followOffset: {x: -2, y: 3, z: -5}
+  overrideFollowOffset: 1
+  followZoomSmoothTime: 0.25

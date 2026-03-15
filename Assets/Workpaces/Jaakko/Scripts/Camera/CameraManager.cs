@@ -18,23 +18,26 @@ public class CameraManager : IManager
     private List<ICameraMode> m_cameraModes;
 
     private ICameraMode m_mode;
-    public CameraManager(ActorManager actorManager, CombatManager combatManager, GameManager gameManager) 
+    public CameraManager(ActorManager actorManager, CombatManager combatManager, GameManager gameManager)
     {
         m_actorManager = actorManager;
         m_combatManager = combatManager;
         m_game = gameManager;
-    }    
-    public bool Init() 
+    }
+    public bool Init()
     {
         m_cinemachineCamera = GameObject
             .FindFirstObjectByType<CinemachineCamera>();
         return true;
     }
-    public bool Dispose() 
+
+    // new: cached director reference
+    private CombatCameraDirector m_director;
+    public bool Dispose()
     {
         return true;
     }
-    public void OnManagersInitialzied() 
+    public void OnManagersInitialzied()
     {
         m_container = new Container();
         m_container.RegisterInstance(this);
@@ -50,6 +53,9 @@ public class CameraManager : IManager
         var defaultMode = m_cameraModes.FirstOrDefault();
         if (defaultMode != null)
             SetMode(defaultMode);
+
+        // find director in scene (configure presets in inspector)
+        m_director = GameObject.FindFirstObjectByType<CombatCameraDirector>();
     }
     public void Update(float dt)
     {
@@ -64,10 +70,24 @@ public class CameraManager : IManager
         // Update current mode
         m_mode?.Update(dt);
     }
-    private void SetMode(ICameraMode mode) 
+    private void SetMode(ICameraMode mode)
     {
         m_mode?.Exit();
         m_mode = mode;
         m_mode.Enter();
+    }
+
+    // Public API used by camera modes / combat to transition camera to a preset.
+    public void TransitionToPreset(string presetId, CombatActor actor = null, CombatActor target = null)
+    {
+        if (m_director == null)
+            m_director = GameObject.FindFirstObjectByType<CombatCameraDirector>();
+
+        if (m_director == null) return;
+
+        var preset = m_director.GetPreset(presetId);
+        if (preset == null) return;
+
+        m_director.ApplyPreset(preset, actor != null ? actor.transform : null, target != null ? target.transform : null);
     }
 }

@@ -34,8 +34,6 @@ public class FollowActorCameraMode : ICameraMode
     private void OnActorChanged(Actor actor) 
     {
         if (actor == null) return;
-
-        m_cameraManager.Camera.Target.LookAtTarget = actor.TrackingTarget;
-        m_cameraManager.Camera.Target.TrackingTarget = actor.TrackingTarget;
+        m_cameraManager.TransitionToPreset("CC_FollowActor", actor: actor.GetComponent<CombatActor>(), target: null);
     }
 }

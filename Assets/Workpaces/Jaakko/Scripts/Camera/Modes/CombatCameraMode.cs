@@ -6,44 +6,57 @@ public class CombatCameraMode : ICameraMode
     private CameraManager m_cameraManager;
     private GameManager m_game;
 
-
-    public CombatCameraMode(CombatManager combatManager, CameraManager cameraManager, GameManager game) 
+    public CombatCameraMode(CombatManager combatManager, CameraManager cameraManager, GameManager game)
     {
         m_combatManager = combatManager;
         m_cameraManager = cameraManager;
         m_game = game;
     }
-    public bool CanEnter() 
+
+    public bool CanEnter()
     {
         return m_game.State == GameState.Combat;
     }
-    public void Enter() 
-    {
-        //OnActorChanged(m_combatManager.Actor);
-        //m_combatManager.OnCurrentActorChanged += OnActorChanged;        
-    }
-    public void Exit() 
-    {
-        //m_combatManager.OnCurrentActorChanged -= OnActorChanged;
-    }
-    public void Update(float dt) 
-    {
 
-    }
-    private void OnActorChanged(Actor actor) 
+    public void Enter()
     {
-        if (actor == null) 
-        {
-            Debug.Log("Actor is NULL");
-            return;
-        }
-            
-        if (actor.TrackingTarget == null) 
-        {
-            Debug.Log("Tracking Target is NULL");
-            return;
-        }
-        m_cameraManager.Camera.Target.TrackingTarget = actor.TrackingTarget;
-        m_cameraManager.Camera.Target.LookAtTarget = actor.TrackingTarget;
+        // subscribe to events and drive director via presets
+        CombatEvents.OnTurnStarted += OnTurnStarted;
+        CombatEvents.OnTargetSelected += OnTargetSelected;
+        CombatEvents.OnActionExecuting += OnActionExecuting;
+    }
+
+    public void Exit()
+    {
+        CombatEvents.OnTurnStarted -= OnTurnStarted;
+        CombatEvents.OnTargetSelected -= OnTargetSelected;
+        CombatEvents.OnActionExecuting -= OnActionExecuting;
+    }
+
+    public void Update(float dt)
+    {
+    }
+
+    private void OnTurnStarted(CombatActor actor)
+    {
+        if (actor == null) return;
+
+        // Use director presets to position anchor — do NOT change vcam Follow/LookAt directly.
+        if (actor.IsPlayer)
+            m_cameraManager.TransitionToPreset("CC_PlayerTurn", actor, null);
+        else
+            m_cameraManager.TransitionToPreset("CC_EnemyPrepare", actor, null);
+    }
+
+    private void OnTargetSelected(CombatActor source, CombatActor target)
+    {
+        // focus between source and target via preset
+        m_cameraManager.TransitionToPreset("CC_SelectTarget", source, target);
+    }
+
+    private void OnActionExecuting(CombatActor source, CombatActor target, CombatAction action)
+    {
+        // dramatic preset for execution
+        m_cameraManager.TransitionToPreset("CC_ActionExecute", source, target);
     }
 }
