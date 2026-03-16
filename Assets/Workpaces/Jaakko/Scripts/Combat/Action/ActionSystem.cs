@@ -49,7 +49,9 @@ public class ActionSystem
         m_reaction.Close();
 
         ActionResult res = m_reaction.ResolveResults();
-        m_currentAction.Action.ResolveResult(m_currentAction, res);
+        m_currentAction.Action.ResolveResult(m_currentAction, res);        
+        CombatEvents.ActionResolved(m_currentAction, res);
+        Debug.Log($"{m_currentAction.Source.name} performed {m_currentAction.Action.actionName} on {m_currentAction.Target.name} result: {res}");
     }
 
     public void NotifyActionFinished(CombatActor actor) 
@@ -59,14 +61,12 @@ public class ActionSystem
         if (actor != m_currentAction.Source) 
         {
             // if you get this warning it may be that ui is trying to submit again 
-            // when you are confirming an attack
+            // when you are confirming an attack or submiting input
 
             Debug.LogWarning("AS: Can not Finish, Actor is not Source");
             return;
         }        
         OnActionFinished?.Invoke(m_currentAction);
-        CombatEvents.ActionFinished(m_currentAction);
-        CombatEvents.TurnEnded(m_currentAction.Source);
         m_currentAction = null;
     }
     public void TurnStarted() 
@@ -96,7 +96,6 @@ public class ActionSystem
             Action = action,
         };
         OnActionSubmitted?.Invoke(m_currentAction);
-        CombatEvents.ActionSubmitted(m_currentAction);
     }
     
 }

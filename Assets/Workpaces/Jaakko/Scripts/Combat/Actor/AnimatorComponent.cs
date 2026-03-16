@@ -38,6 +38,10 @@ public class AnimatorComponent : MonoBehaviour, IActorComponent
     {
         m_animator.Play(clip.name, 0, 0f);
     }
+    public void PlayTransition() 
+    {
+        m_animator.Play(m_transition.name, 0, 0f);
+    }
     // called by animation
     public void Anim_OpenWindow(string promptKey) 
     {

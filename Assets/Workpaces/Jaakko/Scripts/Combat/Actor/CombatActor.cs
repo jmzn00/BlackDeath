@@ -101,6 +101,10 @@ public class CombatActor : MonoBehaviour, IActorComponent
     {
         return m_animator.TransitionClip != null;
     }
+    public void PlayTransition() 
+    {
+        m_animator.PlayTransition();
+    }
     void OnHealthChanged(float value)
     {
         if (IsDead) return;

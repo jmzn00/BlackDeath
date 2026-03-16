@@ -7,12 +7,8 @@ public class TransitionSystem
     public TransitionSystem(CombatArea area) 
     {
         m_area = area;
-        transitionOpen = false;
-    }
+    }    
     public event Action OnTransitionFinished;
-
-    private Transform m_sourceActorPoint;
-    private Transform m_targetActorPoint;
 
     private Transform m_sourceActor;
     private Transform m_targetActor;
@@ -28,13 +24,13 @@ public class TransitionSystem
 
     private float m_sourceDuration;
     private float m_targetDuration;
-
     private const float DEFAULT_DURATION = 3f;
 
-    private bool transitionOpen;
+    private bool m_transitionOpen;
+    
     public void Update(float dt) 
     {
-        if (!transitionOpen) return;
+        if (!m_transitionOpen) return;
 
         m_sourceTime += dt;
         m_targetTime += dt;
@@ -62,17 +58,20 @@ public class TransitionSystem
         m_sourceActor = null;
         m_targetActor = null;
 
-        transitionOpen = false;
+        m_transitionOpen = false;
     }
     public void Start(ActionContext actx) 
     {
-        m_sourceActor = actx.Source.transform;
-        m_targetActor = actx.Target.transform;
+        CombatActor source = actx.Source;
+        CombatActor target = actx.Target;
+
+        m_sourceActor = source.transform;
+        m_targetActor = target.transform;
 
         m_sourceStart = m_sourceActor.position;
         m_targetStart = m_targetActor.position;
 
-        if (actx.Source.IsPlayer) 
+        if (source.IsPlayer) 
         {
             m_sourceEnd = m_area.Preferences.m_partyActionPoint.position;
             m_targetEnd = m_area.Preferences.m_enemyActionPoint.position;
@@ -81,21 +80,31 @@ public class TransitionSystem
         {
             m_sourceEnd = m_area.Preferences.m_enemyActionPoint.position;
             m_targetEnd = m_area.Preferences.m_partyActionPoint.position;           
+        }                
+        m_sourceDuration = source.HasTransition() && source.TransitionClip
+            ? source.TransitionClip.length : DEFAULT_DURATION;
+        m_targetDuration = target.HasTransition() && target.TransitionClip
+            ? target.TransitionClip.length : DEFAULT_DURATION;
+
+        if (source.HasTransition())
+        {
+            source.PlayTransition();
+        }
+        if (target.HasTransition())
+        {
+            target.PlayTransition();
         }
 
-        m_sourceDuration = actx.Source.HasTransition() && actx.Source.TransitionClip
-            ? actx.Source.TransitionClip.length : DEFAULT_DURATION;
-        m_targetDuration = actx.Target.HasTransition() && actx.Target.TransitionClip
-            ? actx.Target.TransitionClip.length : DEFAULT_DURATION;
-
-        transitionOpen = true;
+        m_transitionOpen = true;
+        CombatEvents.TransitionStarted();
     }    
     private void Finish() 
     {
-        transitionOpen = false;
+        m_transitionOpen = false;
         m_sourceTime = 0f;
         m_targetTime = 0f;
 
         OnTransitionFinished?.Invoke();
+        CombatEvents.TransitionEnded();
     }
 }

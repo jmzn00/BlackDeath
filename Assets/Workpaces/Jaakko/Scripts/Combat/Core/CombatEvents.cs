@@ -3,27 +3,40 @@ using System.Collections.Generic;
 
 public static class CombatEvents
 {
-    // COMBATEVENTS IS NOT USED FOR COMBATSYSTEM
-    // DO NOT USE COMBAT EVENTS FOR COMBAT LOGIC
-
+    // COMBAT STATE
     public static event Action OnCombatStarted;
     public static event Action<CombatResult> OnCombatEnded;
 
-    public static event Action<CombatActor> OnTurnStarted;
-    public static event Action<CombatActor> OnTurnEnded;
+    // ACTORS
+    public static event Action<List<CombatActor>> OnCombatActorsChanged;
+    public static event Action<CombatActor> OnActorDied;
 
+    // ACTION
+    public static event Action<ActionContext> OnActionFinished;
     public static event Action<ActionContext> OnActionSubmitted;
     public static event Action<ActionContext, ActionResult> OnActionResolved;
 
-    public static event Action<CombatActor> OnActorDied;
-
+    // REACTION
     public static event Action<ActionContext> OnReactionWindowOpened;
     public static event Action<ActionContext> OnReactionWindowClosed;
-
     public static event Action<ActionContext, ActionResult> OnReactionResolved;
-    
-    public static event Action<ActionContext> OnActionFinished;
-    public static event Action<List<CombatActor>> OnCombatActorsChanged;
+
+    // TURN
+    public static event Action<CombatActor> OnTurnStarted;
+    public static event Action<CombatActor> OnTurnEnded;
+
+    // TRANSITION
+    public static event Action OnTransitionStarted;
+    public static event Action OnTransitionEnded;
+
+    public static void TransitionStarted() 
+    {
+        OnTransitionStarted?.Invoke();
+    }
+    public static void TransitionEnded() 
+    {
+        OnTransitionEnded?.Invoke();
+    }
 
     public static void CombatStarted() 
     {

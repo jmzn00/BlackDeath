@@ -436,7 +436,7 @@ MonoBehaviour:
   m_walk: {fileID: 7400000, guid: 63e02d32969e3b7438060ca2da476b80, type: 2}
   m_parry: {fileID: 7400000, guid: 6237323bf1378af43a63e6523222f8f8, type: 2}
   m_dodge: {fileID: 7400000, guid: f38ee071d7c3e804b8828547a025f7f6, type: 2}
-  m_transition: {fileID: 0}
+  m_transition: {fileID: 7400000, guid: bfe1d8faa49308441ab526bc0897b9ec, type: 2}
 --- !u!114 &113909496
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6197,7 +6197,7 @@ MonoBehaviour:
   m_walk: {fileID: 7400000, guid: 63e02d32969e3b7438060ca2da476b80, type: 2}
   m_parry: {fileID: 7400000, guid: 6237323bf1378af43a63e6523222f8f8, type: 2}
   m_dodge: {fileID: 7400000, guid: f38ee071d7c3e804b8828547a025f7f6, type: 2}
-  m_transition: {fileID: 0}
+  m_transition: {fileID: 7400000, guid: bfe1d8faa49308441ab526bc0897b9ec, type: 2}
 --- !u!1001 &7480100165545062637
 PrefabInstance:
   m_ObjectHideFlags: 0
