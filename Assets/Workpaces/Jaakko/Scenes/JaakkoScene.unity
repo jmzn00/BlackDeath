@@ -256,6 +256,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 12936379}
   m_CullTransparentMesh: 1
+--- !u!4 &23626664 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6591907515494581436, guid: 85ef8995bad49724dabaa7f9824d0e6b, type: 3}
+  m_PrefabInstance: {fileID: 7480100165545062637}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &27302924
 GameObject:
   m_ObjectHideFlags: 0
@@ -6248,6 +6253,26 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8308307896277485454, guid: 85ef8995bad49724dabaa7f9824d0e6b, type: 3}
+      propertyPath: m_combatPreferences.m_enemies.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8308307896277485454, guid: 85ef8995bad49724dabaa7f9824d0e6b, type: 3}
+      propertyPath: 'm_combatPreferences.m_enemies.Array.data[1]'
+      value: 
+      objectReference: {fileID: 1550098968372106492, guid: 11786ea09098cc54cb1e950d032b8593, type: 3}
+    - target: {fileID: 8308307896277485454, guid: 85ef8995bad49724dabaa7f9824d0e6b, type: 3}
+      propertyPath: 'm_combatPreferences.m_enemies.Array.data[2]'
+      value: 
+      objectReference: {fileID: 1550098968372106492, guid: bd3927e68a91fa04c83cc7ce08f16e42, type: 3}
+    - target: {fileID: 8308307896277485454, guid: 85ef8995bad49724dabaa7f9824d0e6b, type: 3}
+      propertyPath: m_combatPreferences.m_enemySpawnPoints.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8308307896277485454, guid: 85ef8995bad49724dabaa7f9824d0e6b, type: 3}
+      propertyPath: 'm_combatPreferences.m_enemySpawnPoints.Array.data[2]'
+      value: 
+      objectReference: {fileID: 23626664}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
