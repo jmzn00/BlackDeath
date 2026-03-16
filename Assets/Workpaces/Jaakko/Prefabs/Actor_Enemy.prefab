@@ -100,12 +100,10 @@ GameObject:
   m_Component:
   - component: {fileID: 1620661794050020554}
   - component: {fileID: 5730682946787434844}
-  - component: {fileID: 691782086803937665}
-  - component: {fileID: 7519845105093333698}
-  - component: {fileID: 806502385994463262}
+  - component: {fileID: 8712629343443046731}
+  - component: {fileID: 6752013568241414850}
   - component: {fileID: 1550098968372106492}
   - component: {fileID: 8098921205275610837}
-  - component: {fileID: 6752013568241414850}
   m_Layer: 0
   m_Name: Actor_Enemy
   m_TagString: Untagged
@@ -153,7 +151,7 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &691782086803937665
+--- !u!114 &8712629343443046731
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -162,40 +160,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 562378834416262406}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e11d133ad2accc0448d76529985cbc2d, type: 3}
+  m_Script: {fileID: 11500000, guid: dfea707aeec5e624d93708b22d80ee56, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::AnimationController
-  m_spriteRenderer: {fileID: 5093997064220521558}
-  m_idleAnim: {fileID: 7400000, guid: 514bc794587bf3348b66f7b318109bac, type: 2}
-  m_runAnim: {fileID: 7400000, guid: 63e02d32969e3b7438060ca2da476b80, type: 2}
-  m_dodgeAnim: {fileID: 7400000, guid: f38ee071d7c3e804b8828547a025f7f6, type: 2}
-  m_parryAnim: {fileID: 7400000, guid: 6237323bf1378af43a63e6523222f8f8, type: 2}
---- !u!143 &7519845105093333698
-CharacterController:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 562378834416262406}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Height: 1.75
-  m_Radius: 0.5
-  m_SlopeLimit: 45
-  m_StepOffset: 0.3
-  m_SkinWidth: 0.08
-  m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 0.9, z: 0}
---- !u!114 &806502385994463262
+  m_EditorClassIdentifier: Assembly-CSharp::AnimatorComponent
+  m_idle: {fileID: 7400000, guid: 514bc794587bf3348b66f7b318109bac, type: 2}
+  m_walk: {fileID: 0}
+  m_parry: {fileID: 0}
+  m_dodge: {fileID: 0}
+--- !u!114 &6752013568241414850
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -204,42 +176,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 562378834416262406}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4c246a3f1bf280643b859a9da5b901e6, type: 3}
+  m_Script: {fileID: 11500000, guid: 80c1c75e03f205d42aab4767c478f87e, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MovementController
-  m_defaultLayer:
-    serializedVersion: 2
-    m_Bits: 1
-  m_visualCapsule: {fileID: 1251749698081068059}
-  m_playerStats:
-    WalkSpeed: 5
-    RunSpeed: 8
-    TimeToRun: 0.3
-    Stamina: 0
-    MaxStamina: 4
-    StaminaRegenRate: 0.25
-    Acceleration: 10
-    Deceleration: 14
-    TimeToStop: 0.2
-    SlideFactor: 0
-    BrakeFactor: 8
-    Gravity: -20
-    JumpForce: 6
-    MaxAirJumps: 0
-    MaxAirSpeed: 0
-    AirAcceleration: 0
-    AirControl: 0
-    DashDistance: 0
-    DashTime: 0
-    DashStaminaCost: 0
-    DashCooldown: 0
-    WallJumpDistance: 0
-    WallJumpInputInfluence: 0
-    WallJumpHeight: 0
-    FirstWallJumpStaminaCost: 0
-    SecondWallJumpStaminaCost: 0
-    WallJumpStaminaCost: 0
-    ConsecutiveWallJumpStaminaCostMultiplier: 0
+  m_EditorClassIdentifier: Assembly-CSharp::HealthComponent
+  ch: 0
+  m_maxHealth: 8
 --- !u!114 &1550098968372106492
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -268,10 +209,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8931c9d27803dc488d26d7f2c67d9a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AICombatActor
+  m_visual: {fileID: 1251749698081068059}
   m_actions:
   - {fileID: 11400000, guid: 87f5263f686512649bd4cd039a07cb55, type: 2}
   - {fileID: 11400000, guid: dfdad7663ecea414698ac367f47a6981, type: 2}
-  m_visual: {fileID: 1251749698081068059}
   m_reactionSettings:
     dodgePercentage: 15
     parryPercentage: 5
@@ -279,21 +220,7 @@ MonoBehaviour:
   m_actionBehaviours:
   - {fileID: 11400000, guid: 1e5d3c0960926dc4b82c32c6a62c2363, type: 2}
   m_targetingBehaviours:
-  - {fileID: 11400000, guid: 8f3478a99276447438279a9c425747d3, type: 2}
---- !u!114 &6752013568241414850
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 562378834416262406}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 80c1c75e03f205d42aab4767c478f87e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::HealthComponent
-  m_maxHealth: 8
-  CurrentHealth: 0
+  - {fileID: 11400000, guid: cb1ef68f319351143a3f56762ecde7db, type: 2}
 --- !u!1 &1251749698081068059
 GameObject:
   m_ObjectHideFlags: 0

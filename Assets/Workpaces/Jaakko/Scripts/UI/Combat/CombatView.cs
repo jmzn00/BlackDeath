@@ -1,10 +1,9 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.UI;
 
 
@@ -30,7 +29,7 @@ public class CombatView : MonoBehaviour, IUIComponentView
 
     private bool m_actionSet;
 
-    private Dictionary<CombatActor, CombatPortrait> m_portraits;
+    private Dictionary<CombatActor, CombatPortrait> m_portraits = new();
     
     #region IUIComponentView
     public void Initialize(UIManager uiManager)
@@ -91,56 +90,28 @@ public class CombatView : MonoBehaviour, IUIComponentView
             m_confirmImage.sprite = prompt.icon;
     }
     #endregion    
-    public void OnCombatStarted(bool started) 
+    public void ActorsChanged(List<CombatActor> actors) 
     {
-        if (started) 
+        foreach (var a in actors) 
         {
-        
-        }
-        else 
-        {
-            foreach (var kvp in m_portraits) 
+            if (m_portraits.TryGetValue(a, out var p))
             {
-                kvp.Value.Dispose();
-            }
-            m_portraits.Clear();   
-            UpdateNavigation();
-        }
-    }
-    public void OnContextChanged(CombatContext ctx)
-    {        
-        ClearActionButtons();
-        ClearActionTypeButtons();
-
-        m_currentActor = ctx.CurrentActor;
-
-        if (m_currentActor.IsPlayer) 
-        {
-            m_actionSet = false;
-            m_currentTarget = null;
-        }
-            
-
-        foreach (var a in ctx.Actors) 
-        {
-            if (m_portraits.TryGetValue(a, out var p)) 
-            {
-                if (a.IsDead) 
+                if (a.IsDead)
                 {
                     m_portraits.Remove(a);
-                    p.OnClick -= OnTargetSelected;
+                    p.OnClick -= TargetSelected;
 
                     if (p.TryGetComponent<Selectable>(out var s))
                         m_ui.Navigation.RemoveSelectable(s);
 
                     p.Dispose();
                 }
-                else 
+                else
                 {
                     p.UpdateData(a);
-                }                    
+                }
             }
-            else 
+            else
             {
                 if (a.IsDead)
                     return;
@@ -148,13 +119,17 @@ public class CombatView : MonoBehaviour, IUIComponentView
                 CombatPortrait portrait = Instantiate(m_combatPortraitPrefab
                     , TargetsContainer);
                 portrait.Initialize(a);
-                portrait.OnClick += OnTargetSelected;
+                portrait.OnClick += TargetSelected;
                 m_portraits.Add(a, portrait);
             }
         }
         UpdateNavigation();
     }
-    private void OnTargetSelected(CombatActor target) 
+    public void TurnStarted(CombatActor actor) 
+    {        
+        m_currentActor = actor;
+    }
+    private void TargetSelected(CombatActor target) 
     {        
         m_currentTarget = target;
 
@@ -213,20 +188,9 @@ public class CombatView : MonoBehaviour, IUIComponentView
         UpdateNavigation(go);
     }
     private void OnActionSelected(CombatAction action)
-    {
-        if (m_actionSet) 
-        {
-            Debug.LogWarning("CV: Action Already Set");
-            return;
-        }
-
-        ActionContext ctx = new ActionContext()
-        {
-            Action = action,
-            Target = m_currentTarget
-        };
-        m_actionSet = true;
-        m_currentActor.SetActionContext(ctx);
+    {        
+        m_currentActor.SubmitAction(m_currentActor,
+            m_currentTarget, action);
     }
     private void ClearActionTypeButtons() 
     {

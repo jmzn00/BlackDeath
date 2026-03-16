@@ -148,6 +148,14 @@ public class InputManager : IManager
     {
 
     }
+    private void CombatStarted()
+    {
+        ToggleInput(false);
+    }
+    private void CombatEnded(CombatResult result)
+    {
+        ToggleInput(true);
+    }
     public void ToggleInput(bool value) 
     {
         if (!value) 
@@ -162,6 +170,9 @@ public class InputManager : IManager
     }
     public bool Init()
     {
+        CombatEvents.OnCombatStarted += CombatStarted;
+        CombatEvents.OnCombatEnded += CombatEnded;
+
         m_inputActions = new InputSystem_Actions();
         m_inputActions.Enable();
         m_active = true;        
@@ -171,6 +182,8 @@ public class InputManager : IManager
     public bool Dispose()
     {
         m_active = false;
+        CombatEvents.OnCombatStarted -= CombatStarted;
+        CombatEvents.OnCombatEnded -= CombatEnded;
 
         m_inputActions.Disable();
         m_inputActions.Dispose();        

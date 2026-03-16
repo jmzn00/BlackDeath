@@ -17,7 +17,7 @@ public class TargetBehaviour_WeakestEnemy : AITargetingBehaviour
         CombatActor bestTarget = null;
         foreach (var enemy in enemies) 
         {
-            float hp = enemy.Health.GetHealth();
+            float hp = enemy.Health.CurrentHealth;
             if (hp < lowestHp) 
             {
                 lowestHp = hp;

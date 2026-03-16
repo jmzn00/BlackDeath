@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab7a988b895ede04e8f4a0ffc4dc52cd, type: 3}
   m_Name: BurnEffect
   m_EditorClassIdentifier: Assembly-CSharp::BurnEffect
-  duration: 2
+  duration: 3
   displayName: Burn
   m_isStackable: 1
   tickDamage: 1

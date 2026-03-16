@@ -67,7 +67,7 @@ public class AIActionProvider : IActionProvider
                 Target = bestTarget
             };
         }
-        m_actor.SetActionContext(ctx);                
+        m_actor.SubmitAction(m_actor, bestTarget, bestAction);                
         m_coroutine = null;
         m_hasActed = false;
     }

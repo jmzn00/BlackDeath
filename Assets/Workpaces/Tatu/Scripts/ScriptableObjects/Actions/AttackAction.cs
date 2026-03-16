@@ -8,6 +8,7 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Combat/Action/Attack")]
 public class AttackAction : CombatAction
 {
+    [Header("LEGACY")]
     [Header("Damage")]
     public int damage = 1;
     [Tooltip("Extra damage added when the reactive prompt is hit successfully.")]

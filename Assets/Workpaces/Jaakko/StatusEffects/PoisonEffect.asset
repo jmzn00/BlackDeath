@@ -15,4 +15,4 @@ MonoBehaviour:
   duration: 2
   displayName: Poison
   m_isStackable: 0
-  tickDamage: 3
+  tickDamage: 2

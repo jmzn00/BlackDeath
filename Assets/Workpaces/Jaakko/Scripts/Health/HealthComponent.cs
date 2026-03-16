@@ -3,13 +3,19 @@ using UnityEngine;
 
 public class HealthComponent : MonoBehaviour, IDamageable, IActorComponent
 {
+    private float m_currentHealth;
+    public float CurrentHealth => m_currentHealth;
+
+    [SerializeField] private float ch;
     [SerializeField] private float m_maxHealth = 5f;
     public float MaxHealth => m_maxHealth;
 
     public event Action<float> OnHealthChanged;
-    private float m_currentHealth;
 
-    public float CurrentHealth;
+    public bool IsDead { get; private set; }
+
+    
+
     public bool Initialize(GameManager game) 
     {
         SetHealth(m_maxHealth);
@@ -17,7 +23,7 @@ public class HealthComponent : MonoBehaviour, IDamageable, IActorComponent
     }
     public void OnActorComponentsInitialized(Actor actor)
     {
-        // Subscribe to health changes or other events here
+        
     }
     public bool Dispose() 
     {
@@ -41,7 +47,6 @@ public class HealthComponent : MonoBehaviour, IDamageable, IActorComponent
     }
     public void ApplyDamage(float amount, Actor attacker = null) 
     {
-        //Debug.Log($"{amount} damage applied to {name}");
         float newHealth = Mathf.Max(0, m_currentHealth - amount);
         SetHealth(newHealth);
     }
@@ -53,7 +58,12 @@ public class HealthComponent : MonoBehaviour, IDamageable, IActorComponent
     private void SetHealth(float value) 
     {        
         m_currentHealth = value;
-        CurrentHealth = value;
+        ch = m_currentHealth;
+
+        if (m_currentHealth <= 0f) 
+        {
+            IsDead = true;
+        }
         OnHealthChanged?.Invoke(m_currentHealth);
     }
 }
