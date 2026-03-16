@@ -15,10 +15,15 @@ public class AnimatorComponent : MonoBehaviour, IActorComponent
     public void SetInputSource(IInputSource source) { }
 
     [Header("Animations")]
+    [Header("Out Of Combat")]
     [SerializeField] private AnimationClip m_idle;
     [SerializeField] private AnimationClip m_walk;
+    [Header("Combat")]
     [SerializeField] private AnimationClip m_parry;
     [SerializeField] private AnimationClip m_dodge;
+    [SerializeField] private AnimationClip m_transition;
+
+    public AnimationClip TransitionClip => m_transition;
 
     private CombatActor m_combatActor;
     private Animator m_animator;

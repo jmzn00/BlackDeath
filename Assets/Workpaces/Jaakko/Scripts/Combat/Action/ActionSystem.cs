@@ -10,6 +10,7 @@ public class ActionSystem
     private ActionContext m_currentAction;
 
     public event Action<ActionContext> OnActionFinished;
+    public event Action <ActionContext> OnActionSubmitted;
     public ActionSystem(CombatContext ctx,
         ReactionSystem reaction) 
     {
@@ -73,6 +74,11 @@ public class ActionSystem
         m_context.CurrentActor.ActionProvider.
             RequestAction(m_context.CurrentActor, m_context.Actors.ToList());
     }
+    public event Action TempAction; // REMOVE
+    public void Resolve() 
+    {
+        m_currentAction.Action.Resolve(m_currentAction, TempAction);
+    }
     public void SubmitAction(CombatActor source, 
         CombatActor target,
         CombatAction action)
@@ -89,8 +95,8 @@ public class ActionSystem
             Target = target,
             Action = action,
         };
-        action.Resolve(m_currentAction, TempAction); // REMOVE TEMP
+        OnActionSubmitted?.Invoke(m_currentAction);
         CombatEvents.ActionSubmitted(m_currentAction);
     }
-    public event Action TempAction; // REMOVE
+    
 }

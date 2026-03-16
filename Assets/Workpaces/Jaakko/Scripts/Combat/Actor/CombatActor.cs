@@ -12,6 +12,10 @@ public class CombatActor : MonoBehaviour, IActorComponent
     private Actor m_actor;
     public Actor Actor => m_actor;
 
+    private AnimatorComponent m_animator;
+    public AnimatorComponent Animator => m_animator;
+
+
     private IActionProvider m_actionProvider;
     public IActionProvider ActionProvider => m_actionProvider;
 
@@ -29,8 +33,7 @@ public class CombatActor : MonoBehaviour, IActorComponent
 
     [SerializeField] private List<CombatAction> m_actions;
     public List<CombatAction> Actions => m_actions;
-
-    private AnimatorComponent m_animator;
+    
     // event that m_animator listens to
     public event Action<AnimationClip> OnPlayRequested;
 
@@ -92,7 +95,12 @@ public class CombatActor : MonoBehaviour, IActorComponent
 
     }
     #endregion
-    #region Combat            
+    #region Combat  
+    public AnimationClip TransitionClip => m_animator.TransitionClip;
+    public bool HasTransition() 
+    {
+        return m_animator.TransitionClip != null;
+    }
     void OnHealthChanged(float value)
     {
         if (IsDead) return;

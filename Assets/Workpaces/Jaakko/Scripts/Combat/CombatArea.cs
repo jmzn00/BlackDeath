@@ -9,14 +9,18 @@ public class CombatPreferences
 {
     [HideInInspector] public CombatArea m_area;
     public Actor[] m_enemies;
-    public Transform[] m_enemySpawnPoints;
 
-    public Transform[] m_partySpawnPoints;    
+    public Transform[] m_enemySpawnPoints;
+    public Transform[] m_partySpawnPoints;
+
+    public Transform m_partyActionPoint;
+    public Transform m_enemyActionPoint;
 }
 [RequireComponent(typeof(BoxCollider))]
 public class CombatArea : MonoBehaviour
 {
     [SerializeField] private CombatPreferences m_combatPreferences;
+    public CombatPreferences Preferences => m_combatPreferences;
     private CombatManager m_combatManager;
     private ActorManager m_actorManager;
     private BoxCollider m_boxCollider;
@@ -93,7 +97,7 @@ public class CombatArea : MonoBehaviour
             }
         }
         m_spawned = true;
-        m_combatManager.StartCombat(combatActors);
+        m_combatManager.StartCombat(combatActors, this);
     }
     private void OnTriggerEnter(Collider other)
     {

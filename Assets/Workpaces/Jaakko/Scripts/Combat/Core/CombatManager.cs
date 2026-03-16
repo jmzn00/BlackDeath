@@ -5,11 +5,6 @@ public enum CombatState
 {
     Active,
     Inactive,
-    Starting,
-    NextTurn,
-    WaitingForAction,
-    TurnStarting,
-    Resolving,
 }
 public enum CombatResult
 {
@@ -27,6 +22,7 @@ public class CombatManager : IManager
     private TurnSystem m_turn;
     private ReactionSystem m_reaction;
     private ActionSystem m_action;
+    private TransitionSystem m_transition;
     public ActionSystem Action => m_action;
 
     /*
@@ -78,6 +74,7 @@ public class CombatManager : IManager
         if (m_state == CombatState.Inactive) return;
 
         m_reaction.Update(dt);
+        m_transition.Update(dt);
     }
     public bool Init()
     {
@@ -100,7 +97,7 @@ public class CombatManager : IManager
         return true;
     }
     #endregion
-    public void StartCombat(List<CombatActor> actors)
+    public void StartCombat(List<CombatActor> actors, CombatArea area)
     {
         if (m_state != CombatState.Inactive) return;
 
@@ -113,16 +110,31 @@ public class CombatManager : IManager
         m_turn = new TurnSystem(m_context);
         m_reaction = new ReactionSystem();
         m_action = new ActionSystem(m_context, m_reaction);
+        m_transition = new TransitionSystem(area);
 
         m_action.OnActionFinished += ActionFinished;
 
+        m_action.OnActionSubmitted += ActionSubmitted;
+        m_transition.OnTransitionFinished += TransitionFinished;
+
         StartNextTurn();
+    }
+    private void ActionSubmitted(ActionContext actx) 
+    {
+        m_transition.Start(actx);
+    }
+    private void TransitionFinished() 
+    {
+        m_action.Resolve();
     }
     private void ActionFinished(ActionContext aCtx)
     {
         ActionResult result = m_reaction.ResolveResults();
         aCtx.Action.ResolveResult(aCtx, result);
         Debug.Log($"{aCtx.Source.name} Performed Action {aCtx.Action.actionName} on {aCtx.Target.name}. Result {result}");
+
+        // returns players to their original positions
+        m_transition.Reset();
 
         if (CheckEnd())
         {
