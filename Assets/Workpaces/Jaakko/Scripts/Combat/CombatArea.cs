@@ -22,15 +22,21 @@ public class CombatArea : MonoBehaviour
     [SerializeField] private CombatPreferences m_combatPreferences;
     public CombatPreferences Preferences => m_combatPreferences;
     private CombatManager m_combatManager;
+    private DialogueManager m_dialogueManger;
     private ActorManager m_actorManager;
     private BoxCollider m_boxCollider;
     private bool m_areaCompleted;
     private bool m_spawned;
 
+    [Header("Flags")]
+    [SerializeField] private string m_conditionFlag;
+    [SerializeField] private string m_setFlag;
+
     public void Initialize(GameManager game) 
     {
         m_combatManager = game.Resolve<CombatManager>();
         m_actorManager = game.Resolve<ActorManager>();
+        m_dialogueManger = game.Resolve<DialogueManager>();
         m_spawned = false;
 
         CombatEvents.OnCombatEnded += AreaFinished;
@@ -99,12 +105,27 @@ public class CombatArea : MonoBehaviour
         m_spawned = true;
         m_combatManager.StartCombat(combatActors, this);
     }
+    public void EndBattle(CombatResult result) 
+    {
+        if (result == CombatResult.Won) 
+        {
+            m_dialogueManger.SetFlag(m_setFlag);
+        }
+    }
     private void OnTriggerEnter(Collider other)
     {
         if (m_areaCompleted || m_spawned) return;
 
+        // if the area has a condition flag and player does
+        // not have the flag then they cannot start the battle
         if (other.CompareTag("Player")) 
         {
+            if (!string.IsNullOrEmpty(m_conditionFlag))
+            {
+                if (!m_dialogueManger.HasFlag(m_conditionFlag))
+                    return;
+            }
+
             StartBattle();
         }
     }

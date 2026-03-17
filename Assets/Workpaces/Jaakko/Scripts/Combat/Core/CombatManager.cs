@@ -31,6 +31,8 @@ public class CombatManager : IManager
     public event Action<CombatActor> OnTurnStart;
     public event Action<CombatActor> OnTurnEnd;
 
+    private CombatArea m_area;
+
     public CombatManager(GameManager game)
     {
         m_game = game;
@@ -77,7 +79,9 @@ public class CombatManager : IManager
     {
         if (m_state != CombatState.Inactive) return;
 
-        CombatEvents.CombatActorsChanged(actors);        
+        CombatEvents.CombatActorsChanged(actors);
+
+        m_area = area;
 
         m_state = CombatState.Active;
         OnCombatStarted?.Invoke();
@@ -152,7 +156,16 @@ public class CombatManager : IManager
         if (m_state == CombatState.Inactive) return;
         m_state = CombatState.Inactive;
 
-        OnCombatEnded?.Invoke(CombatResult.Won);
-        CombatEvents.CombatEnded(CombatResult.Won);        
+        CombatResult result = CombatResult.Lost;
+        if (m_context.Actors.ToList().Exists(a => a.IsPlayer && !a.IsDead)) 
+        {
+            result = CombatResult.Won;
+        }
+
+        m_area.EndBattle(result);
+        OnCombatEnded?.Invoke(result);
+        CombatEvents.CombatEnded(result);        
+
+        m_area = null;
     }
 }

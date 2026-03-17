@@ -7252,6 +7252,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8308307896277485454, guid: 85ef8995bad49724dabaa7f9824d0e6b, type: 3}
+      propertyPath: m_setFlag
+      value: flag_testWonBattle
+      objectReference: {fileID: 0}
+    - target: {fileID: 8308307896277485454, guid: 85ef8995bad49724dabaa7f9824d0e6b, type: 3}
+      propertyPath: m_combatPreferences.m_enemies.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8308307896277485454, guid: 85ef8995bad49724dabaa7f9824d0e6b, type: 3}
+      propertyPath: m_combatPreferences.m_enemySpawnPoints.Array.size
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

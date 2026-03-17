@@ -19,3 +19,7 @@ MonoBehaviour:
     nextNode: {fileID: 11400000, guid: 619d9f4a9a9a54640bb9663043a1d2c7, type: 2}
     conditionFlag: flag_testAcceptTask
     setFlag: 
+  - choiceText: I Defeated The enemies
+    nextNode: {fileID: 11400000, guid: c4a0c057a529b8043b52c05615690651, type: 2}
+    conditionFlag: flag_testWonBattle
+    setFlag: 
