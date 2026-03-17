@@ -17,11 +17,11 @@ MonoBehaviour:
   worldPosition: {x: 0, y: 5, z: -5}
   offset: {x: 0, y: 0, z: 0}
   lookAtOffset: {x: 0, y: 0, z: 0}
-  smooth: 1
+  smooth: 0
   moveSmoothTime: 0.1
   rotationSmoothTime: 0.3
-  useFollowZoom: 1
-  followZoomFovRange: {x: 85, y: 142}
-  followOffset: {x: 0, y: 3, z: -5}
-  overrideFollowOffset: 1
+  useFollowZoom: 0
+  followZoomFovRange: {x: 2, y: 2}
+  followOffset: {x: -0.18, y: 1, z: -5}
+  overrideFollowOffset: 0
   followZoomSmoothTime: 0.25

@@ -8,6 +8,7 @@ public class ActionSystem
     private CombatContext m_context;
 
     private ActionContext m_currentAction;
+    public ActionContext CurrentAction => m_currentAction; // expose current action for diagnostics if needed
 
     public event Action<ActionContext> OnActionFinished;
     public ActionSystem(CombatContext ctx,
@@ -83,7 +84,9 @@ public class ActionSystem
         };
         action.Resolve(m_currentAction, TempAction); // REMOVE TEMP
         CombatEvents.ActionSubmitted(m_currentAction);
-        CombatEvents.ActionExecuting(source, target, action);
+
+        // NOTE: Do NOT fire ActionExecuting here — the CombatActor.PlayAction will raise ActionExecuting
+        // when the animation is actually started. This ensures camera / UI react at the first animation frame.
     }
     public event Action TempAction; // REMOVE
 }

@@ -135,6 +135,9 @@ public class CombatActor : MonoBehaviour, IActorComponent
         m_combatManager.Action.SubmitAction(this,
             target, action);
     }
+
+    // PlayAction is called when the action execution begins. Raise ActionExecuting here so external systems
+    // (camera, UI) receive the event exactly at animation start.
     public void PlayAction(ActionContext ctx, Action onComplete)
     {
         if (ctx.Source == ctx.Target) 
@@ -147,7 +150,12 @@ public class CombatActor : MonoBehaviour, IActorComponent
             Debug.LogWarning("AnimationClip is NULL");
             ActionFinished();
             return;
-        }        
+        }
+
+        // NEW: raise the ActionExecuting event right when the actor is instructed to play the animation.
+        // This makes camera systems switch to tracking the actor/its camera target at the first animation frame.
+        CombatEvents.ActionExecuting(ctx.Source, ctx.Target, ctx.Action);
+
         OnPlayRequested?.Invoke(ctx.Action.animationClip);
     }
     // called by m_animator
