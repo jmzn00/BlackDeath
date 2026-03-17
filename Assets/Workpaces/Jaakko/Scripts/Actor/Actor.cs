@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using Unity.Cinemachine;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 [ExecuteAlways]
 public class Actor : MonoBehaviour, IActor

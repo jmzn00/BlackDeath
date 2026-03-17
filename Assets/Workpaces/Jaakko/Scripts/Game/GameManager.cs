@@ -5,7 +5,8 @@ using UnityEngine;
 public enum GameState 
 {
     None,
-    Combat
+    Combat,
+    Dialogue
 }
 public class GameManager : IManager
 {
@@ -36,7 +37,8 @@ public class GameManager : IManager
         m_container.Register<ItemManager>();
         m_container.Register<CombatManager>();
         m_container.Register<UIManager>();
-        m_container.Register<CameraManager>();        
+        m_container.Register<CameraManager>();
+        m_container.Register<DialogueManager>();
 
         m_managers = m_container
             .GetAll<IManager>()

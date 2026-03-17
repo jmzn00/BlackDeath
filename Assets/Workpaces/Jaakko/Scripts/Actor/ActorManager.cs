@@ -108,6 +108,7 @@ public class ActorManager : IManager
         }            
         else
             Debug.LogWarning("No playable actors found in scene!");
+
     }
     public bool Dispose() 
     {

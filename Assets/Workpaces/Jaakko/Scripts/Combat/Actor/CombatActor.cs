@@ -54,10 +54,11 @@ public class CombatActor : MonoBehaviour, IActorComponent
         IsPlayer = m_actor.IsPlayable;
         m_combatManager = game.Resolve<CombatManager>();
 
-        CombatEvents.OnCombatStarted += CombatStarted;
-        CombatEvents.OnCombatEnded += CombatEnded;
-        CombatEvents.OnTurnStarted += TurnStart;
-        CombatEvents.OnTurnEnded += TurnEnd;
+        m_combatManager.OnCombatStarted += CombatStarted;
+        m_combatManager.OnCombatEnded += CombatEnded;
+
+        m_combatManager.OnTurnStart += TurnStart;
+        m_combatManager.OnTurnEnd += TurnEnd;
         OnInitliazed(game);
         return true;
     }
@@ -72,6 +73,7 @@ public class CombatActor : MonoBehaviour, IActorComponent
     public bool Dispose()
     {
         m_health.OnHealthChanged -= OnHealthChanged;
+        m_animator.OnActionAnimationFinished -= ActionFinished;
         OnDispose();
         return true;
     }
@@ -81,6 +83,7 @@ public class CombatActor : MonoBehaviour, IActorComponent
         m_health.OnHealthChanged += OnHealthChanged;
 
         m_animator = actor.Get<AnimatorComponent>();
+        m_animator.OnActionAnimationFinished += ActionFinished;
     }
     public void SetInputSource(IInputSource source)
     {
@@ -112,7 +115,7 @@ public class CombatActor : MonoBehaviour, IActorComponent
         if (value <= 0f)
         {            
             IsDead = true;
-            CombatEvents.ActorDied(this);
+            CombatEvents.ActorDied(this); // CHANGE
             if (m_visual) // temp
                 m_visual.SetActive(false); // temp
         }
@@ -182,7 +185,7 @@ public class CombatActor : MonoBehaviour, IActorComponent
         m_combatManager.Action.OpenPrompt(this, promptKey);
         
     }
-    // called by m_animator
+    // called by event
     public void ActionFinished()
     {
         m_combatManager.Action.NotifyActionFinished(this);

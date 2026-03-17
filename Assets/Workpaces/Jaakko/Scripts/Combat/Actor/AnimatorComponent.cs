@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 [RequireComponent(typeof(Animator))]
@@ -24,6 +25,8 @@ public class AnimatorComponent : MonoBehaviour, IActorComponent
     [SerializeField] private AnimationClip m_transition;
 
     public AnimationClip TransitionClip => m_transition;
+
+    public event Action OnActionAnimationFinished;
 
     private CombatActor m_combatActor;
     private Animator m_animator;
@@ -66,7 +69,7 @@ public class AnimatorComponent : MonoBehaviour, IActorComponent
             Debug.LogWarning("Combat Actor is NULL on AnimatiorComponent");
             return;
         }
-        m_combatActor.ActionFinished();
+        OnActionAnimationFinished?.Invoke();
         m_animator.Play(m_idle.name, 0, 0f);
-    }
+    }    
 }

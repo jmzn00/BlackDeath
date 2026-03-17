@@ -9,6 +9,8 @@ public class ActorSaveData
 
     public string[] InventoryItems;
     public float Health;
+
+    public string DialogueNodeID;
 }
 
 public interface IActor

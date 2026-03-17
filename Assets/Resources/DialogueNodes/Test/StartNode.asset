@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3fd8163f98351f429f4ffbaad53e585, type: 3}
+  m_Name: StartNode
+  m_EditorClassIdentifier: Assembly-CSharp::DialogueNode
+  id: 01bb4db8-a7c7-4ed6-848d-83eaea237b73
+  text: Hello, would you like to help me with task X?
+  choices:
+  - choiceText: No I dont, you suck!
+    nextNode: {fileID: 11400000, guid: e2918334ee76ecd42b57dba94413fd15, type: 2}
+    conditionFlag: 
+    setFlag: 
+  - choiceText: I dont know. Whats in it for me?
+    nextNode: {fileID: 11400000, guid: 35a460fccca128b4f9ef46edd341530a, type: 2}
+    conditionFlag: 
+    setFlag: 
+  - choiceText: Yes i will, No questions asked.
+    nextNode: {fileID: 11400000, guid: 6427912507299534dabcbc2899396096, type: 2}
+    conditionFlag: 
+    setFlag: flag_testAcceptTask

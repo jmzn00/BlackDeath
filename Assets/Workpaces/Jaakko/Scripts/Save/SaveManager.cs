@@ -13,6 +13,7 @@ public class SaveData
 public class GameSaveData
 {
     public List<ActorSaveData> Actors = new List<ActorSaveData>();
+    public DialogueSaveData Dialogue;
 }
 public class SaveManager : IManager
 {
@@ -21,10 +22,12 @@ public class SaveManager : IManager
     private SaveData m_currentSave;
 
     private ActorManager m_actorManager;
+    private DialogueManager m_dialogueManager;
 
-    public SaveManager(ActorManager actorManager) 
+    public SaveManager(ActorManager actorManager, DialogueManager dialogueManager) 
     {
         m_actorManager = actorManager;
+        m_dialogueManager = dialogueManager;
     }
 
     public void Update(float dt) 
@@ -54,10 +57,11 @@ public class SaveManager : IManager
         return m_currentSave;
     }
     public void Save() 
-    {       
+    {
         GameSaveData save = new GameSaveData()
         {
-            Actors = m_actorManager.SaveAllActors()
+            Actors = m_actorManager.SaveAllActors(),
+            Dialogue = m_dialogueManager.Save()
         };
         string json = JsonUtility.ToJson(save, true);
         File.WriteAllText(m_savePath, json);
@@ -77,5 +81,6 @@ public class SaveManager : IManager
         GameSaveData save = JsonUtility.FromJson<GameSaveData>(json);
 
         m_actorManager.LoadAllActors(save.Actors);
+        m_dialogueManager.Load(save.Dialogue);
     }
 }

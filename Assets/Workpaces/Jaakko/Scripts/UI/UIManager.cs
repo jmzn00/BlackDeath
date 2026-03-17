@@ -59,10 +59,14 @@ public class UIManager : IManager
         {
             case GameState.None:
                 m_uiController.ShowComponent<CombatUI>(false);
+                m_uiController.ShowComponent<DialogueUI>(false);
                 break;
             case GameState.Combat:
                 m_uiController.ShowComponent<CombatUI>(true);
-                break;            
+                break;
+            case GameState.Dialogue:
+                m_uiController.ShowComponent<DialogueUI>(true);
+                break;
         }
     }
     public void SetInputMode(UIInputMode mode) 

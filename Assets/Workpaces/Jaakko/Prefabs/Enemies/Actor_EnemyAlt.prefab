@@ -167,6 +167,7 @@ MonoBehaviour:
   m_walk: {fileID: 0}
   m_parry: {fileID: 0}
   m_dodge: {fileID: 0}
+  m_transition: {fileID: 7400000, guid: bfe1d8faa49308441ab526bc0897b9ec, type: 2}
 --- !u!114 &1550098968372106492
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor.Build;
+using System;
 using UnityEngine;
 public enum CombatState
 {
@@ -25,6 +25,11 @@ public class CombatManager : IManager
     private ActionSystem m_action;
     private TransitionSystem m_transition;
     public ActionSystem Action => m_action;
+
+    public event Action OnCombatStarted;
+    public event Action<CombatResult> OnCombatEnded;
+    public event Action<CombatActor> OnTurnStart;
+    public event Action<CombatActor> OnTurnEnd;
 
     public CombatManager(GameManager game)
     {
@@ -72,9 +77,10 @@ public class CombatManager : IManager
     {
         if (m_state != CombatState.Inactive) return;
 
-        CombatEvents.CombatActorsChanged(actors);
+        CombatEvents.CombatActorsChanged(actors);        
 
         m_state = CombatState.Active;
+        OnCombatStarted?.Invoke();
 
         m_context = new CombatContext(actors);
         m_turn = new TurnSystem(m_context);
@@ -96,6 +102,7 @@ public class CombatManager : IManager
     }
     private void ActionFinished(ActionContext aCtx)
     {
+        OnTurnEnd?.Invoke(aCtx.Source);
         CombatEvents.TurnEnded(aCtx.Source);        
 
         // returns players to their original positions
@@ -122,12 +129,14 @@ public class CombatManager : IManager
             Debug.LogWarning($"Turn System Next() == NULL");
             EndCombat();
             return;
-        }       
-        CombatEvents.TurnStarted(actor);
+        }               
+        OnTurnStart?.Invoke(actor);
 
         m_context.SetCurrentActor(actor);
         m_context.AdvanceTurn();
         m_action.TurnStarted();
+
+        CombatEvents.TurnStarted(actor);
     }
     private bool CheckEnd()
     {
@@ -141,8 +150,9 @@ public class CombatManager : IManager
     private void EndCombat()
     {
         if (m_state == CombatState.Inactive) return;
-
-        CombatEvents.CombatEnded(CombatResult.Won);
         m_state = CombatState.Inactive;
+
+        OnCombatEnded?.Invoke(CombatResult.Won);
+        CombatEvents.CombatEnded(CombatResult.Won);        
     }
 }

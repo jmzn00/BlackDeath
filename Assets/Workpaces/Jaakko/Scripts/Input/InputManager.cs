@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 public enum UIInputAction
 {
     Inventory
@@ -20,6 +21,10 @@ public struct InputState
 
     public bool ParryPressedThisFrame;
     public bool DodgePressedThisFrame;
+
+    public bool InteractPressedThisFrame;
+
+    public bool MouseDownPressedThisFrame;
 }
 public struct UIInputState 
 {
@@ -78,6 +83,9 @@ public class InputManager : IManager
         m_inputState.CrouchPressed =
             m_inputActions.Player.Crouch.IsPressed();
 
+        m_inputState.InteractPressedThisFrame =
+            m_inputActions.Player.Interact.WasPressedThisFrame();
+
         m_inputState.ParryPressed = 
             m_inputActions.Combat.Parry.IsPressed();
 
@@ -89,7 +97,7 @@ public class InputManager : IManager
 
         m_inputState.DodgePressedThisFrame =
             m_inputActions.Combat.Dodge.WasPressedThisFrame();
-        
+   
 
         if (m_inputActions.UI.OpenInventory.WasPressedThisFrame())
             OnUIInputAction?.Invoke(UIInputAction.Inventory);

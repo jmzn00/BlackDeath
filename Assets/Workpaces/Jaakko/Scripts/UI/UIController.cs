@@ -27,6 +27,7 @@ public class UIController : MonoBehaviour
         InitializeModules();
 
         ShowComponent<InventoryUI>(false);
+        ShowComponent<DialogueUI>(false);
     }   
     public void Dispose() 
     {
@@ -86,7 +87,6 @@ public class UIController : MonoBehaviour
         switch (action) 
         {
             case UIInputAction.Inventory:
-
                 ShowComponent<InventoryUI>(!IsVisibe<InventoryUI>());
                 break;
         }

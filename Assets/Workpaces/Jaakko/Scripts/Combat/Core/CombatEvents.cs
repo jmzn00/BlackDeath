@@ -3,31 +3,6 @@ using System.Collections.Generic;
 
 public static class CombatEvents
 {
-
-    // COMBATEVENTS IS NOT USED FOR COMBATSYSTEM
-    // DO NOT USE COMBAT EVENTS FOR COMBAT LOGIC
-
-    public static event Action OnCombatStarted;
-    public static event Action<CombatResult> OnCombatEnded;
-
-    public static event Action<CombatActor> OnTurnStarted;
-    public static event Action<CombatActor> OnTurnEnded;
-
-    public static event Action<ActionContext> OnActionSubmitted;
-    public static event Action<ActionContext, ActionResult> OnActionResolved;
-
-    public static event Action<CombatActor> OnActorDied;
-
-    public static event Action<ActionContext> OnReactionWindowOpened;
-    public static event Action<ActionContext> OnReactionWindowClosed;
-
-    public static event Action<ActionContext, ActionResult> OnReactionResolved;
-    
-    public static event Action<ActionContext> OnActionFinished;
-    public static event Action<List<CombatActor>> OnCombatActorsChanged;
-
-
-
     // COMBAT STATE
     public static event Action OnCombatStarted;
     public static event Action<CombatResult> OnCombatEnded;
