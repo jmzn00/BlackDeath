@@ -14,4 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DialogueNode
   id: 65e65355-f8ae-412e-8f08-e646d2bef233
   text: oh wow, good job!
-  choices: []
+  choices:
+  - choiceText: continue
+    nextNode: {fileID: 11400000, guid: bd5fa8f9ab1fa2c44be1f9ca78189c9a, type: 2}
+    conditionFlag: 
+    setFlag: 

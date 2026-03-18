@@ -97,6 +97,14 @@ public class CombatActor : MonoBehaviour, IActorComponent
     {
 
     }
+    public void Load(object data)
+    {
+
+    }
+    public object Save()
+    {
+        return null;
+    }
     #endregion
     #region Combat  
     public AnimationClip TransitionClip => m_animator.TransitionClip;

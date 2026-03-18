@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using TMPro;
-using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -18,6 +17,7 @@ public class DialogueView : MonoBehaviour, IUIComponentView
 
     [Header("Dialogue")]
     [SerializeField] private Button m_endButton;
+    [SerializeField] private Button m_backButton;
 
     private DialogueManager m_dialogue;
     public void OnActorChanged(Actor actor) 
@@ -38,6 +38,7 @@ public class DialogueView : MonoBehaviour, IUIComponentView
         m_endButton.onClick.AddListener(() =>
         {
             m_dialogue.EndDialogue();
+            ClearChoiceButtons();
         });
     }
     public void DialogueStarted(DialogueContext context) 
@@ -65,10 +66,10 @@ public class DialogueView : MonoBehaviour, IUIComponentView
             }
 
             Button b = Instantiate(m_choiceButtonPrefab, m_choiceAnchor);
-            var choice = c;
-
-            b.GetComponentInChildren<TMP_Text>().text = choice.choiceText;
             m_choiceButtons.Add(b);
+
+            var choice = c;
+            b.GetComponentInChildren<TMP_Text>().text = choice.choiceText;            
 
             if (choice.nextNode != null)
             {

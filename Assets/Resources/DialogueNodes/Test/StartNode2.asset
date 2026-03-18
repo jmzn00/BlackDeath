@@ -13,5 +13,13 @@ MonoBehaviour:
   m_Name: StartNode2
   m_EditorClassIdentifier: Assembly-CSharp::DialogueNode
   id: b2a4ffbb-8ff5-44d5-8a97-ea0113673f46
-  text: 
-  choices: []
+  text: Bruh, what u wanna do
+  choices:
+  - choiceText: idk
+    nextNode: {fileID: 0}
+    conditionFlag: 
+    setFlag: 
+  - choiceText: ik
+    nextNode: {fileID: 0}
+    conditionFlag: 
+    setFlag: 

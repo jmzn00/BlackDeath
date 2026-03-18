@@ -3,13 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 [Serializable]
-public class SaveData
-{
-    public Vector3 PlayerPosition;
-    public string[] InventoryItems;
-    public int QuestProgress;
-}
-[Serializable]
 public class GameSaveData
 {
     public List<ActorSaveData> Actors = new List<ActorSaveData>();
@@ -19,7 +12,6 @@ public class SaveManager : IManager
 {
     private bool m_active;
     private string m_savePath;
-    private SaveData m_currentSave;
 
     private ActorManager m_actorManager;
     private DialogueManager m_dialogueManager;
@@ -38,7 +30,6 @@ public class SaveManager : IManager
     {
         //m_game = gameManager;
         m_savePath = Path.Combine(Application.persistentDataPath, "savegame.json");
-        m_currentSave = new SaveData();
         m_active = true;        
 
         return true;
@@ -51,11 +42,7 @@ public class SaveManager : IManager
     {
         m_active = false;
         return true;
-    }
-    public SaveData GetSave() 
-    {
-        return m_currentSave;
-    }
+    }    
     public void Save() 
     {
         GameSaveData save = new GameSaveData()

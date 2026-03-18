@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class DialogueActor : MonoBehaviour, IActorComponent
@@ -9,8 +11,8 @@ public class DialogueActor : MonoBehaviour, IActorComponent
     private DialogueManager m_dialogue;
 
     private DialogueNode m_currentNode = null;
-    public DialogueNode CurrentNode => m_currentNode;
-    
+
+    private Stack<DialogueNode> m_history = new();
     public void SetInputSource(IInputSource source) 
     {
         
@@ -32,7 +34,7 @@ public class DialogueActor : MonoBehaviour, IActorComponent
     }
     public void LoadData(ActorSaveData data) 
     {
-        if (data.DialogueNodeID == null) return;
+        if (string.IsNullOrEmpty(data.DialogueNodeID)) return;
 
         m_currentNode = m_dialogue.GetNodeByID(data.DialogueNodeID);
     }
@@ -41,6 +43,14 @@ public class DialogueActor : MonoBehaviour, IActorComponent
         if (m_currentNode == null) return;
 
         data.DialogueNodeID = m_currentNode.id;
+    }
+    public void Load(object data) 
+    {
+        
+    }
+    public object Save() 
+    {
+        return null;
     }
     public void StartDialogue(DialogueActor listner, DialogueActor speaker) 
     {
@@ -60,6 +70,14 @@ public class DialogueActor : MonoBehaviour, IActorComponent
     }
     public void AdvanceDialogue(DialogueNode node) 
     {        
+        if (m_currentNode != null)
+            m_history.Push(m_currentNode);
+
         m_currentNode = node;
+    }
+    public void GoBack() 
+    {
+        if (m_history.Count > 0)
+            m_currentNode = m_history.Pop();
     }
 }

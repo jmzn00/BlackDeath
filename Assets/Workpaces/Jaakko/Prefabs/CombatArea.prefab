@@ -177,17 +177,15 @@ MonoBehaviour:
     m_area: {fileID: 0}
     m_enemies:
     - {fileID: 2071846275302041565, guid: 41fd462dc5473ea4bb2694cd702cc3a2, type: 3}
-    - {fileID: 1550098968372106492, guid: 11786ea09098cc54cb1e950d032b8593, type: 3}
-    - {fileID: 1550098968372106492, guid: bd3927e68a91fa04c83cc7ce08f16e42, type: 3}
     m_enemySpawnPoints:
     - {fileID: 5200816024943034630}
-    - {fileID: 7938234151335957140}
-    - {fileID: 6591907515494581436}
     m_partySpawnPoints:
     - {fileID: 4839368653468985675}
     - {fileID: 8558772789353973411}
     m_partyActionPoint: {fileID: 73728073088005052}
     m_enemyActionPoint: {fileID: 8829880876550613665}
+  m_conditionFlag: 
+  m_setFlag: flag_testWonBattle
 --- !u!65 &6757304353328434931
 BoxCollider:
   m_ObjectHideFlags: 0

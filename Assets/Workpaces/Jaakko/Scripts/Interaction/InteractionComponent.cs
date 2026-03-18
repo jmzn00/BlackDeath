@@ -6,6 +6,7 @@ public class InteractionComponent : MonoBehaviour, IActorComponent
     private Actor m_actor;
     private CameraManager m_cameraManager;
     private IInputSource m_inputSource;
+
     public void SetInputSource(IInputSource source)
     {
         m_inputSource = source;
@@ -30,6 +31,14 @@ public class InteractionComponent : MonoBehaviour, IActorComponent
     public void SaveData(ActorSaveData data)
     {
 
+    }
+    public void Load(object data)
+    {
+
+    }
+    public object Save()
+    {
+        return null;
     }
     [SerializeField] private LayerMask m_actorLayerMask;
     [SerializeField] private float m_interactionDistance = 5f;

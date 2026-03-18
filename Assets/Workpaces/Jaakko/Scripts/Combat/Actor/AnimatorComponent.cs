@@ -13,6 +13,14 @@ public class AnimatorComponent : MonoBehaviour, IActorComponent
 
     public void LoadData(ActorSaveData data) { }
     public void SaveData(ActorSaveData data) { }
+    public void Load(object data)
+    {
+
+    }
+    public object Save()
+    {
+        return null;
+    }
     public void SetInputSource(IInputSource source) { }
 
     [Header("Animations")]

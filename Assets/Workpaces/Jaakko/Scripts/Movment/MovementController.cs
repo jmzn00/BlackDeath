@@ -57,13 +57,7 @@ public class MovementController : MonoBehaviour, IActorComponent
         Velocity = Vector3.zero;
         transform.position = pos;
         m_controller.enabled = true;
-    }
-    public void LoadData(ActorSaveData data)
-    {
-        m_controller.enabled = false;
-        transform.position = data.Position;
-        m_controller.enabled = true;
-    }
+    }    
     public void MoveTo(Transform t) 
     {
         m_controller.enabled = false;
@@ -74,6 +68,20 @@ public class MovementController : MonoBehaviour, IActorComponent
     public void SaveData(ActorSaveData data)
     {
 
+    }
+    public void LoadData(ActorSaveData data)
+    {
+        m_controller.enabled = false;
+        transform.position = data.Position;
+        m_controller.enabled = true;
+    }
+    public void Load(object data)
+    {
+
+    }
+    public object Save()
+    {
+        return null;
     }
     public bool Initialize(GameManager game)
     {

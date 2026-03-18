@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
@@ -6,6 +7,8 @@ public class ActorSaveData
 {
     public string ActorID;
     public Vector3 Position;
+
+    public Dictionary<string, object> ComponentData = new();
 
     public string[] InventoryItems;
     public float Health;

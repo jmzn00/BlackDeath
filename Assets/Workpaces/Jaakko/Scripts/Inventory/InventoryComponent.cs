@@ -37,6 +37,14 @@ public class InventoryComponent : MonoBehaviour, IActorComponent
     {
         data.InventoryItems = InventoryItems;
     }
+    public void Load(object data)
+    {
+
+    }
+    public object Save()
+    {
+        return null;
+    }
     public void SetInputSource(IInputSource source) 
     {
         

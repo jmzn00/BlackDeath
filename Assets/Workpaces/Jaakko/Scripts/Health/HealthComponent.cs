@@ -37,6 +37,14 @@ public class HealthComponent : MonoBehaviour, IDamageable, IActorComponent
     {
         data.Health = m_currentHealth;
     }
+    public void Load(object data)
+    {
+
+    }
+    public object Save()
+    {
+        return null;
+    }
     public void SetInputSource(IInputSource source) 
     {
 
