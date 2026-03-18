@@ -20,6 +20,14 @@ public class CombatCameraMode : ICameraMode
 
     // Pause state tracking
     private bool m_wasPausedLastFrame = false;
+    
+    // Smooth transition state
+    private bool m_isTransitioning = false;
+    private float m_transitionProgress = 0f;
+    private CameraPresetData m_previousPreset;
+    private Vector3 m_previousOffset;
+    private float m_previousDamping;
+    private float m_previousWidth;
 
     public CombatCameraMode(CombatManager combatManager, CameraManager cameraManager, GameManager gameManager)
     {
@@ -126,29 +134,72 @@ public class CombatCameraMode : ICameraMode
             m_wasPausedLastFrame = isPaused;
         }
 
-        // When paused, still update Cinemachine but skip our preset logic
+        // Skip updates when paused to allow manual manipulation
         if (isPaused)
         {
-            // Force Cinemachine brain to update so we see changes in Game view
-            var brain = UnityEngine.Camera.main?.GetComponent<Unity.Cinemachine.CinemachineBrain>();
-            if (brain != null)
-            {
-                brain.ManualUpdate();
-            }
             return;
         }
 #endif
 
         if (m_currentTarget == null || m_currentPreset == null) return;
 
-        // Skip smooth movement if animation is controlling camera
-        if (m_isAnimationControlled)
+        // Handle smooth transitions between presets
+        if (m_isTransitioning)
+        {
+            UpdateTransition(dt);
+        }
+        else if (m_isAnimationControlled)
         {
             UpdateAnimationControlled(dt);
         }
         else
         {
             UpdatePresetControlled(dt);
+        }
+    }
+
+    private void UpdateTransition(float dt)
+    {
+        if (m_previousPreset == null || m_currentPreset == null)
+        {
+            m_isTransitioning = false;
+            return;
+        }
+
+        // Advance transition progress
+        m_transitionProgress += dt * m_currentPreset.transitionSpeed;
+
+        if (m_transitionProgress >= 1f)
+        {
+            // Transition complete
+            m_transitionProgress = 1f;
+            m_isTransitioning = false;
+            Debug.Log("Camera preset transition complete");
+        }
+
+        // Smooth interpolation using easing
+        float t = EaseInOutCubic(m_transitionProgress);
+
+        // Interpolate between previous and current preset values
+        Vector3 targetOffset = Vector3.Lerp(m_previousOffset, m_currentPreset.positionOffset, t);
+        float targetDamping = Mathf.Lerp(m_previousDamping, m_currentPreset.followDamping, t);
+        float targetWidth = Mathf.Lerp(m_previousWidth, m_currentPreset.width, t);
+
+        // Apply interpolated values
+        var follow = m_camera.GetComponent<CinemachineFollow>();
+        if (follow != null)
+        {
+            m_camera.Follow = m_currentTarget.transform;
+            follow.FollowOffset = targetOffset;
+            follow.TrackerSettings.PositionDamping = new Vector3(targetDamping, targetDamping, targetDamping);
+        }
+
+        var followZoom = m_camera.GetComponent<CinemachineFollowZoom>();
+        if (followZoom != null)
+        {
+            followZoom.Width = targetWidth * m_currentTarget.zoomMultiplier;
+            followZoom.Damping = m_currentPreset.zoomDamping;
+            followZoom.FovRange = m_currentPreset.fovRange;
         }
     }
 
@@ -211,6 +262,25 @@ public class CombatCameraMode : ICameraMode
             return;
         }
 
+        // Store previous preset values for smooth transition
+        if (m_currentPreset != null)
+        {
+            m_previousPreset = m_currentPreset;
+            
+            var follow = m_camera.GetComponent<CinemachineFollow>();
+            if (follow != null)
+            {
+                m_previousOffset = follow.FollowOffset;
+                m_previousDamping = follow.TrackerSettings.PositionDamping.x;
+            }
+            
+            var followZoom = m_camera.GetComponent<CinemachineFollowZoom>();
+            if (followZoom != null)
+            {
+                m_previousWidth = followZoom.Width;
+            }
+        }
+
         m_currentPresetType = presetType;
         m_currentPreset = m_presets.GetPreset(presetType);
         m_isAnimationControlled = false;
@@ -221,11 +291,29 @@ public class CombatCameraMode : ICameraMode
             return;
         }
 
-        Debug.Log($"Applied camera preset: {presetType} - {m_currentPreset.presetName}");
-        
-        // Immediately apply the preset
-        UpdateCinemachineFollow();
-        ApplyZoomFromTarget();
+        // Start transition if we had a previous preset
+        if (m_previousPreset != null && m_currentPreset.transitionSpeed > 0)
+        {
+            m_isTransitioning = true;
+            m_transitionProgress = 0f;
+            Debug.Log($"Starting smooth transition to preset: {presetType} (speed: {m_currentPreset.transitionSpeed})");
+        }
+        else
+        {
+            // Immediate application
+            m_isTransitioning = false;
+            UpdateCinemachineFollow();
+            ApplyZoomFromTarget();
+            Debug.Log($"Applied camera preset immediately: {presetType}");
+        }
+    }
+
+    // Easing function for smoother transitions
+    private float EaseInOutCubic(float t)
+    {
+        return t < 0.5f 
+            ? 4f * t * t * t 
+            : 1f - Mathf.Pow(-2f * t + 2f, 3f) / 2f;
     }
 
     private void SetTarget(CombatActor actor)
@@ -294,7 +382,6 @@ public class CombatCameraMode : ICameraMode
         Debug.Log($"CombatCameraMode: Found {m_actorTargets.Count} camera targets total");
     }
 
-    // Make current preset publicly accessible for editor tools
     public CameraPresetType CurrentPresetType => m_currentPresetType;
 
     #region Event Handlers

@@ -19,7 +19,7 @@ MonoBehaviour:
     fieldOfView: 60
     orthographicSize: 5
     followDamping: 1
-    transitionSpeed: 2
+    transitionSpeed: 5
     width: 10
     zoomDamping: 0.5
     fovRange: {x: 40, y: 60}
@@ -40,8 +40,8 @@ MonoBehaviour:
     rotation: {x: 18.408485, y: 33.69007, z: 0}
     fieldOfView: 60
     orthographicSize: 5
-    followDamping: 1
-    transitionSpeed: 2
+    followDamping: 1.5
+    transitionSpeed: 1
     width: 2
     zoomDamping: 0.5
     fovRange: {x: 54.445892, y: 95.4059}
@@ -51,8 +51,8 @@ MonoBehaviour:
     rotation: {x: 22.791355, y: 2.0926397, z: 0.000000057880033}
     fieldOfView: 60
     orthographicSize: 5
-    followDamping: 1
-    transitionSpeed: 2
+    followDamping: 1.5
+    transitionSpeed: 1
     width: 10
     zoomDamping: 0.5
     fovRange: {x: 16.964691, y: 34.505867}
@@ -62,8 +62,8 @@ MonoBehaviour:
     rotation: {x: 14.529142, y: 3.3111782, z: -0.000000027561848}
     fieldOfView: 60
     orthographicSize: 5
-    followDamping: 1
-    transitionSpeed: 2
+    followDamping: 1.5
+    transitionSpeed: 1
     width: 10
     zoomDamping: 0.5
     fovRange: {x: 20, y: 60}
