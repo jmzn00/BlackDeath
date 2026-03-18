@@ -24,6 +24,7 @@ public class CombatView : MonoBehaviour, IUIComponentView
     [SerializeField] private Image m_confirmImage;
 
     private CombatActor m_currentActor;
+    private List<CombatActor> m_participants;
     private CombatActor m_currentTarget;
     private UIManager m_ui;
 
@@ -92,6 +93,8 @@ public class CombatView : MonoBehaviour, IUIComponentView
     #endregion    
     public void ActorsChanged(List<CombatActor> actors) 
     {
+        m_participants = new List<CombatActor>(actors);
+
         foreach (var a in actors) 
         {
             if (m_portraits.TryGetValue(a, out var p))
@@ -124,6 +127,23 @@ public class CombatView : MonoBehaviour, IUIComponentView
             }
         }
         UpdateNavigation();
+    }
+    public void TargetScroll(float value) 
+    {
+        if (m_currentActor == null ||
+            !m_currentActor.IsPlayer) { return; }
+
+        int index = 0;
+        CombatActor target = m_participants[index];
+
+        if (value >= 0.9f) 
+        {
+            Debug.LogWarning($"Next Target");
+        }
+        else if (value <= -0.9f) 
+        {
+            Debug.LogWarning("Prev Target");
+        }
     }
     public void TurnStarted(CombatActor actor) 
     {        

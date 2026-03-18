@@ -1,7 +1,12 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-
+public enum CombatActorState 
+{
+    ActionSelecting,
+    SubActionSelecting,
+    Targeting
+}
 [RequireComponent(typeof(Actor))]
 public class CombatActor : MonoBehaviour, IActorComponent
 {
@@ -36,6 +41,8 @@ public class CombatActor : MonoBehaviour, IActorComponent
     
     // event that m_animator listens to
     public event Action<AnimationClip> OnPlayRequested;
+
+    public event Action<CombatActorState> OnCombatActorStateChanged;
 
     #region IActionProvider
     protected void SetActionProvider(IActionProvider provider)
@@ -106,6 +113,13 @@ public class CombatActor : MonoBehaviour, IActorComponent
         return null;
     }
     #endregion
+    #region UiSelection
+    private CombatActor m_currentTarget;
+    public void SelectTarget(CombatActor actor) 
+    {
+        m_currentTarget = actor;
+    }
+    #endregion
     #region Combat  
     public AnimationClip TransitionClip => m_animator.TransitionClip;
     public bool HasTransition() 
@@ -134,7 +148,7 @@ public class CombatActor : MonoBehaviour, IActorComponent
         {
             return;
         }
-        HandleStatusEffectsTurnStart();        
+        HandleStatusEffectsTurnStart();
     }
     public void TurnEnd(CombatActor actor) 
     {
@@ -166,6 +180,14 @@ public class CombatActor : MonoBehaviour, IActorComponent
     {
         m_combatManager.Action.SubmitAction(this,
             target, action);
+    }
+    private CombatActorState m_state;
+    private void ChangeState(CombatActorState state) 
+    {
+        if (state == m_state) return;
+
+        m_state = state;
+        OnCombatActorStateChanged?.Invoke(m_state);
     }
     public void PlayAction(ActionContext ctx, Action onComplete)
     {

@@ -6,6 +6,7 @@ public static class CombatEvents
     // COMBAT STATE
     public static event Action OnCombatStarted;
     public static event Action<CombatResult> OnCombatEnded;
+    public static event Action<CombatState> OnCombatStateChanged;
 
     // ACTORS
     public static event Action<List<CombatActor>> OnCombatActorsChanged;
@@ -85,5 +86,9 @@ public static class CombatEvents
     public static void CombatActorsChanged(List<CombatActor> actors) 
     {
         OnCombatActorsChanged?.Invoke(actors);
+    }
+    public static void CombatStateChanged(CombatState state) 
+    {
+        OnCombatStateChanged?.Invoke(state);
     }
 }

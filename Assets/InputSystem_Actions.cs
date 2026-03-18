@@ -957,6 +957,15 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""SelectTarget"",
+                    ""type"": ""Value"",
+                    ""id"": ""77c8b4fd-273e-4d80-8c94-b5f337dd25f6"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -1003,6 +1012,39 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""action"": ""Dodge"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""1D Axis"",
+                    ""id"": ""38a8da03-7385-4ebf-8e1f-61f51b2f938a"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SelectTarget"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""negative"",
+                    ""id"": ""7e9dcc64-a118-4ac9-a45f-00015b5f1a8e"",
+                    ""path"": ""<Gamepad>/leftStick/left"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SelectTarget"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""77c67587-3a8a-4d35-b313-3c3ad1b5fe2a"",
+                    ""path"": ""<Gamepad>/leftStick/right"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SelectTarget"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
                 }
             ]
         }
@@ -1102,6 +1144,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         m_Combat = asset.FindActionMap("Combat", throwIfNotFound: true);
         m_Combat_Parry = m_Combat.FindAction("Parry", throwIfNotFound: true);
         m_Combat_Dodge = m_Combat.FindAction("Dodge", throwIfNotFound: true);
+        m_Combat_SelectTarget = m_Combat.FindAction("SelectTarget", throwIfNotFound: true);
     }
 
     ~@InputSystem_Actions()
@@ -1620,6 +1663,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
     private List<ICombatActions> m_CombatActionsCallbackInterfaces = new List<ICombatActions>();
     private readonly InputAction m_Combat_Parry;
     private readonly InputAction m_Combat_Dodge;
+    private readonly InputAction m_Combat_SelectTarget;
     /// <summary>
     /// Provides access to input actions defined in input action map "Combat".
     /// </summary>
@@ -1639,6 +1683,10 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Combat/Dodge".
         /// </summary>
         public InputAction @Dodge => m_Wrapper.m_Combat_Dodge;
+        /// <summary>
+        /// Provides access to the underlying input action "Combat/SelectTarget".
+        /// </summary>
+        public InputAction @SelectTarget => m_Wrapper.m_Combat_SelectTarget;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -1671,6 +1719,9 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @Dodge.started += instance.OnDodge;
             @Dodge.performed += instance.OnDodge;
             @Dodge.canceled += instance.OnDodge;
+            @SelectTarget.started += instance.OnSelectTarget;
+            @SelectTarget.performed += instance.OnSelectTarget;
+            @SelectTarget.canceled += instance.OnSelectTarget;
         }
 
         /// <summary>
@@ -1688,6 +1739,9 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @Dodge.started -= instance.OnDodge;
             @Dodge.performed -= instance.OnDodge;
             @Dodge.canceled -= instance.OnDodge;
+            @SelectTarget.started -= instance.OnSelectTarget;
+            @SelectTarget.performed -= instance.OnSelectTarget;
+            @SelectTarget.canceled -= instance.OnSelectTarget;
         }
 
         /// <summary>
@@ -1991,5 +2045,12 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnDodge(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "SelectTarget" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSelectTarget(InputAction.CallbackContext context);
     }
 }

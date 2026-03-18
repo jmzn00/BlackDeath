@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+
 [Serializable]
 public class DialogueSaveData
 {
@@ -48,6 +49,16 @@ public class DialogueManager : IManager
         
     }
     #endregion
+    public DialogueSaveData Save()
+    {
+        DialogueSaveData data = new DialogueSaveData();
+        data.flags = m_flags;
+        return data;
+    }
+    public void Load(DialogueSaveData data)
+    {
+        m_flags = data.flags;
+    }
     public DialogueNode GetNodeByID(string id) 
     {
         m_nodeLookup.TryGetValue(id, out DialogueNode node);
@@ -73,16 +84,6 @@ public class DialogueManager : IManager
         m_context.Node = node;        
         m_context.Speaker.AdvanceDialogue(node);
         OnDialogueAdvanced?.Invoke(m_context);
-    }
-    public DialogueSaveData Save() 
-    {
-        DialogueSaveData data = new DialogueSaveData();
-        data.flags = m_flags;
-        return data;
-    }    
-    public void Load(DialogueSaveData data) 
-    {
-        m_flags = data.flags;
     }
     public void SetFlag(string flag) 
     {

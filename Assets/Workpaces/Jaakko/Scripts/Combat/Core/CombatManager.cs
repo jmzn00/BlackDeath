@@ -6,6 +6,10 @@ public enum CombatState
 {
     Active,
     Inactive,
+
+    Transition,
+    Action
+
 }
 public enum CombatResult
 {
@@ -82,14 +86,9 @@ public class CombatManager : IManager
         CombatEvents.CombatActorsChanged(actors);
 
         m_area = area;
+        ChangeState(CombatState.Active);
 
-        m_state = CombatState.Active;
-        
-        // SET GAME STATE TO COMBAT
-        m_game.SetState(GameState.Combat);
-        
         OnCombatStarted?.Invoke();
-        CombatEvents.CombatStarted();
 
         m_context = new CombatContext(actors);
         m_turn = new TurnSystem(m_context);
@@ -107,6 +106,8 @@ public class CombatManager : IManager
     private void ActionSubmitted(ActionContext actx)
     {
         m_transition.Start(actx);
+        ChangeState(CombatState.Transition);
+
         CombatEvents.ActionSubmitted(actx);
     }
     private void ActionFinished(ActionContext aCtx)
@@ -128,6 +129,7 @@ public class CombatManager : IManager
     }
     private void TransitionFinished() 
     {
+        ChangeState(CombatState.Action);
         m_action.Resolve();
     }
     private void NextTurn()
@@ -138,14 +140,14 @@ public class CombatManager : IManager
             Debug.LogWarning($"Turn System Next() == NULL");
             EndCombat();
             return;
-        }               
+        }
+        CombatEvents.TurnStarted(actor);
+
         OnTurnStart?.Invoke(actor);
 
         m_context.SetCurrentActor(actor);
         m_context.AdvanceTurn();
         m_action.TurnStarted();
-
-        CombatEvents.TurnStarted(actor);
     }
     private bool CheckEnd()
     {
@@ -169,11 +171,16 @@ public class CombatManager : IManager
 
         m_area.EndBattle(result);
         OnCombatEnded?.Invoke(result);
-        CombatEvents.CombatEnded(result);
-        
-        // RESET GAME STATE TO NONE
-        m_game.SetState(GameState.None);
+        ChangeState(CombatState.Inactive);
+        CombatEvents.CombatEnded(result);        
 
         m_area = null;
+    }
+    public void ChangeState(CombatState state) 
+    {
+        if (state == m_state) return;
+
+        m_state = state;
+        CombatEvents.CombatStateChanged(m_state);
     }
 }
