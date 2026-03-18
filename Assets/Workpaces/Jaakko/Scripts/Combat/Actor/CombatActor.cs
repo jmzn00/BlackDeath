@@ -4,7 +4,6 @@ using UnityEngine;
 public enum CombatActorState 
 {
     ActionSelecting,
-    SubActionSelecting,
     Targeting
 }
 [RequireComponent(typeof(Actor))]
@@ -43,6 +42,7 @@ public class CombatActor : MonoBehaviour, IActorComponent
     public event Action<AnimationClip> OnPlayRequested;
 
     public event Action<CombatActorState> OnCombatActorStateChanged;
+    public event Action<CombatActor> OnCurrentTargetChanged;
 
     #region IActionProvider
     protected void SetActionProvider(IActionProvider provider)
@@ -114,10 +114,21 @@ public class CombatActor : MonoBehaviour, IActorComponent
     }
     #endregion
     #region UiSelection
-    private CombatActor m_currentTarget;
-    public void SelectTarget(CombatActor actor) 
+
+    // ui calls
+    public void ChangeState(CombatActorState state) 
     {
-        m_currentTarget = actor;
+        if (m_state == state) return;
+
+        m_state = state;
+        OnCombatActorStateChanged?.Invoke(state);
+    }
+    // ui calls
+    public void ChangeTarget(CombatActor actor) 
+    {
+        Debug.Log($"Selected Target: {actor.name}");
+
+        OnCurrentTargetChanged?.Invoke(actor);
     }
     #endregion
     #region Combat  
@@ -182,13 +193,6 @@ public class CombatActor : MonoBehaviour, IActorComponent
             target, action);
     }
     private CombatActorState m_state;
-    private void ChangeState(CombatActorState state) 
-    {
-        if (state == m_state) return;
-
-        m_state = state;
-        OnCombatActorStateChanged?.Invoke(m_state);
-    }
     public void PlayAction(ActionContext ctx, Action onComplete)
     {
         if (ctx.Source == ctx.Target) 

@@ -15,11 +15,12 @@ public class CombatUI : UIComponentBase
     public override void Initialize()
     {
         CombatEvents.OnTurnStarted += TurnStarted;
+        CombatEvents.OnTurnEnded += TurnEnded;
+
         CombatEvents.OnCombatActorsChanged += ActorsChanged;
         CombatEvents.OnCombatEnded += CombatEnded;
 
-        
-
+        m_view.Init();        
         m_view.Initialize(m_uiManager);
         m_input.InputActions.Combat.SelectTarget.performed += ctx =>
         {
@@ -29,11 +30,23 @@ public class CombatUI : UIComponentBase
         {
             m_view.TargetScroll(0f);
         };
+        m_input.InputActions.UI.Cancel.performed += ctx =>
+        {
+            m_view.BackPressed();
+        };
+        m_input.InputActions.UI.Submit.performed += ctx =>
+        {
+            m_view.SubmitAction();
+        };
 
     }
+
+
     public override void Dispose()
     {
         CombatEvents.OnTurnStarted -= TurnStarted;
+        CombatEvents.OnTurnEnded -= TurnEnded;
+
         CombatEvents.OnCombatActorsChanged -= ActorsChanged;
         CombatEvents.OnCombatEnded -= CombatEnded;
     }
@@ -43,19 +56,23 @@ public class CombatUI : UIComponentBase
     }
     private void TurnStarted(CombatActor actor) 
     {
-        if (actor.IsPlayer && !actor.IsDead) 
+        if (actor.IsPlayer) 
         {            
             m_view.TurnStarted(actor);
             Toggle(true);
         }
-        else 
+    }
+    private void TurnEnded(CombatActor actor) 
+    {
+        if (actor.IsPlayer) 
         {
+            m_view.TurnEnded(actor);
             Toggle(false);
         }
     }
     private void CombatEnded(CombatResult result) 
     {
-        Toggle(false);
+        
     }
     public override void Toggle(bool show) 
     {

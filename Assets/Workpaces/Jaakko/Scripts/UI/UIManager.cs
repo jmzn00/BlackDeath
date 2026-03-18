@@ -96,8 +96,7 @@ public class UIManager : IManager
     }
     public void Update(float dt) 
     {
-        if (IsNavigationEnabled())
-            m_navigation.UpdateNavigation();
+        m_navigation.UpdateNavigation();
     }
 }
 public class UIControllerNavigation 
@@ -152,7 +151,10 @@ public class UIControllerNavigation
     }
     public void UpdateNavigation() 
     {
-        if (m_selectables.Count == 0) return;
+        if (m_selectables.Count == 0) 
+        {
+            return;
+        }
 
         ref UIInputState input = ref m_input.GetUIInputState();
 

@@ -35,7 +35,7 @@ public class FollowActorCameraMode : ICameraMode
     public bool CanEnter() 
     {
         bool canEnter = m_game.State == GameState.None;
-        Debug.Log($"FollowActorCameraMode.CanEnter: {canEnter} (GameState: {m_game.State})");
+        //Debug.Log($"FollowActorCameraMode.CanEnter: {canEnter} (GameState: {m_game.State})");
         return canEnter;
     }
 

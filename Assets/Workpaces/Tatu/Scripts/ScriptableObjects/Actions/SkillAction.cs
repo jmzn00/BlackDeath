@@ -22,6 +22,7 @@ public class SkillAction : CombatAction
 
     public override bool Resolve(ActionContext context, Action OnComplete)
     {
-        throw new System.NotImplementedException();
+        context.Source.PlayAction(context, OnComplete);
+        return true;
     }
 }
