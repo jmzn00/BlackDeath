@@ -1,0 +1,80 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2b598488d18fa9f43b2a46b7ed18a0ff, type: 3}
+  m_Name: CameraPresets
+  m_EditorClassIdentifier: Assembly-CSharp::CameraPresetsConfig
+  actionSelection:
+    presetName: Action Selection
+    positionOffset: {x: 0, y: 0, z: 0}
+    rotation: {x: 0, y: 0, z: 0}
+    fieldOfView: 60
+    orthographicSize: 5
+    followDamping: 1
+    transitionSpeed: 2
+    width: 10
+    zoomDamping: 0.5
+    fovRange: {x: 40, y: 60}
+  targeting:
+    presetName: Targeting
+    positionOffset: {x: 0, y: 0, z: 0}
+    rotation: {x: 0, y: 0, z: 0}
+    fieldOfView: 60
+    orthographicSize: 5
+    followDamping: 1
+    transitionSpeed: 2
+    width: 10
+    zoomDamping: 0.5
+    fovRange: {x: 40, y: 60}
+  turnStart:
+    presetName: Turn Start
+    positionOffset: {x: -2, y: 2, z: -3}
+    rotation: {x: 18.408485, y: 33.69007, z: 0}
+    fieldOfView: 60
+    orthographicSize: 5
+    followDamping: 1
+    transitionSpeed: 2
+    width: 2
+    zoomDamping: 0.5
+    fovRange: {x: 54.445892, y: 95.4059}
+  actionExecution:
+    presetName: Action Execution
+    positionOffset: {x: 0, y: 3, z: -5}
+    rotation: {x: 22.791355, y: 2.0926397, z: 0.000000057880033}
+    fieldOfView: 60
+    orthographicSize: 5
+    followDamping: 1
+    transitionSpeed: 2
+    width: 10
+    zoomDamping: 0.5
+    fovRange: {x: 16.964691, y: 34.505867}
+  reactionWindow:
+    presetName: Reaction Window
+    positionOffset: {x: 0, y: 3, z: -15}
+    rotation: {x: 14.529142, y: 3.3111782, z: -0.000000027561848}
+    fieldOfView: 60
+    orthographicSize: 5
+    followDamping: 1
+    transitionSpeed: 2
+    width: 10
+    zoomDamping: 0.5
+    fovRange: {x: 20, y: 60}
+  exploration:
+    presetName: Exploration
+    positionOffset: {x: 0, y: 2, z: -3}
+    rotation: {x: 21.796139, y: 0.054847155, z: 0}
+    fieldOfView: 60
+    orthographicSize: 2
+    followDamping: 1
+    transitionSpeed: 2
+    width: 2
+    zoomDamping: 0.5
+    fovRange: {x: 54.445892, y: 95.4059}

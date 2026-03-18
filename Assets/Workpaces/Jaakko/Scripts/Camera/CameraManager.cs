@@ -23,11 +23,17 @@ public class CameraManager : IManager
         m_actorManager = actorManager;
         m_combatManager = combatManager;
         m_game = gameManager;
+        Debug.Log("CameraManager constructed");
     }    
     public bool Init() 
     {
-        m_cinemachineCamera = GameObject
-            .FindFirstObjectByType<CinemachineCamera>();
+        m_cinemachineCamera = GameObject.FindFirstObjectByType<CinemachineCamera>();
+        if (m_cinemachineCamera == null)
+        {
+            Debug.LogError("CameraManager: No CinemachineCamera found in scene!");
+            return false;
+        }
+        Debug.Log($"CameraManager: Found CinemachineCamera: {m_cinemachineCamera.name}");
         return true;
     }
     public bool Dispose() 
@@ -36,6 +42,8 @@ public class CameraManager : IManager
     }
     public void OnManagersInitialzied() 
     {
+        Debug.Log("CameraManager: OnManagersInitialized");
+        
         m_container = new Container();
         m_container.RegisterInstance(this);
         m_container.RegisterInstance(m_actorManager);
@@ -46,18 +54,37 @@ public class CameraManager : IManager
         m_container.Register<CombatCameraMode>();
 
         m_cameraModes = m_container.GetAll<ICameraMode>().ToList();
+        Debug.Log($"CameraManager: Registered {m_cameraModes.Count} camera modes");
+        
+        // Log which modes were created
+        foreach (var mode in m_cameraModes)
+        {
+            Debug.Log($"  - {mode.GetType().Name}");
+        }
 
         var defaultMode = m_cameraModes.FirstOrDefault();
         if (defaultMode != null)
+        {
+            Debug.Log($"CameraManager: Setting default mode to {defaultMode.GetType().Name}");
             SetMode(defaultMode);
+        }
+        else
+        {
+            Debug.LogError("CameraManager: No camera modes available!");
+        }
     }
     public void Update(float dt)
     {
-        m_mode.Update(dt);
+        if (m_mode == null)
+        {
+            Debug.LogWarning("CameraManager: No active mode in Update");
+            return;
+        }
 
         var nextMode = m_cameraModes.FirstOrDefault(m => m.CanEnter());
         if (nextMode != null && nextMode != m_mode)
         {
+            Debug.Log($"Camera switching from {m_mode.GetType().Name} to {nextMode.GetType().Name}");
             SetMode(nextMode);
         }
 
@@ -66,8 +93,14 @@ public class CameraManager : IManager
     }
     private void SetMode(ICameraMode mode) 
     {
-        m_mode?.Exit();
+        if (m_mode != null)
+        {
+            Debug.Log($"CameraManager: Exiting {m_mode.GetType().Name}");
+            m_mode.Exit();
+        }
+        
         m_mode = mode;
+        Debug.Log($"CameraManager: Entering {m_mode.GetType().Name}");
         m_mode.Enter();
     }
 }

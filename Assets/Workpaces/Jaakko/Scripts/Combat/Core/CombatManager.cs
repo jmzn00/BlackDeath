@@ -84,7 +84,12 @@ public class CombatManager : IManager
         m_area = area;
 
         m_state = CombatState.Active;
+        
+        // SET GAME STATE TO COMBAT
+        m_game.SetState(GameState.Combat);
+        
         OnCombatStarted?.Invoke();
+        CombatEvents.CombatStarted();
 
         m_context = new CombatContext(actors);
         m_turn = new TurnSystem(m_context);
@@ -164,7 +169,10 @@ public class CombatManager : IManager
 
         m_area.EndBattle(result);
         OnCombatEnded?.Invoke(result);
-        CombatEvents.CombatEnded(result);        
+        CombatEvents.CombatEnded(result);
+        
+        // RESET GAME STATE TO NONE
+        m_game.SetState(GameState.None);
 
         m_area = null;
     }
