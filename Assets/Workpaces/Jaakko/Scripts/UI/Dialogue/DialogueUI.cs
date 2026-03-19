@@ -8,11 +8,13 @@ public class DialogueUI : UIComponentBase<DialogueViewGroup>
         : base(game, group) 
     {
         m_dialogue = game.Resolve<DialogueManager>();
+
+        m_view = group.dialogueView;
     }
     public override void Initialize() 
     {
-        //m_view.Initialize(m_dialogue);
-        //m_view.Init();        
+        m_view.Initialize(m_dialogue);
+        m_view.Init();        
     }    
     public override void Dispose()
     {

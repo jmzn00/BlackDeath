@@ -44,6 +44,10 @@ public class CombatActor : MonoBehaviour, IActorComponent
     public event Action<CombatActorState> OnCombatActorStateChanged;
     public event Action<CombatActor> OnCurrentTargetChanged;
 
+    public AnimationClip TransitionClip => m_animator.TransitionClip;
+
+    private CombatActorState m_state;
+
     #region IActionProvider
     protected void SetActionProvider(IActionProvider provider)
     {
@@ -135,15 +139,6 @@ public class CombatActor : MonoBehaviour, IActorComponent
     }
     #endregion
     #region Combat  
-    public AnimationClip TransitionClip => m_animator.TransitionClip;
-    public bool HasTransition() 
-    {
-        return m_animator.TransitionClip != null;
-    }
-    public void PlayTransition() 
-    {
-        m_animator.PlayTransition();
-    }
     void OnHealthChanged(float value)
     {
         if (IsDead) return;
@@ -195,20 +190,29 @@ public class CombatActor : MonoBehaviour, IActorComponent
         m_combatManager.Action.SubmitAction(this,
             target, action);
     }
-    private CombatActorState m_state;
+    #endregion
+    #region Animation
+    public bool HasTransition()
+    {
+        return m_animator.TransitionClip != null;
+    }
+    public void PlayTransition()
+    {
+        m_animator.PlayTransition();
+    }
     public void PlayAction(ActionContext ctx, Action onComplete)
     {
-        if (ctx.Source == ctx.Target) 
+        if (ctx.Source == ctx.Target)
         {
             ActionFinished();
             return;
         }
-        if (ctx.Action.animationClip == null) 
+        if (ctx.Action.animationClip == null)
         {
             Debug.LogWarning("AnimationClip is NULL");
             ActionFinished();
             return;
-        }        
+        }
         OnPlayRequested?.Invoke(ctx.Action.animationClip);
     }
     // called by m_animator
@@ -220,7 +224,7 @@ public class CombatActor : MonoBehaviour, IActorComponent
     public void OpenWindow(string promptKey)
     {
         m_combatManager.Action.OpenPrompt(this, promptKey);
-        
+
     }
     // called by event
     public void ActionFinished()

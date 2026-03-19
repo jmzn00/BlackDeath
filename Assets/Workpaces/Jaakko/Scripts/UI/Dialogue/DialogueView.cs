@@ -17,9 +17,10 @@ public class DialogueView : MonoBehaviour, IUIComponentView
 
     [Header("Dialogue")]
     [SerializeField] private Button m_endButton;
-    [SerializeField] private Button m_backButton;
 
     private DialogueManager m_dialogue;
+    private List<Button> m_choiceButtons = new();
+
     public void OnActorChanged(Actor actor) 
     {
         
@@ -30,6 +31,7 @@ public class DialogueView : MonoBehaviour, IUIComponentView
     }
     public void Initialize(DialogueManager dialogue) 
     {
+        Debug.Log("Dialog View Init");
         m_dialogue = dialogue;
 
         m_dialogue.OnDialogueStarted += DialogueStarted;
@@ -50,7 +52,6 @@ public class DialogueView : MonoBehaviour, IUIComponentView
     {
         DisplayNode(ctx.Node);
     }
-    private List<Button> m_choiceButtons = new();
     private void DisplayNode(DialogueNode node) 
     {
         m_speakerText.text = node.text;

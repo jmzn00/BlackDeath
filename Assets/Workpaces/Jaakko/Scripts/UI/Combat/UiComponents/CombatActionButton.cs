@@ -23,7 +23,7 @@ public class CombatActionButton : MonoBehaviour
             description += " Applies ";
             foreach (var e in action.AppliedEffects) 
             {
-                description += $"{e.displayName} for {e.duration}.";
+                description += $"{e.displayName} for {e.duration} turns.";
 
                 if (e.IsStackable) 
                 {
