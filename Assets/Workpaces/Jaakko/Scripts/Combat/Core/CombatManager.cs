@@ -87,7 +87,7 @@ public class CombatManager : IManager
 
         m_area = area;
         ChangeState(CombatState.Active);
-
+        m_game.SetState(GameState.Combat);
         OnCombatStarted?.Invoke();
 
         m_context = new CombatContext(actors);
