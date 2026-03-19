@@ -84,6 +84,7 @@ public class CombatArea : MonoBehaviour
         int enemyCount = prefs.m_enemies.Length;
         int spawnPoints = prefs.m_enemySpawnPoints.Length;
 
+        int spawned = 0;
         for (int i = 0; i < spawnPoints; i++)
         {
             int index = i % enemyCount;
@@ -94,9 +95,11 @@ public class CombatArea : MonoBehaviour
                 position = prefs.m_enemySpawnPoints[i].position,
                 rotation = prefs.m_enemySpawnPoints[i].rotation
             };
-            Actor enemy = m_actorManager.Spawn(asp);
+            Actor enemy = m_actorManager.Spawn(asp);    
+            spawned++;
             if (enemy != null)
             {
+                enemy.name = "enemy " + spawned;
                 CombatActor ca = enemy.Get<CombatActor>();
                 if (ca != null)
                     combatActors.Add(ca);

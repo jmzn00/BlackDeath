@@ -3,11 +3,13 @@ using UnityEngine;
 
 public class TargetView : MonoBehaviour, IUIComponentView
 {
+    [Header("Elements")]
     [SerializeField] private TMP_Text m_targetNameText;
-
+    [Header("Position")]
+    [SerializeField] private Vector3 m_positionOffset;
     public void SetPosition(Vector3 position) 
     {
-        transform.position = position;
+        transform.position = position + m_positionOffset;
     }
     public void ChangeTarget(CombatActor target) 
     {

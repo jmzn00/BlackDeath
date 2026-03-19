@@ -9,12 +9,12 @@ public class TickStatusEffect : ActorStatusEffect
         base.OnApply();
     }
     protected override void OnTurnStart()
-    {
-        Owner.Health.ApplyDamage(tickDamage);
+    {        
         base.OnTurnStart();
     }
     protected override void OnTurnEnd()
     {
+        Owner.Health.ApplyDamage(tickDamage);
         base.OnTurnEnd();
     }
     protected override void OnExpire()

@@ -75,6 +75,8 @@ public class CameraManager : IManager
     }
     public void Update(float dt)
     {
+        
+        
         if (m_mode == null)
         {
             Debug.LogWarning("CameraManager: No active mode in Update");
@@ -90,6 +92,7 @@ public class CameraManager : IManager
 
         // Update current mode
         m_mode?.Update(dt);
+        
     }
     private void SetMode(ICameraMode mode) 
     {

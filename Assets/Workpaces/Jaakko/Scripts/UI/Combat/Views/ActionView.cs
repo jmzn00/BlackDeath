@@ -20,6 +20,9 @@ public class ActionView : MonoBehaviour, IUIComponentView
     [SerializeField] private Transform m_typeAnchor;
     [SerializeField] private Transform m_actionAnchor;
 
+    [Header("Position")]
+    [SerializeField] private Vector3 m_positionOffset;
+
     private Dictionary<Type, Button> m_actionTypeMap = new();
 
     public event Action<Button> OnButtonCreated;
@@ -56,7 +59,7 @@ public class ActionView : MonoBehaviour, IUIComponentView
     }
     public void SetPosition(Vector3 position) 
     {
-        transform.position = position;
+        transform.position = position + m_positionOffset;
     }
     public void ShowActionTypes(List<CombatAction> actions) 
     {

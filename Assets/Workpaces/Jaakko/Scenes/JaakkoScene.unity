@@ -2543,7 +2543,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82ea207c0d6c93d42aae47c0e7b5c7a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthView
-  m_healthSlider: {fileID: 578094202}
 --- !u!1 &664426646
 GameObject:
   m_ObjectHideFlags: 0
@@ -3133,6 +3132,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 87860420}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &888810715 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7938234151335957140, guid: 85ef8995bad49724dabaa7f9824d0e6b, type: 3}
+  m_PrefabInstance: {fileID: 7480100165545062637}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &911837065
 GameObject:
   m_ObjectHideFlags: 0
@@ -3496,11 +3500,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 03f875ae44a407543a37301704b46336, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InventoryView
-  m_actorImage: {fileID: 404283863}
-  m_actorNameText: {fileID: 1757352920}
-  m_inventoryItemsText: {fileID: 117814441}
-  m_closeButton: {fileID: 820696412}
-  m_inventory: {fileID: 0}
 --- !u!114 &1000722745
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3731,6 +3730,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TargetView
   m_targetNameText: {fileID: 339886643}
+  m_positionOffset: {x: -3, y: 1, z: 0}
 --- !u!1 &1107097717
 GameObject:
   m_ObjectHideFlags: 0
@@ -4370,7 +4370,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1327020511
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4409,6 +4409,7 @@ MonoBehaviour:
   m_typeButtonPrefab: {fileID: 8918731536623935964, guid: 29dd6831d0d09954ba35cdba841be629, type: 3}
   m_typeAnchor: {fileID: 1162782165}
   m_actionAnchor: {fileID: 1360953240}
+  m_positionOffset: {x: 2, y: 1, z: 0}
 --- !u!1 &1352528426
 GameObject:
   m_ObjectHideFlags: 0
@@ -4769,6 +4770,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1380605202}
   m_CullTransparentMesh: 1
+--- !u!4 &1412698236 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6591907515494581436, guid: 85ef8995bad49724dabaa7f9824d0e6b, type: 3}
+  m_PrefabInstance: {fileID: 7480100165545062637}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1430665926
 GameObject:
   m_ObjectHideFlags: 0
@@ -4923,7 +4929,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1436397753
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7691,6 +7697,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8308307896277485454, guid: 85ef8995bad49724dabaa7f9824d0e6b, type: 3}
+      propertyPath: m_combatPreferences.m_enemySpawnPoints.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8308307896277485454, guid: 85ef8995bad49724dabaa7f9824d0e6b, type: 3}
+      propertyPath: 'm_combatPreferences.m_enemySpawnPoints.Array.data[1]'
+      value: 
+      objectReference: {fileID: 888810715}
+    - target: {fileID: 8308307896277485454, guid: 85ef8995bad49724dabaa7f9824d0e6b, type: 3}
+      propertyPath: 'm_combatPreferences.m_enemySpawnPoints.Array.data[2]'
+      value: 
+      objectReference: {fileID: 1412698236}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

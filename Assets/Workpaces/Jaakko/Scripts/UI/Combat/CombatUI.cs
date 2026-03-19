@@ -114,8 +114,7 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
         }        
         m_currentTarget = validTargets[m_currentTargetIndex];
         m_targetView.ChangeTarget(m_currentTarget);
-        m_targetView.SetPosition(m_currentTarget.transform.position
-            + new Vector3(-4f, 1f, 0f));
+        m_targetView.SetPosition(m_currentTarget.transform.position);
         m_currentActor.ChangeTarget(m_currentTarget);
     }
     private void SubmitAction() 
@@ -163,12 +162,14 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
 
         m_actionView.View();
         m_actionView.ShowActionTypes(actor.Actions);
-        m_actionView.SetPosition(actor.transform.position + new Vector3(2f, 1f, 0f));
+        m_actionView.SetPosition(actor.transform.position);
 
         m_actionView.OnActionTypeSelected += ActionTypeSelected;
         m_actionView.OnActionSelected += ActionSelected;
 
         m_actionViewState = ActionViewState.ActionType;        
+
+        // for camera
         m_currentActor.ChangeState(CombatActorState.ActionSelecting); 
     }
     private void TurnEnd(CombatActor actor) 

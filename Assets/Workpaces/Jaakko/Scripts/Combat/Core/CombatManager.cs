@@ -143,7 +143,6 @@ public class CombatManager : IManager
             return;
         }
         CombatEvents.TurnStarted(actor);
-
         OnTurnStart?.Invoke(actor);
 
         m_context.SetCurrentActor(actor);
