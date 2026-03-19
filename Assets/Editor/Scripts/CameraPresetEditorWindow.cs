@@ -7,7 +7,7 @@ using System.Linq;
 public class CameraPresetEditorWindow : EditorWindow
 {
     private CameraPresetsConfig m_config;
-    private CameraPresetType m_selectedPreset = CameraPresetType.ActionSelection;
+    private CameraPresetType m_selectedPreset = CameraPresetType.PlayerActionSelecting;
     private CinemachineCamera m_camera;
     private bool m_isPlayMode = false;
     

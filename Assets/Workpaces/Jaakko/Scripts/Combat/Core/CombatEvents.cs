@@ -12,6 +12,9 @@ public static class CombatEvents
     public static event Action<List<CombatActor>> OnCombatActorsChanged;
     public static event Action<CombatActor> OnActorDied;
 
+    // ACTOR STATE
+    public static event Action<CombatActor, CombatActorState> OnActorStateChanged;  // NEW
+
     // ACTION
     public static event Action<ActionContext> OnActionFinished;
     public static event Action<ActionContext> OnActionSubmitted;
@@ -47,6 +50,17 @@ public static class CombatEvents
     {
         OnCombatEnded?.Invoke(res);
     }
+    
+    public static void CombatStateChanged(CombatState state)  // NEW
+    {
+        OnCombatStateChanged?.Invoke(state);
+    }
+    
+    public static void ActorStateChanged(CombatActor actor, CombatActorState state)  // NEW
+    {
+        OnActorStateChanged?.Invoke(actor, state);
+    }
+    
     public static void TurnStarted(CombatActor actor) 
     {
         OnTurnStarted?.Invoke(actor);
@@ -86,9 +100,5 @@ public static class CombatEvents
     public static void CombatActorsChanged(List<CombatActor> actors) 
     {
         OnCombatActorsChanged?.Invoke(actors);
-    }
-    public static void CombatStateChanged(CombatState state) 
-    {
-        OnCombatStateChanged?.Invoke(state);
     }
 }

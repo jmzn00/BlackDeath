@@ -122,6 +122,9 @@ public class CombatActor : MonoBehaviour, IActorComponent
 
         m_state = state;
         OnCombatActorStateChanged?.Invoke(state);
+        
+        // Fire global event for camera system
+        CombatEvents.ActorStateChanged(this, state);
     }
     // ui calls
     public void ChangeTarget(CombatActor actor) 
