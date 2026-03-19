@@ -1,10 +1,11 @@
-using System.Globalization;
 using UnityEngine;
 public abstract class ActorStatusEffect : ScriptableObject
 {
     public int duration = 1;
     public string displayName;
     [SerializeField] private bool m_isStackable = false;
+    [TextArea(4, 10)]
+    public string description;
 
     public CombatActor Owner {  get; private set; }
     public int RemainingTurns { get; protected set; }

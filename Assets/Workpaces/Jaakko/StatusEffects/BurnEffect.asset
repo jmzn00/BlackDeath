@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab7a988b895ede04e8f4a0ffc4dc52cd, type: 3}
   m_Name: BurnEffect
   m_EditorClassIdentifier: Assembly-CSharp::BurnEffect
-  duration: 3
+  duration: 2
   displayName: Burn
   m_isStackable: 1
+  description: "- Burn deals 1 damage on turn \n- Burn lasts for 2 turns\n- Burn
+    can be stacked"
   tickDamage: 1

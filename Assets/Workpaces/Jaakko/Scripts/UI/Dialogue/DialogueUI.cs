@@ -1,18 +1,18 @@
 [UIComponent(typeof(DialogueView))]
-public class DialogueUI : UIComponentBase
+public class DialogueUI : UIComponentBase<DialogueViewGroup>
 {
     private DialogueView m_view;
     private DialogueManager m_dialogue;
 
-    public DialogueUI(GameManager game, DialogueView view) : base(game) 
+    public DialogueUI(GameManager game, DialogueViewGroup group)
+        : base(game, group) 
     {
-        m_view = view;
         m_dialogue = game.Resolve<DialogueManager>();
     }
     public override void Initialize() 
     {
-        m_view.Initialize(m_dialogue);
-        m_view.Init();        
+        //m_view.Initialize(m_dialogue);
+        //m_view.Init();        
     }    
     public override void Dispose()
     {

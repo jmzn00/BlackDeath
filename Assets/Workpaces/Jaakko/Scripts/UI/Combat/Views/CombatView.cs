@@ -1,10 +1,7 @@
 using System.Collections.Generic;
 using System;
-using System.Linq;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 
@@ -44,7 +41,6 @@ public class CombatView : MonoBehaviour, IUIComponentView
     public void Initialize(UIManager uiManager)
     {
         m_ui = uiManager;
-        m_confirmImage.gameObject.SetActive(false);
     }
     public void OnActorChanged(Actor actor)
     {
@@ -120,7 +116,6 @@ public class CombatView : MonoBehaviour, IUIComponentView
         {
             kvp.Value.gameObject.SetActive(false);
         }
-
         m_cachedActions.Clear();
         foreach (var action in actions) 
         {

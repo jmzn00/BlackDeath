@@ -16,10 +16,9 @@ public class UIManager : IManager
     private GameManager m_game;
     private UIController m_uiController;
     public UIController Controller => m_uiController;
+
     private UIControllerNavigation m_navigation;
     public UIControllerNavigation Navigation => m_navigation;
-
-    private UIInputMode m_inputMode;
     public UIManager(GameManager game) 
     {
         m_game = game;
@@ -68,31 +67,6 @@ public class UIManager : IManager
                 m_uiController.ShowComponent<DialogueUI>(true);
                 break;
         }
-    }
-    public void SetInputMode(UIInputMode mode) 
-    {
-        if (mode == m_inputMode) 
-        {
-            return;
-        }
-        m_inputMode = mode;
-
-        switch (m_inputMode) 
-        {
-            case UIInputMode.None:
-
-                break;
-            case UIInputMode.Navigation:
-
-                break;
-            case UIInputMode.Combat:
-                EventSystem.current.SetSelectedGameObject(null);
-                break;
-        }
-    }
-    protected bool IsNavigationEnabled() 
-    {
-        return m_inputMode == UIInputMode.Navigation;
     }
     public void Update(float dt) 
     {
@@ -160,11 +134,11 @@ public class UIControllerNavigation
 
         if (input.NavigateUpPressed) 
         {
-            MoveUp();
+            MoveDown();
         }
         else if (input.NavigateDownPressed) 
         {
-            MoveDown();
+            MoveUp();
         }
         else if (input.NavigateRightPressed) 
         {

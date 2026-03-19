@@ -1,88 +1,254 @@
 using System.Collections.Generic;
+using UnityEngine.UI;
+using UnityEngine;
+using System;
+using System.Linq;
 
-[UIComponent(typeof(CombatView))]
-public class CombatUI : UIComponentBase
+
+public class CombatUI : UIComponentBase<CombatUIViewGroup>
 {
-    private CombatView m_view;
-    private UIManager m_uiManager;
     private InputManager m_input;
-    public CombatUI(GameManager game, CombatView view) : base(game) 
+    private UIManager m_ui;
+
+    private ActionView m_actionView;
+    private TargetView m_targetView;
+
+    private ActionViewState m_actionViewState;
+    private List<Button> m_buttons = new();
+
+    private CombatActor m_currentActor;
+
+    private CombatAction m_currentAction;
+    private CombatActor m_currentTarget;
+
+    private List<CombatActor> m_currentEnemies;
+    public CombatUI(GameManager game, CombatUIViewGroup group) 
+        : base(game, group)
     {
-        m_view = view;
-        m_uiManager = game.Resolve<UIManager>();
+        m_actionView = group.ActionView;
+        m_targetView = group.TargetView;
+
+        m_targetView.Hide();
+        m_actionView.Hide();
+
         m_input = game.Resolve<InputManager>();
+        m_ui = game.Resolve<UIManager>();
     }
     public override void Initialize()
     {
-        CombatEvents.OnTurnStarted += TurnStarted;
-        CombatEvents.OnTurnEnded += TurnEnded;
+        m_actionView.OnButtonCreated += ButtonCreated;
+        m_actionView.OnButtonRemoved += ButtonRemoved;
 
+        CombatEvents.OnTurnStarted += TurnStart;
+        CombatEvents.OnTurnEnded += TurnEnd;
         CombatEvents.OnCombatActorsChanged += ActorsChanged;
-        CombatEvents.OnCombatEnded += CombatEnded;
 
-        m_view.Init();        
-        m_view.Initialize(m_uiManager);
-        m_input.InputActions.Combat.SelectTarget.performed += ctx =>
-        {
-            m_view.TargetScroll(ctx.ReadValue<float>());
-        };
-        m_input.InputActions.Combat.SelectTarget.canceled += ctx =>
-        {
-            m_view.TargetScroll(0f);
-        };
+        m_actionView.Init();
+
+        // REMEMBER TO CHANGE TO PROPER SUBSCRIBING
+        // THIS WILL LEAK
         m_input.InputActions.UI.Cancel.performed += ctx =>
         {
-            m_view.BackPressed();
+            GoBack();
         };
         m_input.InputActions.UI.Submit.performed += ctx =>
         {
-            m_view.SubmitAction();
+            SubmitAction();
         };
-
+        m_input.OnSelectTarget += SelectTarget;
     }
-
-
     public override void Dispose()
     {
-        CombatEvents.OnTurnStarted -= TurnStarted;
-        CombatEvents.OnTurnEnded -= TurnEnded;
+        m_actionView.OnButtonCreated -= ButtonCreated;
+        m_actionView.OnButtonRemoved -= ButtonRemoved;
 
+        CombatEvents.OnTurnStarted -= TurnStart;
+        CombatEvents.OnTurnEnded -= TurnEnd;
         CombatEvents.OnCombatActorsChanged -= ActorsChanged;
-        CombatEvents.OnCombatEnded -= CombatEnded;
     }
     private void ActorsChanged(List<CombatActor> actors) 
     {
-        m_view.ActorsChanged(actors);
-    }
-    private void TurnStarted(CombatActor actor) 
-    {
-        if (actor.IsPlayer) 
-        {            
-            m_view.TurnStarted(actor);
-            Toggle(true);
-        }
-    }
-    private void TurnEnded(CombatActor actor) 
-    {
-        if (actor.IsPlayer) 
+        m_currentEnemies = new List<CombatActor>();
+
+        foreach (CombatActor actor in actors) 
         {
-            m_view.TurnEnded(actor);
-            Toggle(false);
+            if (!actor.IsPlayer)
+                m_currentEnemies.Add(actor);
         }
     }
-    private void CombatEnded(CombatResult result) 
+    private int m_currentTargetIndex = 0;
+    private void SelectTarget(float value) 
     {
+        if (m_currentEnemies == null) 
+        {
+            Debug.LogWarning($"Cannot Select Target, enemies is NULL");
+            return;
+        }
+        if (m_currentAction == null) 
+        {
+            Debug.LogWarning($"Cannot Select Target, Action is NULL");
+            return;
+        }
+
+        List<CombatActor> validTargets 
+            = new List<CombatActor>(m_currentEnemies)
+            .Where(e => !e.IsDead).ToList();
+        
+        if (validTargets.Count == 0) 
+        {
+            Debug.LogWarning($"CombatUI: No valid Targets");
+            return;
+        }
+
+        if (value > 0) 
+        {
+            m_currentTargetIndex++;
+            if (m_currentTargetIndex >= validTargets.Count)
+                m_currentTargetIndex = 0;
+        }
+        else if (value < 0) 
+        {
+            m_currentTargetIndex--;
+            if (m_currentTargetIndex < 0)
+                m_currentTargetIndex = validTargets.Count - 1;
+        }        
+        m_currentTarget = validTargets[m_currentTargetIndex];
+        m_targetView.ChangeTarget(m_currentTarget);
+        m_targetView.SetPosition(m_currentTarget.transform.position
+            + new Vector3(-4f, 1f, 0f));
+        m_currentActor.ChangeTarget(m_currentTarget);
+    }
+    private void SubmitAction() 
+    {
+        if (m_currentActor == null
+            || m_currentAction == null
+            || m_currentTarget == null) return;
+
+        ActionContext ctx = new ActionContext
+        {
+            Source = m_currentActor,
+            Target = m_currentTarget,
+            Action = m_currentAction
+        };
+        m_currentActor.
+            ActionProvider.SetAction(ctx);
+
+        m_targetView.Hide();
+    }
+    private void GoBack() 
+    {
+        if (m_currentActor == null) return;
+            
+        switch (m_actionViewState) 
+        {
+            case ActionViewState.ActionType:
+
+                break;
+            case ActionViewState.ActionSelect:
+                m_actionView.ClearActions();
+                m_actionView.ShowActionTypes(m_currentActor.Actions);
+                break;
+            case ActionViewState.Selected:
+
+                break;
+        }
+    }
+    private void TurnStart(CombatActor actor) 
+    {
+        if (!actor.IsPlayer) return;
+
+        m_currentActor = actor;
+        m_currentAction = null;
+        m_currentTarget = null;
+
+        m_actionView.View();
+        m_actionView.ShowActionTypes(actor.Actions);
+        m_actionView.SetPosition(actor.transform.position + new Vector3(2f, 1f, 0f));
+
+        m_actionView.OnActionTypeSelected += ActionTypeSelected;
+        m_actionView.OnActionSelected += ActionSelected;
+
+        m_actionViewState = ActionViewState.ActionType;        
+        m_currentActor.ChangeState(CombatActorState.ActionSelecting); 
+    }
+    private void TurnEnd(CombatActor actor) 
+    {
+        if (!actor.IsPlayer) return;
+
+        m_currentAction = null;
+        m_currentTarget = null;
+        m_currentActor = null;
+
+        m_actionView.Hide();
+        m_targetView.Hide();
+
+        m_actionView.OnActionTypeSelected -= ActionTypeSelected;
+        m_actionView.OnActionSelected -= ActionSelected;
+    }
+    private void ActionTypeSelected(Type type)
+    {
+        m_actionView.ShowActionsOfType(type, m_currentActor.Actions);
+        m_actionViewState = ActionViewState.ActionSelect;
+    }
+    private void ActionSelected(CombatAction action) 
+    {
+        m_actionView.Hide();
+        m_targetView.View();
+        SelectTarget(0f);
+
+        m_currentAction = action;
+        m_currentActor.ChangeState(CombatActorState.Targeting);
+        m_actionViewState = ActionViewState.Selected;
+    }
+    private void ButtonCreated(Button button) 
+    {
+        if (m_buttons.Contains(button)) 
+        {
+            Debug.LogWarning($"CombatUI: Trying to add a button that already exists");
+            return;
+        }
+        m_buttons.Add(button);
+
+        if (m_buttons.Count > 0)
+        {
+            m_ui.Navigation.UpdateButtons(m_buttons, m_buttons[0].gameObject);
+        }
+        else
+        {
+            m_ui.Navigation.Clear();
+        }
+    }
+    private void ButtonRemoved(Button button) 
+    {
+        if (!m_buttons.Contains(button)) 
+        {
+            Debug.LogWarning($"Trying to remove button that does not exist");
+            return;
+        }
+        m_buttons.Remove(button);
+        if (m_buttons.Count > 0) 
+        {
+            m_ui.Navigation.UpdateButtons(m_buttons, m_buttons[0].gameObject);
+        }
+        else 
+        {
+            m_ui.Navigation.Clear();
+        }
         
     }
     public override void Toggle(bool show) 
     {
-        if (show)
-            m_view.View();
-        else
-            m_view.Hide();
+        if (show) 
+        {
+            m_actionView.View();
+        }
+        else 
+        {
+            m_actionView.Hide();
+        }
     }
     public override bool IsVisible()
     {
-        return m_view.gameObject.activeInHierarchy;
+        return m_actionView.gameObject.activeInHierarchy;
     }
 }

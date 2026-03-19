@@ -49,7 +49,7 @@ public class InputManager : IManager
     public InputSystem_Actions InputActions => m_inputActions;
 
     public event Action<UIInputAction> OnUIInputAction;
-
+    public event Action<float> OnSelectTarget;
 
     public InputManager() 
     {
@@ -151,7 +151,33 @@ public class InputManager : IManager
             m_uiInputState.NavigateLeftPressed = false;
             m_uiInputState._horizontalUsedLastFrame = false;
         }
+
+
+
+        float targetAxis = m_inputActions.Combat.SelectTarget.ReadValue<float>();
+
+        if (targetAxis > 0.5f) 
+        {
+            if (!m_selectTargetUsedLastFrame) 
+            {
+                OnSelectTarget?.Invoke(1f);
+                m_selectTargetUsedLastFrame = true;
+            }
+        }
+        else if (targetAxis < -0.5f) 
+        {
+            if (!m_selectTargetUsedLastFrame) 
+            {
+                OnSelectTarget?.Invoke(-1f);
+                m_selectTargetUsedLastFrame = true;
+            }
+        }
+        else 
+        {
+            m_selectTargetUsedLastFrame = false;
+        }
     }
+    private bool m_selectTargetUsedLastFrame = false;
     public void OnManagersInitialzied()
     {
 

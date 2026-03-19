@@ -15,4 +15,10 @@ MonoBehaviour:
   duration: 2
   displayName: Poison
   m_isStackable: 0
+  description: '- Poison deals 2 damage on turn
+
+    - Poison is active for 2 turns
+
+    -
+    Poison is not stackable '
   tickDamage: 2

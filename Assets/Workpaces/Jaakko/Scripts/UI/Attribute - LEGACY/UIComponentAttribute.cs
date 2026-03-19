@@ -4,8 +4,9 @@ using System;
 public class UIComponentAttribute : Attribute
 {
     public Type ViewType { get; }
-    public UIComponentAttribute(Type viewType) 
+    public Type[] ViewTypes { get; }
+    public UIComponentAttribute(params Type[] viewTypes) 
     {
-        ViewType = viewType;
+        ViewTypes = viewTypes;
     }
 }

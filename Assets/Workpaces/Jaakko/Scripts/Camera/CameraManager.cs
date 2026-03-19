@@ -23,7 +23,7 @@ public class CameraManager : IManager
         m_actorManager = actorManager;
         m_combatManager = combatManager;
         m_game = gameManager;
-        Debug.Log("CameraManager constructed");
+        //Debug.Log("CameraManager constructed");
     }    
     public bool Init() 
     {
@@ -33,7 +33,7 @@ public class CameraManager : IManager
             Debug.LogError("CameraManager: No CinemachineCamera found in scene!");
             return false;
         }
-        Debug.Log($"CameraManager: Found CinemachineCamera: {m_cinemachineCamera.name}");
+        //Debug.Log($"CameraManager: Found CinemachineCamera: {m_cinemachineCamera.name}");
         return true;
     }
     public bool Dispose() 
@@ -42,7 +42,7 @@ public class CameraManager : IManager
     }
     public void OnManagersInitialzied() 
     {
-        Debug.Log("CameraManager: OnManagersInitialized");
+        //Debug.Log("CameraManager: OnManagersInitialized");
         
         m_container = new Container();
         m_container.RegisterInstance(this);
@@ -54,12 +54,12 @@ public class CameraManager : IManager
         m_container.Register<CombatCameraMode>();
 
         m_cameraModes = m_container.GetAll<ICameraMode>().ToList();
-        Debug.Log($"CameraManager: Registered {m_cameraModes.Count} camera modes");
+        //Debug.Log($"CameraManager: Registered {m_cameraModes.Count} camera modes");
         
         // Log which modes were created
         foreach (var mode in m_cameraModes)
         {
-            Debug.Log($"  - {mode.GetType().Name}");
+            //Debug.Log($"  - {mode.GetType().Name}");
         }
 
         var defaultMode = m_cameraModes.FirstOrDefault();
@@ -84,7 +84,7 @@ public class CameraManager : IManager
         var nextMode = m_cameraModes.FirstOrDefault(m => m.CanEnter());
         if (nextMode != null && nextMode != m_mode)
         {
-            Debug.Log($"Camera switching from {m_mode.GetType().Name} to {nextMode.GetType().Name}");
+            //Debug.Log($"Camera switching from {m_mode.GetType().Name} to {nextMode.GetType().Name}");
             SetMode(nextMode);
         }
 
@@ -100,7 +100,7 @@ public class CameraManager : IManager
         }
         
         m_mode = mode;
-        Debug.Log($"CameraManager: Entering {m_mode.GetType().Name}");
+        //Debug.Log($"CameraManager: Entering {m_mode.GetType().Name}");
         m_mode.Enter();
     }
 }

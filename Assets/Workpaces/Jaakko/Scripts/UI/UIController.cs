@@ -3,13 +3,13 @@ using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class UIController : MonoBehaviour
 {
     private List<IUIComponent> m_uiComponents = new List<IUIComponent>();
 
     private HashSet<IUIComponent> m_visibleComponents = new HashSet<IUIComponent>();
-
 
     private InputManager m_inputManager;
     private GameManager m_game;
@@ -26,8 +26,8 @@ public class UIController : MonoBehaviour
         BuildModules();
         InitializeModules();
 
-        ShowComponent<InventoryUI>(false);
-        ShowComponent<DialogueUI>(false);
+        //ShowComponent<InventoryUI>(false);
+        //ShowComponent<DialogueUI>(false);
     }   
     public void Dispose() 
     {
@@ -55,23 +55,35 @@ public class UIController : MonoBehaviour
     }
     void BuildModules() 
     {
+        var groups = FindObjectsByType<UIViewGroup>(FindObjectsSortMode.None)
+            .ToDictionary(g => g.ComponentType, g => g);
+        
         var uiTypes = Assembly.GetExecutingAssembly()
             .GetTypes()
-            .Where(t => typeof(UIComponentBase).IsAssignableFrom(t)
-            && !t.IsAbstract);
+            .Where(t => !t.IsAbstract && typeof(IUIComponent).IsAssignableFrom(t));
 
         foreach (var type in uiTypes) 
         {
-            var attr = type.GetCustomAttribute<UIComponentAttribute>();
-            if (attr == null) continue;
-
-            var view = FindFirstObjectByType(attr.ViewType);
-            if (view == null) 
+            if (!groups.TryGetValue(type, out var group)) 
             {
-                Debug.LogWarning($"View {attr.ViewType.Name} not found");
+                Debug.LogWarning($"No UIViewGroup found for {type.Name}");
                 continue;
             }
-            var instance = Activator.CreateInstance(type, m_game, view) as IUIComponent;
+
+            var ctor = type.GetConstructors()
+                .FirstOrDefault(c =>
+                {
+                    var p = c.GetParameters();
+                    return p.Length == 2 &&
+                    p[0].ParameterType == typeof(GameManager) &&
+                    p[1].ParameterType.IsAssignableFrom(group.GetType());
+                });
+            if (ctor == null) 
+            {
+                Debug.LogWarning($"No valid constructor for {type.Name}");
+                continue;
+            }
+            var instance = ctor.Invoke(new object[] { m_game, group }) as IUIComponent;
 
             if (instance != null)
                 m_uiComponents.Add(instance);
@@ -87,7 +99,7 @@ public class UIController : MonoBehaviour
         switch (action) 
         {
             case UIInputAction.Inventory:
-                ShowComponent<InventoryUI>(!IsVisibe<InventoryUI>());
+                //ShowComponent<InventoryUI>(!IsVisibe<InventoryUI>());
                 break;
         }
     }

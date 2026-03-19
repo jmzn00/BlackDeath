@@ -13,9 +13,12 @@ MonoBehaviour:
   m_Name: PoisonSkill
   m_EditorClassIdentifier: Assembly-CSharp::SkillAction
   actionName: PoisonSkill
-  description: 
+  description: 'This skill inflicts 1 flat damage with the multiplier 1.2 on confirm.
+
+    On
+    confirm, the attack will proc poison for 2 turns'
   apCost: 0
-  animationClip: {fileID: 0}
+  animationClip: {fileID: 7400000, guid: c105fac2c4171c54390d8e9111a5c889, type: 2}
   isReactive: 1
   grantsApOnUse: 0
   baseDamage: 1
