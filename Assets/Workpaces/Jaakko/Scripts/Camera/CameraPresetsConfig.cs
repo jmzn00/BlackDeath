@@ -15,7 +15,7 @@ public class CameraPresetsConfig : ScriptableObject
     public CameraPresetData actionExecution = new CameraPresetData { presetName = "Action Execution" };
     
     [Header("Combat Flow Presets")]
-    public CameraPresetData turnStart = new CameraPresetData { presetName = "Turn Start" };
+    public CameraPresetData combatStart = new CameraPresetData { presetName = "Combat Start" };
     public CameraPresetData combatEnd = new CameraPresetData { presetName = "Combat End" };
 
     [Header("Exploration Presets")]
@@ -37,7 +37,7 @@ public class CameraPresetsConfig : ScriptableObject
             case CameraPresetType.ActionExecution: return actionExecution;
             
             // Combat Flow
-            case CameraPresetType.TurnStart: return turnStart;
+            case CameraPresetType.CombatStart: return combatStart;
             case CameraPresetType.CombatEnd: return combatEnd;
             
             // Exploration
@@ -62,7 +62,7 @@ public enum CameraPresetType
     ActionExecution,
     
     // Combat Flow
-    TurnStart,
+    CombatStart,
     CombatEnd,
     
     // Exploration
