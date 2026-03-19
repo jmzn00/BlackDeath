@@ -153,7 +153,7 @@ public class CombatCameraMode : ICameraMode
         }
 #endif
 
-        if (m_currentTarget == null || m_currentPreset == null) return;
+        if (m_currentPreset == null) return; // don't require a CameraTarget to update presets
 
         // Handle smooth transitions between presets
         if (m_isTransitioning)
@@ -196,7 +196,11 @@ public class CombatCameraMode : ICameraMode
         var follow = m_camera.GetComponent<CinemachineFollow>();
         if (follow != null)
         {
-            m_camera.Follow = m_currentTarget.transform;
+            // follow target if we have one, otherwise fall back to the current actor transform
+            Transform followTransform = m_currentTarget != null ? m_currentTarget.transform : m_currentActor?.transform;
+            if (followTransform != null)
+                m_camera.Follow = followTransform;
+
             follow.FollowOffset = targetOffset;
             follow.TrackerSettings.PositionDamping = new Vector3(targetDamping, targetDamping, targetDamping);
         }
@@ -204,7 +208,8 @@ public class CombatCameraMode : ICameraMode
         var followZoom = m_camera.GetComponent<CinemachineFollowZoom>();
         if (followZoom != null)
         {
-            followZoom.Width = targetWidth * m_currentTarget.zoomMultiplier;
+            float zoomMultiplier = m_currentTarget != null ? m_currentTarget.zoomMultiplier : 1f;
+            followZoom.Width = targetWidth * zoomMultiplier;
             followZoom.Damping = m_currentPreset.zoomDamping;
             followZoom.FovRange = m_currentPreset.fovRange;
         }
@@ -224,12 +229,17 @@ public class CombatCameraMode : ICameraMode
 
     private void UpdateCinemachineFollow()
     {
-        if (m_currentTarget == null || m_currentPreset == null) return;
+        if (m_currentPreset == null) return;
 
         var follow = m_camera.GetComponent<CinemachineFollow>();
         if (follow != null)
         {
-            m_camera.Follow = m_currentTarget.transform;
+            // Use CameraTarget if available, otherwise follow the actor directly
+            Transform followTransform = m_currentTarget != null ? m_currentTarget.transform : m_currentActor?.transform;
+            if (followTransform != null)
+                m_camera.Follow = followTransform;
+
+            // Apply preset follow settings
             follow.FollowOffset = m_currentPreset.positionOffset;
             follow.TrackerSettings.PositionDamping = new Vector3(
                 m_currentPreset.followDamping,
@@ -241,12 +251,13 @@ public class CombatCameraMode : ICameraMode
 
     private void ApplyZoomFromTarget()
     {
-        if (m_currentTarget == null || m_currentPreset == null) return;
+        if (m_currentPreset == null) return;
 
         var followZoom = m_camera.GetComponent<CinemachineFollowZoom>();
         if (followZoom != null)
         {
-            followZoom.Width = m_currentPreset.width * m_currentTarget.zoomMultiplier;
+            float zoomMultiplier = m_currentTarget != null ? m_currentTarget.zoomMultiplier : 1f;
+            followZoom.Width = m_currentPreset.width * zoomMultiplier;
             followZoom.Damping = m_currentPreset.zoomDamping;
             followZoom.FovRange = m_currentPreset.fovRange;
         }
@@ -299,6 +310,7 @@ public class CombatCameraMode : ICameraMode
         else
         {
             m_isTransitioning = false;
+            // Immediately apply even if we don't have a CameraTarget mapped — fall back to actor transform
             UpdateCinemachineFollow();
             ApplyZoomFromTarget();
             Debug.Log($"Applied camera preset immediately: {presetType}");
@@ -320,15 +332,25 @@ public class CombatCameraMode : ICameraMode
             return;
         }
 
+        // Prefer a CameraTarget mapping if present
         if (m_actorTargets.TryGetValue(actor, out CameraTarget target))
         {
             m_currentTarget = target;
-            Debug.Log($"Camera target set to: {actor.name}");
+            Debug.Log($"Camera target set to CameraTarget for: {actor.name}");
         }
         else
         {
-            Debug.LogWarning($"No camera target found for actor: {actor.name}");
+            // No CameraTarget found — clear mapping and fallback to actor transform
+            m_currentTarget = null;
+            Debug.LogWarning($"No CameraTarget found for actor: {actor.name}. Falling back to actor transform.");
+            if (m_camera != null)
+            {
+                m_camera.Follow = actor.transform;
+            }
         }
+
+        // store current actor reference for fallbacks used by update/apply methods
+        m_currentActor = actor;
     }
 
     private void RefreshActorTargets()

@@ -125,6 +125,7 @@ public class CombatManager : IManager
         else
         {
             NextTurn();
+            ChangeState(CombatState.Active);
         }
     }
     private void TransitionFinished() 

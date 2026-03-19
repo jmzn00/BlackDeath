@@ -14,15 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CameraPresetsConfig
   playerActionSelecting:
     presetName: Player Action Selecting
-    positionOffset: {x: 0, y: 0, z: 0}
-    rotation: {x: 0, y: 0, z: 0}
+    positionOffset: {x: -1, y: 2, z: -2}
+    rotation: {x: 28.205963, y: 26.62339, z: 0}
     fieldOfView: 60
     orthographicSize: 5
-    followDamping: 1
+    followDamping: 1.5
     transitionSpeed: 2
     width: 10
     zoomDamping: 0.5
-    fovRange: {x: 40, y: 60}
+    fovRange: {x: 48.065063, y: 65.60624}
   playerTargeting:
     presetName: Player Targeting
     positionOffset: {x: 0, y: 0, z: 0}
@@ -47,15 +47,15 @@ MonoBehaviour:
     fovRange: {x: 40, y: 60}
   transition:
     presetName: Transition
-    positionOffset: {x: 0, y: 3, z: -10}
-    rotation: {x: 0, y: 0, z: 0}
+    positionOffset: {x: 0, y: 3, z: -5}
+    rotation: {x: 23.645794, y: 0.00095969747, z: -1.422156e-11}
     fieldOfView: 60
     orthographicSize: 5
     followDamping: 1
-    transitionSpeed: 2
+    transitionSpeed: 1.5
     width: 10
     zoomDamping: 0.5
-    fovRange: {x: 40, y: 60}
+    fovRange: {x: 18.825277, y: 38.82528}
   actionExecution:
     presetName: Action Execution
     positionOffset: {x: 0, y: 3, z: -5}
@@ -67,17 +67,17 @@ MonoBehaviour:
     width: 10
     zoomDamping: 0.5
     fovRange: {x: 16.964691, y: 34.505867}
-  turnStart:
-    presetName: Turn Start
-    positionOffset: {x: -2, y: 2, z: -3}
-    rotation: {x: 18.408485, y: 33.69007, z: 0}
+  combatStart:
+    presetName: Combat Start
+    positionOffset: {x: 0, y: 0, z: 0}
+    rotation: {x: 0, y: 0, z: 0}
     fieldOfView: 60
     orthographicSize: 5
-    followDamping: 1.5
-    transitionSpeed: 1
-    width: 2
+    followDamping: 1
+    transitionSpeed: 2
+    width: 10
     zoomDamping: 0.5
-    fovRange: {x: 54.445892, y: 95.4059}
+    fovRange: {x: 40, y: 60}
   combatEnd:
     presetName: Combat End
     positionOffset: {x: 0, y: 0, z: 0}
