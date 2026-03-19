@@ -13,7 +13,6 @@ public class CameraPresetsConfig : ScriptableObject
     [Header("Shared Combat Presets")]
     public CameraPresetData transition = new CameraPresetData { presetName = "Transition" };
     public CameraPresetData actionExecution = new CameraPresetData { presetName = "Action Execution" };
-    public CameraPresetData reactionWindow = new CameraPresetData { presetName = "Reaction Window" };
     
     [Header("Combat Flow Presets")]
     public CameraPresetData turnStart = new CameraPresetData { presetName = "Turn Start" };
@@ -36,7 +35,6 @@ public class CameraPresetsConfig : ScriptableObject
             // Shared Combat
             case CameraPresetType.Transition: return transition;
             case CameraPresetType.ActionExecution: return actionExecution;
-            case CameraPresetType.ReactionWindow: return reactionWindow;
             
             // Combat Flow
             case CameraPresetType.TurnStart: return turnStart;
@@ -62,7 +60,6 @@ public enum CameraPresetType
     // Shared Combat States
     Transition,
     ActionExecution,
-    ReactionWindow,
     
     // Combat Flow
     TurnStart,

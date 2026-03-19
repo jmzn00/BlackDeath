@@ -12,19 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b598488d18fa9f43b2a46b7ed18a0ff, type: 3}
   m_Name: CameraPresets
   m_EditorClassIdentifier: Assembly-CSharp::CameraPresetsConfig
-  actionSelection:
-    presetName: Action Selection
-    positionOffset: {x: 0, y: 0, z: 0}
-    rotation: {x: 0, y: 0, z: 0}
-    fieldOfView: 60
-    orthographicSize: 5
-    followDamping: 1
-    transitionSpeed: 5
-    width: 10
-    zoomDamping: 0.5
-    fovRange: {x: 40, y: 60}
-  targeting:
-    presetName: Targeting
+  playerActionSelecting:
+    presetName: Player Action Selecting
     positionOffset: {x: 0, y: 0, z: 0}
     rotation: {x: 0, y: 0, z: 0}
     fieldOfView: 60
@@ -34,17 +23,39 @@ MonoBehaviour:
     width: 10
     zoomDamping: 0.5
     fovRange: {x: 40, y: 60}
-  turnStart:
-    presetName: Turn Start
-    positionOffset: {x: -2, y: 2, z: -3}
-    rotation: {x: 18.408485, y: 33.69007, z: 0}
+  playerTargeting:
+    presetName: Player Targeting
+    positionOffset: {x: 0, y: 0, z: 0}
+    rotation: {x: 0, y: 0, z: 0}
     fieldOfView: 60
     orthographicSize: 5
-    followDamping: 1.5
-    transitionSpeed: 1
-    width: 2
+    followDamping: 1
+    transitionSpeed: 2
+    width: 10
     zoomDamping: 0.5
-    fovRange: {x: 54.445892, y: 95.4059}
+    fovRange: {x: 40, y: 60}
+  enemyTurn:
+    presetName: Enemy Turn
+    positionOffset: {x: 0, y: 3, z: -5}
+    rotation: {x: 0, y: 0, z: 0}
+    fieldOfView: 60
+    orthographicSize: 5
+    followDamping: 1
+    transitionSpeed: 2
+    width: 10
+    zoomDamping: 0.5
+    fovRange: {x: 40, y: 60}
+  transition:
+    presetName: Transition
+    positionOffset: {x: 0, y: 3, z: -10}
+    rotation: {x: 0, y: 0, z: 0}
+    fieldOfView: 60
+    orthographicSize: 5
+    followDamping: 1
+    transitionSpeed: 2
+    width: 10
+    zoomDamping: 0.5
+    fovRange: {x: 40, y: 60}
   actionExecution:
     presetName: Action Execution
     positionOffset: {x: 0, y: 3, z: -5}
@@ -56,17 +67,28 @@ MonoBehaviour:
     width: 10
     zoomDamping: 0.5
     fovRange: {x: 16.964691, y: 34.505867}
-  reactionWindow:
-    presetName: Reaction Window
-    positionOffset: {x: 0, y: 3, z: -15}
-    rotation: {x: 14.529142, y: 3.3111782, z: -0.000000027561848}
+  turnStart:
+    presetName: Turn Start
+    positionOffset: {x: -2, y: 2, z: -3}
+    rotation: {x: 18.408485, y: 33.69007, z: 0}
     fieldOfView: 60
     orthographicSize: 5
     followDamping: 1.5
     transitionSpeed: 1
+    width: 2
+    zoomDamping: 0.5
+    fovRange: {x: 54.445892, y: 95.4059}
+  combatEnd:
+    presetName: Combat End
+    positionOffset: {x: 0, y: 0, z: 0}
+    rotation: {x: 0, y: 0, z: 0}
+    fieldOfView: 60
+    orthographicSize: 5
+    followDamping: 1
+    transitionSpeed: 2
     width: 10
     zoomDamping: 0.5
-    fovRange: {x: 20, y: 60}
+    fovRange: {x: 40, y: 60}
   exploration:
     presetName: Exploration
     positionOffset: {x: 0, y: 2, z: -3}

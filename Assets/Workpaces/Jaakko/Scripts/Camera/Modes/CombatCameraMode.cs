@@ -64,7 +64,9 @@ public class CombatCameraMode : ICameraMode
 
     public void Enter()
     {
+        Debug.Log("========================================");
         Debug.Log("=== Combat Camera Mode: ENTER ===");
+        Debug.Log("========================================");
 
         // Subscribe to combat events
         CombatEvents.OnTurnStarted += OnTurnStarted;
@@ -73,7 +75,6 @@ public class CombatCameraMode : ICameraMode
         CombatEvents.OnActorStateChanged += OnActorStateChanged;
         CombatEvents.OnActionSubmitted += OnActionSubmitted;
         CombatEvents.OnActionResolved += OnActionResolved;
-        CombatEvents.OnReactionWindowOpened += OnReactionWindowOpened;
         CombatEvents.OnCombatActorsChanged += OnCombatActorsChanged;
         CombatEvents.OnCombatEnded += OnCombatEnded;
         CombatEvents.OnTransitionStarted += OnTransitionStarted;
@@ -83,11 +84,15 @@ public class CombatCameraMode : ICameraMode
         CameraAnimationEvents.OnTargetChanged += OnAnimationTargetChanged;
         CameraAnimationEvents.OnZoomChanged += OnAnimationZoomChanged;
 
+        Debug.Log("CombatCameraMode: All event subscriptions complete");
+
         // Initialize actor targets
         RefreshActorTargets();
 
         // Set initial preset
         ApplyPreset(CameraPresetType.TurnStart);
+        
+        Debug.Log("CombatCameraMode: Enter complete");
     }
 
     public void Exit()
@@ -101,7 +106,6 @@ public class CombatCameraMode : ICameraMode
         CombatEvents.OnActorStateChanged -= OnActorStateChanged;
         CombatEvents.OnActionSubmitted -= OnActionSubmitted;
         CombatEvents.OnActionResolved -= OnActionResolved;
-        CombatEvents.OnReactionWindowOpened -= OnReactionWindowOpened;
         CombatEvents.OnCombatActorsChanged -= OnCombatActorsChanged;
         CombatEvents.OnCombatEnded -= OnCombatEnded;
         CombatEvents.OnTransitionStarted -= OnTransitionStarted;
@@ -460,16 +464,6 @@ public class CombatCameraMode : ICameraMode
     private void OnTransitionEnded()
     {
         Debug.Log("CombatCameraMode: OnTransitionEnded");
-    }
-
-    private void OnReactionWindowOpened(ActionContext ctx)
-    {
-        Debug.Log($"CombatCameraMode: OnReactionWindowOpened");
-        if (ctx.Target != null)
-        {
-            SetTarget(ctx.Target);
-            ApplyPreset(CameraPresetType.ReactionWindow);
-        }
     }
 
     private void OnCombatActorsChanged(List<CombatActor> actors)
