@@ -31,7 +31,6 @@ public class DialogueView : MonoBehaviour, IUIComponentView
     }
     public void Initialize(DialogueManager dialogue) 
     {
-        Debug.Log("Dialog View Init");
         m_dialogue = dialogue;
 
         m_dialogue.OnDialogueStarted += DialogueStarted;

@@ -88,22 +88,6 @@ public class UIControllerNavigation
         m_selectables.Clear();
 
     }
-    public void RegisterButtons(IEnumerable<Selectable> buttons) 
-    {
-        m_selectables = new List<Selectable>(buttons);
-        m_currentIndex = 0;
-
-        if (m_selectables.Count > 0) 
-        {
-            EventSystem.current
-                .SetSelectedGameObject(m_selectables[0].gameObject);
-        }
-    }
-    public void RemoveSelectable(Selectable s) 
-    {
-        if (m_selectables.Contains(s))
-            m_selectables.Remove(s);
-    }
     public void UpdateButtons(IEnumerable<Selectable> buttons, GameObject currentSelected)
     {
         m_selectables = new List<Selectable>(buttons);
@@ -153,13 +137,11 @@ public class UIControllerNavigation
     {
         m_currentIndex = (m_currentIndex - 1 + m_selectables.Count) % m_selectables.Count;
         EventSystem.current.SetSelectedGameObject(m_selectables[m_currentIndex].gameObject);
-        //Debug.Log($"Selected: {EventSystem.current.currentSelectedGameObject.name}");
     }
     private void MoveDown()
     {        
         m_currentIndex = (m_currentIndex + 1) % m_selectables.Count;
         EventSystem.current.SetSelectedGameObject(m_selectables[m_currentIndex].gameObject);
-        //Debug.Log($"Selected: {EventSystem.current.currentSelectedGameObject.name}");
     }
     private void MoveRight()
     {
@@ -174,9 +156,7 @@ public class UIControllerNavigation
         if (next != null) 
         {
             EventSystem.current.SetSelectedGameObject(next.gameObject);
-            //Debug.Log($"Selected: {EventSystem.current.currentSelectedGameObject.name}");
-        }
-            
+        }            
     }
 
     private void MoveLeft()
@@ -192,9 +172,7 @@ public class UIControllerNavigation
         if (next != null) 
         {
             EventSystem.current.SetSelectedGameObject(next.gameObject);
-            //Debug.Log($"Selected: {EventSystem.current.currentSelectedGameObject.name}");
-        }
-        
+        }        
     }
 
 }

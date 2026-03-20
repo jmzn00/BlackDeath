@@ -6,30 +6,20 @@ using UnityEngine;
 public class UIController : MonoBehaviour
 {
     private List<IUIComponent> m_uiComponents = new List<IUIComponent>();
-
     private HashSet<IUIComponent> m_visibleComponents = new HashSet<IUIComponent>();
 
-    private InputManager m_inputManager;
     private GameManager m_game;
 
     public void Initialize(GameManager game) 
     {
         m_game = game;
-        m_inputManager = m_game.Resolve<InputManager>();        
-
-        Actor actor = m_game.Resolve<ActorManager>().CurrentControlled;
-
-        m_inputManager.OnUIInputAction += OnUiInputAction;
 
         BuildModules();
         InitializeModules();
-
-        //ShowComponent<InventoryUI>(false);
-        //ShowComponent<DialogueUI>(false);
     }   
     public void Dispose() 
     {
-        m_inputManager.OnUIInputAction -= OnUiInputAction;
+
     }
     public void ShowComponent<T>(bool show) where T : IUIComponent
     {
@@ -91,14 +81,5 @@ public class UIController : MonoBehaviour
     {
         foreach (var comp in m_uiComponents)
             comp.Initialize();        
-    }
-    private void OnUiInputAction(UIInputAction action) 
-    {
-        switch (action) 
-        {
-            case UIInputAction.Inventory:
-                //ShowComponent<InventoryUI>(!IsVisibe<InventoryUI>());
-                break;
-        }
     }
 }

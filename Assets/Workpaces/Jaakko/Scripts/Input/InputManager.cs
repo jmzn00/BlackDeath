@@ -111,7 +111,6 @@ public class InputManager : IManager
         Vector2 raw = m_inputActions.UI.Navigate.ReadValue<Vector2>();
         m_uiInputState.InputDirection = raw;
 
-        // edge detection
         if (raw.y > 0.5f)
         {
             m_uiInputState.NavigateUpPressed = !m_uiInputState._verticalUsedLastFrame;
@@ -126,13 +125,11 @@ public class InputManager : IManager
         }
         else
         {
-            // reset flag when input returns to neutral
             m_uiInputState.NavigateUpPressed = false;
             m_uiInputState.NavigateDownPressed = false;
             m_uiInputState._verticalUsedLastFrame = false;
         }
 
-        // Horizontal edge detection
         if (raw.x > 0.5f)
         {
             m_uiInputState.NavigateRightPressed = !m_uiInputState._horizontalUsedLastFrame;

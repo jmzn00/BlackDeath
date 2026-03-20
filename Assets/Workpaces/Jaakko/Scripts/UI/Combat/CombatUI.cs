@@ -200,6 +200,8 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
         m_currentAction = action;
         m_currentActor.ChangeState(CombatActorState.Targeting);
         m_actionViewState = ActionViewState.Selected;
+
+        SelectTarget(1f);
     }
     private void ButtonCreated(Button button) 
     {

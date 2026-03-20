@@ -17,4 +17,5 @@ MonoBehaviour:
   m_isStackable: 1
   description: "- Burn deals 1 damage on turn \n- Burn lasts for 2 turns\n- Burn
     can be stacked"
+  statusEffectSprite: {fileID: 21300000, guid: 52ee376697e331c41a2cced3046c5a72, type: 3}
   tickDamage: 1

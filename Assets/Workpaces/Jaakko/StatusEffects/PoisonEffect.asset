@@ -21,4 +21,5 @@ MonoBehaviour:
 
     -
     Poison is not stackable '
+  statusEffectSprite: {fileID: 21300000, guid: 6148f81b9d7532b44a401dc707536ab1, type: 3}
   tickDamage: 2

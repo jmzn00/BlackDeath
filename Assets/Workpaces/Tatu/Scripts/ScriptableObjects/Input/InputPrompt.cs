@@ -14,12 +14,14 @@ public class InputPrompt : ScriptableObject
     [Tooltip("Button icon shown alongside the label.")]
     public Sprite icon;
 
+    public Sprite psIcon;
+    public Sprite xboxIcon;
+
     [Header("Input")]
     [Tooltip("Which input to listen for during the window.")]
     public PromptInputType inputType = PromptInputType.Confirm;
     public InputAction action;
 }
-
 public enum PromptInputType
 {
     Confirm,  // Space / Enter / Confirm action
