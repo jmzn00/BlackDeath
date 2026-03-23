@@ -7,6 +7,10 @@ public class PlayerReactionProvider : IReactionProvider
     {
         m_actor = actor;
     }
+    public void OpenReaction() 
+    {
+    
+    }
     public void TryReact(ReactionSystem reactionSystem, InputPrompt prompt) 
     {
         if (!prompt.action.WasPressedThisFrame()) 

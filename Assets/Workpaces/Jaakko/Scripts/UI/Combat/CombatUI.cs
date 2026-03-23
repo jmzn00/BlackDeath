@@ -130,8 +130,7 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
         {
             m_currentTarget = target;
         }
-
-        if (m_currentTarget == null) return;
+        if (m_currentTarget == null) return;        
 
         ActionContext ctx = new ActionContext
         {
@@ -203,7 +202,14 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
         m_actionViewState = ActionViewState.ActionSelect;
     }
     private void ActionSelected(CombatAction action) 
-    {
+    {        
+        if (!action.CanExecute(m_currentActor,
+            out string reason))
+        {
+            Debug.Log($"{action.actionName} cannot be performed: {reason}");
+            return;
+        }
+
         m_actionView.Hide();
         m_actionViewState = ActionViewState.Selected;
         m_currentAction = action;

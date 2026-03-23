@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 96d9e96d290a56b4e8357d28e7a18676, type: 3}
-  m_Name: RatEnemy_DashAttack
+  m_Name: RatEnemy_DashAttack 1
   m_EditorClassIdentifier: Assembly-CSharp::AttackAction
-  actionName: Dash Attack
+  actionName: Burn Dash
   description: 
   apCost: 0
   animationClip: {fileID: 7400000, guid: 283c51a397d1fc74cab650d35e9ee5c1, type: 2}
@@ -21,7 +21,7 @@ MonoBehaviour:
   baseDamage: 1
   confirmDamageMultipler: 1.2
   AppliedEffects:
-  - {fileID: 11400000, guid: 1e00e8df307b0d9469d906410a575a8e, type: 2}
+  - {fileID: 11400000, guid: 49f52cc500f44b14dbd658d71c5d7625, type: 2}
   targetType: 2
   damage: 1
   bonusDamageOnSuccess: 1

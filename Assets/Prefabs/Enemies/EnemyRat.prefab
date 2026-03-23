@@ -522,7 +522,7 @@ MonoBehaviour:
   m_reactionSettings:
     dodgePercentage: 10
     parryPercentage: 0
-    confirmPercentage: 0
+    confirmPercentage: 50
   m_actionBehaviours:
   - {fileID: 11400000, guid: 1e5d3c0960926dc4b82c32c6a62c2363, type: 2}
   m_targetingBehaviours:

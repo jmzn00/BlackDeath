@@ -58,6 +58,10 @@ public class ReactionSystem
             p.action.Enable();        
 
         m_window.Open();
+
+        ctx.Source.ReactionProvider.OpenReaction();
+        ctx.Target.ReactionProvider.OpenReaction();
+
         CombatEvents.ReactionWindowOpened(ctx);
     }
     public void Close() 

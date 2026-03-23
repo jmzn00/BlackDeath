@@ -24573,7 +24573,7 @@ AnimationClip:
   m_Events:
   - time: 1
     functionName: Anim_OpenWindow
-    data: 
+    data: Confirm_X
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0

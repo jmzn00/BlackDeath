@@ -26,33 +26,38 @@ public class AIReactionProvider : IReactionProvider
             confirmPercentage = Mathf.Clamp(settings.confirmPercentage, 0, 100);
         }
     }
+    private bool m_reacted = false;
+    public void OpenReaction() 
+    {
+        m_reacted = false ;
+    }
     public void TryReact(ReactionSystem reactionSystem, InputPrompt prompt)
     {
         if (reactionSystem == null || prompt == null) return;
-        /*
-        float roll = Random.value * 100f;
+        if (m_reacted) return;
 
+        float roll = Random.value * 100f;
         switch (prompt.inputType)
         {
             case PromptInputType.Parry:
                 if (roll < parryPercentage) 
                 {
                     reactionSystem.ReceiveReaction(m_actor, prompt);
-                    m_actor.OnDodgePerformed();
                 }                
                 break;
             case PromptInputType.Dodge:
                 if (roll < dodgePercentage) 
                 {
                     reactionSystem.ReceiveReaction(m_actor, prompt);
-                    m_actor.OnParryPerformed();
                 }                
                 break;
             case PromptInputType.Confirm:
                 if (roll < confirmPercentage)
+                {
                     reactionSystem.ReceiveReaction(m_actor, prompt);
+                }                    
                 break;
-        }   
-        */
+        }
+        m_reacted = true;
     }
 }
