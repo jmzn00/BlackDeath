@@ -11,9 +11,15 @@ public class ActionBehaviour_MaxDamage : AIActionBehaviour
         selectedAction = null;
 
         CombatAction bestAction = null;
-        float highestDamage = 0f;
+        float highestDamage = -1f;
         for (int i = 0; i < actor.Actions.Count; i++) 
         {
+            CombatAction action = actor.Actions[i];
+            if (!action.CanExecute(actor, out string reason)) 
+            {
+                continue;
+            }
+
             float damage = actor.Actions[i].baseDamage;
             if (damage > highestDamage) 
             {

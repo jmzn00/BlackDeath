@@ -39,25 +39,46 @@ public class AIActionProvider : IActionProvider
             AIActionBehaviour b = m_actor.ActionBehaviours[i];
             score = b.Evaluate(actor, participants, out CombatAction action);
 
+            if (action == null) 
+            {
+                Debug.Log($"Action is NULL");
+                continue;
+            }
+            if (!action.CanExecute(m_actor, out string reason)) 
+            {
+                Debug.Log($"{m_actor.name} cannot perform {action.actionName}. Reason: {reason}");
+                continue;
+            }
+
             if (score > bestActionScore) 
             {
                 bestActionScore = score;
                 bestAction = action;
             }
         }
-        float bestTargetScore = -1f;
         CombatActor bestTarget = null;
-        for (int i = 0; i < m_actor.TargetingBehaviours.Count; i++) 
+        if (bestAction.targetType == TargetType.Self) 
         {
-            AITargetingBehaviour tb = m_actor.TargetingBehaviours[i];
-            float score = tb.Evaluate(actor, participants, out CombatActor target);
-
-            if (score > bestTargetScore) 
-            {
-                bestTargetScore = score;
-                bestTarget = target;
-            }
+            bestTarget = m_actor;
         }
+        
+        if (bestTarget == null) 
+        {
+            float bestTargetScore = -1f;
+
+            for (int i = 0; i < m_actor.TargetingBehaviours.Count; i++)
+            {
+                AITargetingBehaviour tb = m_actor.TargetingBehaviours[i];
+                float score = tb.Evaluate(actor, participants, bestAction
+                    , out CombatActor target);
+
+                if (score > bestTargetScore)
+                {
+                    bestTargetScore = score;
+                    bestTarget = target;
+                }
+            }
+        }        
         ActionContext ctx = null;
         if (bestAction != null && bestTarget != null) 
         {

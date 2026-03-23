@@ -105,6 +105,11 @@ public class CombatManager : IManager
     }
     private void ActionSubmitted(ActionContext actx)
     {
+        if (actx.Action == null) 
+        {
+            ActionFinished(actx);
+            return;
+        }
         m_transition.Start(actx);
         ChangeState(CombatState.Transition);
 

@@ -5,13 +5,18 @@ using UnityEngine;
 public class TargetBehaviour_WeakestEnemy : AITargetingBehaviour
 {
     public override float Evaluate(CombatActor actor,
-        List<CombatActor> participants, out CombatActor selected)
+        List<CombatActor> participants, CombatAction action,
+        out CombatActor selected)
     {
         selected = null;
 
-        var enemies = participants.FindAll(a => a.Team != actor.Team && !a.IsDead);
-        if (enemies.Count == 0)
+        var enemies = action.GetValidTargets(actor, participants);
+        if (enemies.Count == 0) 
+        {
+            Debug.LogWarning($"No Targets {name}");
             return 0f;
+        }
+            
 
         float lowestHp = 100f;
         CombatActor bestTarget = null;

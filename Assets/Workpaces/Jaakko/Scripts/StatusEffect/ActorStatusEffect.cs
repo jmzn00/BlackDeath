@@ -14,7 +14,7 @@ public abstract class ActorStatusEffect : ScriptableObject
 
     public Sprite statusEffectSprite;
 
-    public virtual bool CanPerformAction(CombatAction action, CombatActor target, out string reason) 
+    public virtual bool CanPerformAction(CombatAction action, out string reason) 
     {
         reason = "";
         return true;

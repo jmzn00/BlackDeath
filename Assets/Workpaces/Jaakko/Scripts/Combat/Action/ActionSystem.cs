@@ -93,6 +93,15 @@ public class ActionSystem
             Debug.LogWarning("Cannot Submit Action, Action already Set");
             return;
         }
+        if (action == null) 
+        {
+            OnActionSubmitted?.Invoke(new ActionContext 
+            {
+                Source = source
+            });
+            return;
+        }
+
         m_currentAction = new ActionContext
         {
             Source = source,

@@ -241,7 +241,7 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
     {
         if (!m_buttons.Contains(button)) 
         {
-            Debug.LogWarning($"Trying to remove button that does not exist");
+            //Debug.LogWarning($"Trying to remove button that does not exist");
             return;
         }
         m_buttons.Remove(button);

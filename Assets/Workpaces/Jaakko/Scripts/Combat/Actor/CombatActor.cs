@@ -150,8 +150,6 @@ public class CombatActor : MonoBehaviour, IActorComponent
     // ui calls
     public void ChangeTarget(CombatActor actor) 
     {
-        Debug.Log($"Selected Target: {actor.name}");
-
         OnCurrentTargetChanged?.Invoke(actor);
     }
     #endregion

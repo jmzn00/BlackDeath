@@ -65,9 +65,9 @@ public class CombatCameraMode : ICameraMode
 
     public void Enter()
     {
-        Debug.Log("========================================");
-        Debug.Log("=== Combat Camera Mode: ENTER ===");
-        Debug.Log("========================================");
+        //Debug.Log("========================================");
+        //Debug.Log("=== Combat Camera Mode: ENTER ===");
+        //Debug.Log("========================================");
 
         m_isFirstTurn = true;
 
@@ -88,17 +88,17 @@ public class CombatCameraMode : ICameraMode
         CameraAnimationEvents.OnTargetChanged += OnAnimationTargetChanged;
         CameraAnimationEvents.OnZoomChanged += OnAnimationZoomChanged;
 
-        Debug.Log("CombatCameraMode: All event subscriptions complete");
+        //Debug.Log("CombatCameraMode: All event subscriptions complete");
 
         // Initialize actor targets
         RefreshActorTargets();
 
-        Debug.Log("CombatCameraMode: Enter complete - waiting for combat start");
+        //Debug.Log("CombatCameraMode: Enter complete - waiting for combat start");
     }
 
     public void Exit()
     {
-        Debug.Log("=== Combat Camera Mode: EXIT ===");
+        //Debug.Log("=== Combat Camera Mode: EXIT ===");
 
         // Unsubscribe from events
         CombatEvents.OnCombatStarted -= OnCombatStarted;
@@ -132,11 +132,11 @@ public class CombatCameraMode : ICameraMode
         {
             if (isPaused)
             {
-                Debug.Log("CombatCameraMode: Game paused - Camera manipulation enabled");
+                //Debug.Log("CombatCameraMode: Game paused - Camera manipulation enabled");
             }
             else
             {
-                Debug.Log("CombatCameraMode: Game resumed - Reapplying current preset");
+                //Debug.Log("CombatCameraMode: Game resumed - Reapplying current preset");
                 if (m_currentPreset != null)
                 {
                     UpdateCinemachineFollow();
@@ -184,7 +184,7 @@ public class CombatCameraMode : ICameraMode
         {
             m_transitionProgress = 1f;
             m_isTransitioning = false;
-            Debug.Log("Camera preset transition complete");
+            //Debug.Log("Camera preset transition complete");
         }
 
         float t = EaseInOutCubic(m_transitionProgress);
@@ -267,7 +267,7 @@ public class CombatCameraMode : ICameraMode
     {
         if (m_presets == null)
         {
-            Debug.LogError("CombatCameraMode: Cannot apply preset - m_presets is null");
+            //Debug.LogError("CombatCameraMode: Cannot apply preset - m_presets is null");
             return;
         }
 
@@ -296,7 +296,7 @@ public class CombatCameraMode : ICameraMode
 
         if (m_currentPreset == null)
         {
-            Debug.LogError($"CombatCameraMode: Preset {presetType} is null!");
+            //Debug.LogError($"CombatCameraMode: Preset {presetType} is null!");
             return;
         }
 
@@ -305,7 +305,7 @@ public class CombatCameraMode : ICameraMode
         {
             m_isTransitioning = true;
             m_transitionProgress = 0f;
-            Debug.Log($"Starting smooth transition to preset: {presetType} (speed: {m_currentPreset.transitionSpeed})");
+            //Debug.Log($"Starting smooth transition to preset: {presetType} (speed: {m_currentPreset.transitionSpeed})");
         }
         else
         {
@@ -313,7 +313,7 @@ public class CombatCameraMode : ICameraMode
             // Immediately apply even if we don't have a CameraTarget mapped — fall back to actor transform
             UpdateCinemachineFollow();
             ApplyZoomFromTarget();
-            Debug.Log($"Applied camera preset immediately: {presetType}");
+            //Debug.Log($"Applied camera preset immediately: {presetType}");
         }
     }
 
@@ -328,7 +328,7 @@ public class CombatCameraMode : ICameraMode
     {
         if (actor == null)
         {
-            Debug.LogWarning("CombatCameraMode: Attempted to set null actor as target");
+            //Debug.LogWarning("CombatCameraMode: Attempted to set null actor as target");
             return;
         }
 
@@ -336,13 +336,13 @@ public class CombatCameraMode : ICameraMode
         if (m_actorTargets.TryGetValue(actor, out CameraTarget target))
         {
             m_currentTarget = target;
-            Debug.Log($"Camera target set to CameraTarget for: {actor.name}");
+            //Debug.Log($"Camera target set to CameraTarget for: {actor.name}");
         }
         else
         {
             // No CameraTarget found — clear mapping and fallback to actor transform
             m_currentTarget = null;
-            Debug.LogWarning($"No CameraTarget found for actor: {actor.name}. Falling back to actor transform.");
+            //Debug.LogWarning($"No CameraTarget found for actor: {actor.name}. Falling back to actor transform.");
             if (m_camera != null)
             {
                 m_camera.Follow = actor.transform;
@@ -358,41 +358,41 @@ public class CombatCameraMode : ICameraMode
         m_actorTargets.Clear();
         var targets = GameObject.FindObjectsByType<CameraTarget>(FindObjectsSortMode.None);
 
-        Debug.Log($"CombatCameraMode: Searching for CameraTarget components...");
+        //Debug.Log($"CombatCameraMode: Searching for CameraTarget components...");
         
         foreach (var target in targets)
         {
             if (target.Actor != null)
             {
                 m_actorTargets[target.Actor] = target;
-                Debug.Log($"  - Found target for: {target.Actor.name}");
+                //Debug.Log($"  - Found target for: {target.Actor.name}");
             }
             else
             {
-                Debug.LogWarning($"  - CameraTarget on {target.gameObject.name} has no CombatActor parent!");
+                //Debug.LogWarning($"  - CameraTarget on {target.gameObject.name} has no CombatActor parent!");
             }
         }
 
-        Debug.Log($"CombatCameraMode: Found {m_actorTargets.Count} camera targets total");
+        //Debug.Log($"CombatCameraMode: Found {m_actorTargets.Count} camera targets total");
     }
 
     private CameraPresetType DeterminePresetFromState()
     {
-        Debug.Log($"CombatCameraMode.DeterminePresetFromState:");
-        Debug.Log($"  Combat State: {m_currentCombatState}");
-        Debug.Log($"  Current Actor: {m_currentActor?.name ?? "null"} (IsPlayer: {m_currentActor?.IsPlayer})");
-        Debug.Log($"  Actor State: {m_currentActorState}");
+        //Debug.Log($"CombatCameraMode.DeterminePresetFromState:");
+        //Debug.Log($"  Combat State: {m_currentCombatState}");
+        //Debug.Log($"  Current Actor: {m_currentActor?.name ?? "null"} (IsPlayer: {m_currentActor?.IsPlayer})");
+        //Debug.Log($"  Actor State: {m_currentActorState}");
         
         // Priority: Check combat state first (Transition, Action)
         if (m_currentCombatState == CombatState.Transition)
         {
-            Debug.Log("  -> Result: Transition");
+            //Debug.Log("  -> Result: Transition");
             return CameraPresetType.Transition;
         }
         
         if (m_currentCombatState == CombatState.Action)
         {
-            Debug.Log("  -> Result: ActionExecution");
+            //Debug.Log("  -> Result: ActionExecution");
             return CameraPresetType.ActionExecution;
         }
 
@@ -402,7 +402,7 @@ public class CombatCameraMode : ICameraMode
             // Enemy turn - use single preset
             if (m_currentActor.Team == Team.Enemy)
             {
-                Debug.Log("  -> Result: EnemyTurn");
+                //Debug.Log("  -> Result: EnemyTurn");
                 return CameraPresetType.EnemyTurn;
             }
 
@@ -410,17 +410,17 @@ public class CombatCameraMode : ICameraMode
             switch (m_currentActorState)
             {
                 case CombatActorState.ActionSelecting:
-                    Debug.Log("  -> Result: PlayerActionSelecting");
+                    //Debug.Log("  -> Result: PlayerActionSelecting");
                     return CameraPresetType.PlayerActionSelecting;
                     
                 case CombatActorState.Targeting:
-                    Debug.Log("  -> Result: PlayerTargeting");
+                    //Debug.Log("  -> Result: PlayerTargeting");
                     return CameraPresetType.PlayerTargeting;
             }
         }
 
         // Fallback to action selecting
-        Debug.Log("  -> Result: PlayerActionSelecting (fallback)");
+        //Debug.Log("  -> Result: PlayerActionSelecting (fallback)");
         return CameraPresetType.PlayerActionSelecting;
     }
 
@@ -430,9 +430,9 @@ public class CombatCameraMode : ICameraMode
 
     private void OnCombatStarted()
     {
-        Debug.Log($"========================================");
-        Debug.Log($"CombatCameraMode: OnCombatStarted");
-        Debug.Log($"========================================");
+        //Debug.Log($"========================================");
+        //Debug.Log($"CombatCameraMode: OnCombatStarted");
+        //Debug.Log($"========================================");
         
         // Apply cinematic combat start preset
         ApplyPreset(CameraPresetType.CombatStart);
@@ -440,10 +440,10 @@ public class CombatCameraMode : ICameraMode
 
     private void OnTurnStarted(CombatActor actor)
     {
-        Debug.Log($"========================================");
-        Debug.Log($"CombatCameraMode: OnTurnStarted - {actor.name} (IsPlayer: {actor.IsPlayer})");
-        Debug.Log($"  Is first turn: {m_isFirstTurn}");
-        Debug.Log($"========================================");
+        //Debug.Log($"========================================");
+        //Debug.Log($"CombatCameraMode: OnTurnStarted - {actor.name} (IsPlayer: {actor.IsPlayer})");
+        //Debug.Log($"  Is first turn: {m_isFirstTurn}");
+        //Debug.Log($"========================================");
         
         m_currentActor = actor;
         SetTarget(actor);
@@ -454,7 +454,7 @@ public class CombatCameraMode : ICameraMode
         {
             m_isFirstTurn = false;
             // Combat start preset is already applied, it will transition when actor state changes
-            Debug.Log("  Keeping CombatStart preset for first turn intro");
+            //Debug.Log("  Keeping CombatStart preset for first turn intro");
         }
         else
         {
@@ -462,7 +462,7 @@ public class CombatCameraMode : ICameraMode
             if (actor.Team == Team.Player)
             {
                 // Will transition to PlayerActionSelecting when UI triggers ChangeState
-                Debug.Log("  Player turn - waiting for ActionSelecting state");
+                //Debug.Log("  Player turn - waiting for ActionSelecting state");
             }
             else
             {
@@ -473,97 +473,97 @@ public class CombatCameraMode : ICameraMode
 
     private void OnTurnEnded(CombatActor actor)
     {
-        Debug.Log($"CombatCameraMode: OnTurnEnded - {actor.name}");
+        //Debug.Log($"CombatCameraMode: OnTurnEnded - {actor.name}");
     }
 
     private void OnCombatStateChanged(CombatState state)
     {
-        Debug.Log($"========================================");
-        Debug.Log($"CombatCameraMode: OnCombatStateChanged - {state}");
-        Debug.Log($"========================================");
+        //Debug.Log($"========================================");
+        //Debug.Log($"CombatCameraMode: OnCombatStateChanged - {state}");
+        //Debug.Log($"========================================");
         
         m_currentCombatState = state;
         
         var preset = DeterminePresetFromState();
-        Debug.Log($"  Determined preset: {preset}");
+        //Debug.Log($"  Determined preset: {preset}");
         ApplyPreset(preset);
     }
 
     private void OnActorStateChanged(CombatActor actor, CombatActorState state)
     {
-        Debug.Log($"========================================");
-        Debug.Log($"CombatCameraMode: OnActorStateChanged RECEIVED");
-        Debug.Log($"  Actor: {actor.name}");
-        Debug.Log($"  New State: {state}");
-        Debug.Log($"  Current Actor: {m_currentActor?.name ?? "NULL"}");
-        Debug.Log($"  Is Current Actor: {actor == m_currentActor}");
-        Debug.Log($"  Actor IsPlayer: {actor.IsPlayer}");
-        Debug.Log($"========================================");
+        //Debug.Log($"========================================");
+        //Debug.Log($"CombatCameraMode: OnActorStateChanged RECEIVED");
+        //Debug.Log($"  Actor: {actor.name}");
+        //Debug.Log($"  New State: {state}");
+        //Debug.Log($"  Current Actor: {m_currentActor?.name ?? "NULL"}");
+        //Debug.Log($"  Is Current Actor: {actor == m_currentActor}");
+        //Debug.Log($"  Actor IsPlayer: {actor.IsPlayer}");
+        //Debug.Log($"========================================");
         
         // Only react to the current actor's state changes
         if (actor != m_currentActor)
         {
-            Debug.LogWarning($"CombatCameraMode: Ignoring state change - not current actor");
+            //Debug.LogWarning($"CombatCameraMode: Ignoring state change - not current actor");
             return;
         }
         
         m_currentActorState = state;
-        Debug.Log($"CombatCameraMode: Updated m_currentActorState to {state}");
+        //Debug.Log($"CombatCameraMode: Updated m_currentActorState to {state}");
         
         // Only apply preset if it's a player (enemies use single preset)
         if (actor.Team == Team.Player)
         {
-            Debug.Log("CombatCameraMode: Actor is player, determining preset...");
+            //Debug.Log("CombatCameraMode: Actor is player, determining preset...");
             var preset = DeterminePresetFromState();
-            Debug.Log($"CombatCameraMode: Determined preset: {preset}, applying...");
+            //Debug.Log($"CombatCameraMode: Determined preset: {preset}, applying...");
             ApplyPreset(preset);
         }
         else
         {
-            Debug.Log("CombatCameraMode: Actor is enemy, no preset change needed");
+            //Debug.Log("CombatCameraMode: Actor is enemy, no preset change needed");
         }
     }
 
     private void OnActionSubmitted(ActionContext ctx)
     {
-        Debug.Log($"CombatCameraMode: OnActionSubmitted - {ctx.Source.name}");
+        //Debug.Log($"CombatCameraMode: OnActionSubmitted - {ctx.Source.name}");
         SetTarget(ctx.Source);
         // Combat state change to Transition will trigger preset
     }
 
     private void OnActionResolved(ActionContext ctx, ActionResult result)
     {
-        Debug.Log("CombatCameraMode: OnActionResolved");
+        //Debug.Log("CombatCameraMode: OnActionResolved");
         m_isAnimationControlled = false;
     }
 
     private void OnTransitionStarted()
     {
-        Debug.Log("CombatCameraMode: OnTransitionStarted");
+        //Debug.Log("CombatCameraMode: OnTransitionStarted");
         // Combat state change will trigger Transition preset
     }
 
     private void OnTransitionEnded()
     {
-        Debug.Log("CombatCameraMode: OnTransitionEnded");
+        //Debug.Log("CombatCameraMode: OnTransitionEnded");
     }
 
     private void OnCombatActorsChanged(List<CombatActor> actors)
     {
-        Debug.Log($"CombatCameraMode: OnCombatActorsChanged - {actors.Count} actors");
+        //Debug.Log($"CombatCameraMode: OnCombatActorsChanged - {actors.Count} actors");
         RefreshActorTargets();
     }
 
     private void OnCombatEnded(CombatResult result)
     {
-        Debug.Log($"CombatCameraMode: OnCombatEnded - {result}");
+        //Debug.Log($"CombatCameraMode: OnCombatEnded - {result}");
         ApplyPreset(CameraPresetType.CombatEnd);
     }
 
     private void OnAnimationTargetChanged(CameraTarget target)
     {
         m_currentTarget = target;
-        Debug.Log($"CombatCameraMode: Animation target changed to {target.Actor.name}");
+        //Debug.Log($"CombatCameraMode: Animation target changed to {target.Actor.name}");
     }
 
     private void OnAnimationZoomChanged(float zoom)
@@ -571,7 +571,7 @@ public class CombatCameraMode : ICameraMode
         if (m_currentTarget != null)
         {
             m_currentTarget.zoomMultiplier = zoom;
-            Debug.Log($"CombatCameraMode: Zoom changed to {zoom}");
+            //Debug.Log($"CombatCameraMode: Zoom changed to {zoom}");
         }
     }
 

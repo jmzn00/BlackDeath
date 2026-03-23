@@ -68,31 +68,21 @@ public abstract class CombatAction : ScriptableObject
         }
         return validTargets;
     }
-    public virtual bool CanExecute(CombatActor source, CombatActor target, out string reason) 
+    public virtual bool CanExecute(CombatActor source, out string reason) 
     {
         bool blocked = false;
         reason = "";
-        // check ap 
-
-        if (!IsValidTarget(this, source, target)) 
-        {
-            reason = "Invalid Target";
-            return false;
-        }
+        // Add AP Check Here
 
         foreach (var e in source.StatusEffects) 
         {            
-            if (!e.CanPerformAction(this, target, out string r)) 
+            if (!e.CanPerformAction(this, out string r)) 
             {
                 reason += r + "\n";
                 blocked = true;
             }
         }        
         return !blocked;
-    }
-    public virtual bool IsValidTarget(CombatAction action, CombatActor source, CombatActor target) 
-    {
-        return true;
     }
     public abstract bool Resolve(ActionContext context, Action OnComplete);
 
