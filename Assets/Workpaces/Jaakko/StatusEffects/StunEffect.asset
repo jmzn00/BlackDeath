@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: StunEffect
   m_EditorClassIdentifier: Assembly-CSharp::StunStatusEffect
   duration: 1
-  displayName: 
+  displayName: Stun
   m_isStackable: 0
   description: 
-  statusEffectSprite: {fileID: 0}
+  statusEffectSprite: {fileID: 21300000, guid: 3fae7d18c28b3b04096a3ff874e95890, type: 3}
