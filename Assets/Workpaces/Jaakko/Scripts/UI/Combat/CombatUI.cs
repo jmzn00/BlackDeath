@@ -3,8 +3,6 @@ using UnityEngine.UI;
 using UnityEngine;
 using System;
 using System.Linq;
-
-
 public class CombatUI : UIComponentBase<CombatUIViewGroup>
 {
     private InputManager m_input;
@@ -12,6 +10,7 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
 
     private ActionView m_actionView;
     private TargetView m_targetView;
+    private DamageView m_damageView;
 
     private ActionViewState m_actionViewState;
     private List<Button> m_buttons = new();
@@ -22,14 +21,17 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
     private CombatActor m_currentTarget;
 
     private List<CombatActor> m_currentEnemies;
+    private int m_currentTargetIndex = 0;
     public CombatUI(GameManager game, CombatUIViewGroup group) 
         : base(game, group)
     {
         m_actionView = group.ActionView;
         m_targetView = group.TargetView;
+        m_damageView = group.DamageView;
 
         m_targetView.Hide();
         m_actionView.Hide();
+        m_damageView.Hide();
 
         m_input = game.Resolve<InputManager>();
         m_ui = game.Resolve<UIManager>();
@@ -44,23 +46,31 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
         CombatEvents.OnCombatActorsChanged += ActorsChanged;
 
         m_actionView.Init();
+        m_targetView.Init();
+        m_damageView.Init();
 
-        // REMEMBER TO CHANGE TO PROPER SUBSCRIBING
-        // THIS WILL LEAK
-        m_input.InputActions.UI.Cancel.performed += ctx =>
-        {
-            GoBack();
-        };
-        m_input.InputActions.UI.Submit.performed += ctx =>
-        {
-            SubmitAction();
-        };
         m_input.OnSelectTarget += SelectTarget;
+        m_input.OnUIInputAction += OnUIInputAction;
+    }
+    private void OnUIInputAction(UIInputAction action) 
+    {
+        switch (action) 
+        {
+            case UIInputAction.Submit:
+                SubmitAction();
+                break;
+            case UIInputAction.Cancel:
+                GoBack();
+                break;
+        }
     }
     public override void Dispose()
     {
         m_actionView.OnButtonCreated -= ButtonCreated;
         m_actionView.OnButtonRemoved -= ButtonRemoved;
+
+        m_input.OnUIInputAction -= OnUIInputAction;
+        m_input.OnSelectTarget -= SelectTarget;
 
         CombatEvents.OnTurnStarted -= TurnStart;
         CombatEvents.OnTurnEnded -= TurnEnd;
@@ -72,11 +82,10 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
 
         foreach (CombatActor actor in actors) 
         {
-            if (!actor.IsPlayer)
+            if (actor.Team == Team.Enemy)
                 m_currentEnemies.Add(actor);
         }
     }
-    private int m_currentTargetIndex = 0;
     private void SelectTarget(float value) 
     {
         if (m_currentEnemies == null) 
@@ -154,7 +163,7 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
     }
     private void TurnStart(CombatActor actor) 
     {
-        if (!actor.IsPlayer) return;
+        if (actor.Team == Team.Enemy) return;
 
         m_currentActor = actor;
         m_currentAction = null;
@@ -174,7 +183,7 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
     }
     private void TurnEnd(CombatActor actor) 
     {
-        if (!actor.IsPlayer) return;
+        if (actor.Team == Team.Enemy) return;
 
         m_currentAction = null;
         m_currentTarget = null;
@@ -200,8 +209,6 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
         m_currentAction = action;
         m_currentActor.ChangeState(CombatActorState.Targeting);
         m_actionViewState = ActionViewState.Selected;
-
-        SelectTarget(1f);
     }
     private void ButtonCreated(Button button) 
     {

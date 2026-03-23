@@ -153,10 +153,10 @@ public class CombatManager : IManager
     {
         var actors = m_context.Actors.ToList();
 
-        bool playersAlive = actors.Exists(a => a.IsPlayer && !a.IsDead);
-        bool enemiesAive = actors.Exists(e => !e.IsPlayer && !e.IsDead);
+        bool alliesAlieve = actors.Exists(a => a.Team == Team.Player && !a.IsDead);
+        bool enemiesAive = actors.Exists(e => e.Team == Team.Enemy && !e.IsDead);
 
-        return !playersAlive || !enemiesAive;
+        return !alliesAlieve || !enemiesAive;
     }
     private void EndCombat()
     {
@@ -164,7 +164,8 @@ public class CombatManager : IManager
         m_state = CombatState.Inactive;
 
         CombatResult result = CombatResult.Lost;
-        if (m_context.Actors.ToList().Exists(a => a.IsPlayer && !a.IsDead)) 
+        if (m_context.Actors.ToList().Exists(a => a.Team == Team.Player
+        && !a.IsDead)) 
         {
             result = CombatResult.Won;
         }

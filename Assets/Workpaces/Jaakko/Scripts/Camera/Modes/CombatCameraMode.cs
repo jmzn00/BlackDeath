@@ -400,7 +400,7 @@ public class CombatCameraMode : ICameraMode
         if (m_currentActor != null)
         {
             // Enemy turn - use single preset
-            if (!m_currentActor.IsPlayer)
+            if (m_currentActor.Team == Team.Enemy)
             {
                 Debug.Log("  -> Result: EnemyTurn");
                 return CameraPresetType.EnemyTurn;
@@ -459,7 +459,7 @@ public class CombatCameraMode : ICameraMode
         else
         {
             // Subsequent turns: go directly to appropriate action state
-            if (actor.IsPlayer)
+            if (actor.Team == Team.Player)
             {
                 // Will transition to PlayerActionSelecting when UI triggers ChangeState
                 Debug.Log("  Player turn - waiting for ActionSelecting state");
@@ -511,7 +511,7 @@ public class CombatCameraMode : ICameraMode
         Debug.Log($"CombatCameraMode: Updated m_currentActorState to {state}");
         
         // Only apply preset if it's a player (enemies use single preset)
-        if (actor.IsPlayer)
+        if (actor.Team == Team.Player)
         {
             Debug.Log("CombatCameraMode: Actor is player, determining preset...");
             var preset = DeterminePresetFromState();

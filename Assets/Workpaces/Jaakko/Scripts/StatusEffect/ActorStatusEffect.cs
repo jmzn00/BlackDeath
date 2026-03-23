@@ -1,3 +1,4 @@
+using Unity.Collections;
 using UnityEngine;
 public abstract class ActorStatusEffect : ScriptableObject
 {
@@ -12,6 +13,12 @@ public abstract class ActorStatusEffect : ScriptableObject
     public bool IsStackable => m_isStackable;
 
     public Sprite statusEffectSprite;
+
+    public virtual bool CanPerformAction(CombatAction action, CombatActor target, out string reason) 
+    {
+        reason = "";
+        return true;
+    }
     public void AddDuration(int amount) 
     {
         RemainingTurns += amount;

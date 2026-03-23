@@ -39,6 +39,7 @@ public class GameManager : IManager
         m_container.Register<UIManager>();
         m_container.Register<CameraManager>();
         m_container.Register<DialogueManager>();
+        m_container.Register<PoolManager>();
 
         m_managers = m_container
             .GetAll<IManager>()

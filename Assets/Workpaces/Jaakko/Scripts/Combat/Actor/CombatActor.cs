@@ -6,12 +6,29 @@ public enum CombatActorState
     ActionSelecting,
     Targeting
 }
+public enum Team 
+{
+    Player,
+    Enemy,
+    Neutral
+}
+public enum ControlType
+{
+    User,
+    Ai
+}
 [RequireComponent(typeof(Actor))]
 public class CombatActor : MonoBehaviour, IActorComponent
 {
     private CombatManager m_combatManager;
     public bool IsDead { get; protected set; }
     public bool IsPlayer { get; private set; }
+
+    [SerializeField] private Team m_team;
+    [SerializeField] private ControlType m_controlType;
+
+    public Team Team => m_team;
+    public ControlType ControlType => m_controlType;
 
     private Actor m_actor;
     public Actor Actor => m_actor;

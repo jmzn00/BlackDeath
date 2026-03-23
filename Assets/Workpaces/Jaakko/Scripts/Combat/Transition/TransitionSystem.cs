@@ -71,7 +71,7 @@ public class TransitionSystem
         m_sourceStart = m_sourceActor.position;
         m_targetStart = m_targetActor.position;
 
-        if (source.IsPlayer) 
+        if (source.Team == Team.Player) 
         {
             m_sourceEnd = m_area.Preferences.m_partyActionPoint.position;
             m_targetEnd = m_area.Preferences.m_enemyActionPoint.position;

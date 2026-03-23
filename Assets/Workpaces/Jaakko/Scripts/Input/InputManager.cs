@@ -1,9 +1,9 @@
 using System;
 using UnityEngine;
-using UnityEngine.InputSystem;
 public enum UIInputAction
 {
-    Inventory
+    Submit,
+    Cancel
 }
 public struct InputState 
 {
@@ -97,10 +97,12 @@ public class InputManager : IManager
 
         m_inputState.DodgePressedThisFrame =
             m_inputActions.Combat.Dodge.WasPressedThisFrame();
-   
 
-        if (m_inputActions.UI.OpenInventory.WasPressedThisFrame())
-            OnUIInputAction?.Invoke(UIInputAction.Inventory);
+
+        if (m_inputActions.UI.Submit.WasPressedThisFrame())
+            OnUIInputAction?.Invoke(UIInputAction.Submit);
+        if (m_inputActions.UI.Cancel.WasPressedThisFrame())
+            OnUIInputAction?.Invoke(UIInputAction.Cancel);
 
         HandleUIInput();
 

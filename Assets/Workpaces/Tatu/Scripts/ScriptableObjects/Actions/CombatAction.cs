@@ -9,6 +9,13 @@ public enum ActionResult
     Confirmed,
     None
 }
+public enum TargetType 
+{
+    Self,
+    Ally,
+    Enemy,
+    Any
+}
 
 /// <summary>
 /// Base class for all combat actions. Use AttackAction or SkillAction subclasses.
@@ -37,13 +44,58 @@ public abstract class CombatAction : ScriptableObject
 
     public List<ActorStatusEffect> AppliedEffects = new List<ActorStatusEffect>();
 
+    public TargetType targetType;
     /// <summary>
     /// Execute this action. Called by Combatant.PlayAction.
     /// Base implementation plays the animation; override for special logic.
     /// </summary>
-    public virtual void Execute(Combatant executor, Combatant target)
+    
+    public static List<CombatActor> GetValidTargets(CombatActor source,
+        List<CombatActor> participants,
+        TargetType type)
     {
-        executor.PlayAction(this, target);
+        switch (type) 
+        {
+            case TargetType.Enemy:
+
+                break;
+            case TargetType.Ally:
+
+                break;
+            case TargetType.Self:
+
+                break;
+            case TargetType.Any:
+
+                break;
+        }
+        return null;
+    }
+    public virtual bool CanExecute(CombatActor source, CombatActor target, out string reason) 
+    {
+        bool blocked = false;
+        reason = "";
+        // check ap 
+
+        if (!IsValidTarget(this, source, target)) 
+        {
+            reason = "Invalid Target";
+            return false;
+        }
+
+        foreach (var e in source.StatusEffects) 
+        {            
+            if (!e.CanPerformAction(this, target, out string r)) 
+            {
+                reason += r + "\n";
+                blocked = true;
+            }
+        }        
+        return !blocked;
+    }
+    public virtual bool IsValidTarget(CombatAction action, CombatActor source, CombatActor target) 
+    {
+        return true;
     }
     public abstract bool Resolve(ActionContext context, Action OnComplete);
 

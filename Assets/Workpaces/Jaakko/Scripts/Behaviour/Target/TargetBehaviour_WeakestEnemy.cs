@@ -9,7 +9,7 @@ public class TargetBehaviour_WeakestEnemy : AITargetingBehaviour
     {
         selected = null;
 
-        var enemies = participants.FindAll(a => a.IsPlayer && !a.IsDead);
+        var enemies = participants.FindAll(a => a.Team != actor.Team && !a.IsDead);
         if (enemies.Count == 0)
             return 0f;
 
