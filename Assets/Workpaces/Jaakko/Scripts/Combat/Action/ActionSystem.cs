@@ -77,6 +77,11 @@ public class ActionSystem
     public event Action TempAction; // REMOVE
     public void Resolve() 
     {
+        if (m_currentAction == null) 
+        {
+            Debug.LogWarning($"Trying to Resolve Null Action");
+            return;
+        }
         m_currentAction.Action.Resolve(m_currentAction, TempAction);
     }
     public void SubmitAction(CombatActor source, 
@@ -88,7 +93,6 @@ public class ActionSystem
             Debug.LogWarning("Cannot Submit Action, Action already Set");
             return;
         }
-
         m_currentAction = new ActionContext
         {
             Source = source,

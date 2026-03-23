@@ -20,7 +20,7 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
     private CombatAction m_currentAction;
     private CombatActor m_currentTarget;
 
-    private List<CombatActor> m_currentEnemies;
+    private List<CombatActor> m_currentParticipants;
     private int m_currentTargetIndex = 0;
     public CombatUI(GameManager game, CombatUIViewGroup group) 
         : base(game, group)
@@ -78,19 +78,15 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
     }
     private void ActorsChanged(List<CombatActor> actors) 
     {
-        m_currentEnemies = new List<CombatActor>();
-
-        foreach (CombatActor actor in actors) 
-        {
-            if (actor.Team == Team.Enemy)
-                m_currentEnemies.Add(actor);
-        }
+        m_currentParticipants = new List<CombatActor>(actors);        
     }
     private void SelectTarget(float value) 
     {
-        if (m_currentEnemies == null) 
+        if (m_game.State != GameState.Combat) return;
+
+        if (m_currentParticipants == null) 
         {
-            Debug.LogWarning($"Cannot Select Target, enemies is NULL");
+            Debug.LogWarning($"Cannot Select Target, participants is NULL");
             return;
         }
         if (m_currentAction == null) 
@@ -99,9 +95,9 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
             return;
         }
 
-        List<CombatActor> validTargets 
-            = new List<CombatActor>(m_currentEnemies)
-            .Where(e => !e.IsDead).ToList();
+        List<CombatActor> validTargets
+            = m_currentAction.GetValidTargets(m_currentActor,
+            m_currentParticipants);
         
         if (validTargets.Count == 0) 
         {
@@ -126,11 +122,16 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
         m_targetView.SetPosition(m_currentTarget.transform.position);
         m_currentActor.ChangeTarget(m_currentTarget);
     }
-    private void SubmitAction() 
+    private void SubmitAction(CombatActor target = null) 
     {
-        if (m_currentActor == null
-            || m_currentAction == null
-            || m_currentTarget == null) return;
+        if (m_currentActor == null 
+            || m_currentAction == null) return;
+        if (target != null) 
+        {
+            m_currentTarget = target;
+        }
+
+        if (m_currentTarget == null) return;
 
         ActionContext ctx = new ActionContext
         {
@@ -138,6 +139,7 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
             Target = m_currentTarget,
             Action = m_currentAction
         };
+        
         m_currentActor.
             ActionProvider.SetAction(ctx);
 
@@ -203,12 +205,19 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
     private void ActionSelected(CombatAction action) 
     {
         m_actionView.Hide();
-        m_targetView.View();
-        SelectTarget(0f);
-
-        m_currentAction = action;
-        m_currentActor.ChangeState(CombatActorState.Targeting);
         m_actionViewState = ActionViewState.Selected;
+        m_currentAction = action;
+
+        switch (action.targetType) 
+        {
+            case TargetType.Self:
+                SubmitAction(m_currentActor);
+                break;
+            case TargetType.Enemy:
+                m_targetView.View();
+                m_currentActor.ChangeState(CombatActorState.Targeting);
+                break;
+        }               
     }
     private void ButtonCreated(Button button) 
     {

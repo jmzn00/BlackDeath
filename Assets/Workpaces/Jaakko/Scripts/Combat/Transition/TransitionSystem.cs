@@ -64,7 +64,18 @@ public class TransitionSystem
     {
         CombatActor source = actx.Source;
         CombatActor target = actx.Target;
+        if (source == null || target == null)
+        {
+            Debug.LogWarning($"Transition Source || Target == NULL");
+            Finish();
+            return;
+        }
 
+        if (source == target)
+        {
+            Finish();
+            return;
+        }
         m_sourceActor = source.transform;
         m_targetActor = target.transform;
 

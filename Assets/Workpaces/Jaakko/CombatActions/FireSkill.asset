@@ -22,6 +22,7 @@ MonoBehaviour:
   confirmDamageMultipler: 1
   AppliedEffects:
   - {fileID: 11400000, guid: 49f52cc500f44b14dbd658d71c5d7625, type: 2}
+  targetType: 2
   damage: 0
   bonusDamageOnSuccess: 0
   targetEffects: []

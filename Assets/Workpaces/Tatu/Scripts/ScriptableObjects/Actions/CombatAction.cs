@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 public enum ActionResult 
 {
@@ -50,26 +51,22 @@ public abstract class CombatAction : ScriptableObject
     /// Base implementation plays the animation; override for special logic.
     /// </summary>
     
-    public static List<CombatActor> GetValidTargets(CombatActor source,
-        List<CombatActor> participants,
-        TargetType type)
+    public List<CombatActor> GetValidTargets(CombatActor source,
+        List<CombatActor> participants)
     {
-        switch (type) 
+        List<CombatActor> validTargets = new List<CombatActor>(participants);
+        switch (targetType) 
         {
             case TargetType.Enemy:
-
-                break;
+                return validTargets.Where(p => p.Team != source.Team && !p.IsDead).ToList();                
             case TargetType.Ally:
-
-                break;
+                return validTargets.Where(p => p.Team == source.Team && !p.IsDead).ToList();
             case TargetType.Self:
-
-                break;
+                return validTargets.Where(p => p == source).ToList();
             case TargetType.Any:
-
-                break;
+                return validTargets;
         }
-        return null;
+        return validTargets;
     }
     public virtual bool CanExecute(CombatActor source, CombatActor target, out string reason) 
     {

@@ -21,5 +21,6 @@ MonoBehaviour:
   baseDamage: 1
   confirmDamageMultipler: 1.5
   AppliedEffects: []
+  targetType: 2
   damage: 1
   bonusDamageOnSuccess: 2
