@@ -4,7 +4,6 @@ using UnityEngine.InputSystem;
 public class InteractionComponent : MonoBehaviour, IActorComponent
 {
     private Actor m_actor;
-    private CameraManager m_cameraManager;
     private IInputSource m_inputSource;
 
     public void SetInputSource(IInputSource source)

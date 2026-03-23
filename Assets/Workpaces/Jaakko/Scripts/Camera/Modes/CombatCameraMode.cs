@@ -196,8 +196,12 @@ public class CombatCameraMode : ICameraMode
         var follow = m_camera.GetComponent<CinemachineFollow>();
         if (follow != null)
         {
+            if (m_currentTarget == null) return;
+
             // follow target if we have one, otherwise fall back to the current actor transform
-            Transform followTransform = m_currentTarget != null ? m_currentTarget.transform : m_currentActor?.transform;
+            Transform followTransform = m_currentTarget != null
+                ? m_currentTarget.transform : m_currentActor?.transform;
+            
             if (followTransform != null)
                 m_camera.Follow = followTransform;
 
@@ -230,6 +234,8 @@ public class CombatCameraMode : ICameraMode
     private void UpdateCinemachineFollow()
     {
         if (m_currentPreset == null) return;
+        
+        if (m_currentTarget == null) return;
 
         var follow = m_camera.GetComponent<CinemachineFollow>();
         if (follow != null)

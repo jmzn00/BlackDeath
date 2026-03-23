@@ -175,6 +175,8 @@ public class CombatManager : IManager
             result = CombatResult.Won;
         }
 
+        m_game.SetState(GameState.None);
+
         m_area.EndBattle(result);
         OnCombatEnded?.Invoke(result);
         ChangeState(CombatState.Inactive);

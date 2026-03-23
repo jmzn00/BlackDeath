@@ -128,7 +128,7 @@ public class ActorManager : IManager
     {
         if (m_actors.Contains(actor)) 
             return false;
-
+        
         actor.EnsureID();
         m_actors.Add(actor);
         return true;
@@ -151,7 +151,8 @@ public class ActorManager : IManager
             return null;
         }
 
-        Actor a = GameObject.Instantiate(prefs.prefab, prefs.position, prefs.rotation);
+        Actor a = GameObject.Instantiate(prefs.prefab, prefs.position
+            , prefs.rotation);
         a.Init(m_game);
         IActor ia = a.GetComponent<IActor>();
         if (ia != null) 

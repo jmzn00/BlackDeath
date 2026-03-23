@@ -573,7 +573,7 @@ GameObject:
   - component: {fileID: 113909501}
   m_Layer: 6
   m_Name: Actor_Alt
-  m_TagString: Player
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -628,7 +628,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthComponent
   ch: 0
-  m_maxHealth: 6
+  m_maxHealth: 2
 --- !u!114 &113909495
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4075,7 +4075,7 @@ MonoBehaviour:
   m_typeButtonPrefab: {fileID: 8918731536623935964, guid: 29dd6831d0d09954ba35cdba841be629, type: 3}
   m_typeAnchor: {fileID: 1162782165}
   m_actionAnchor: {fileID: 1360953240}
-  m_positionOffset: {x: 2, y: 3, z: 0}
+  m_positionOffset: {x: 2, y: 2.5, z: 0}
 --- !u!1 &1352528426
 GameObject:
   m_ObjectHideFlags: 0
@@ -7231,7 +7231,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthComponent
   ch: 0
-  m_maxHealth: 6
+  m_maxHealth: 2
 --- !u!114 &6923989823571581367
 MonoBehaviour:
   m_ObjectHideFlags: 0

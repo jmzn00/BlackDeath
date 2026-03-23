@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Unity.Cinemachine;
 using UnityEngine;
 
 [ExecuteAlways]
@@ -17,7 +16,6 @@ public class Actor : MonoBehaviour, IActor
     private PlayerInputSource m_playerInputSource;
     private AIInputSource m_aiInputSource;
 
-    private CinemachineCamera m_camera; // TEMP
     [SerializeField] private Transform m_trackingTarget; // TEMP
     public Transform TrackingTarget => m_trackingTarget;
     public Sprite actorSprite; // TEMP
