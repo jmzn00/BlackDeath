@@ -74,8 +74,10 @@ public class Actor : MonoBehaviour, IActor
     }
     public void EnsureID()
     {
+#if UNITY_EDITOR
         if (string.IsNullOrEmpty(m_actorID) || IsDuplicateID())
             m_actorID = Guid.NewGuid().ToString();
+#endif
     }
 
     public ActorSaveData Save()

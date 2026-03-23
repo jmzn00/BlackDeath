@@ -203,6 +203,7 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
     }
     private void ActionSelected(CombatAction action) 
     {        
+        // check if any status effects block action
         if (!action.CanExecute(m_currentActor,
             out string reason))
         {
