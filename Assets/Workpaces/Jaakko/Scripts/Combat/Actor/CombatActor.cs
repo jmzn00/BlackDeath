@@ -64,6 +64,7 @@ public class CombatActor : MonoBehaviour, IActorComponent, IDamageSource
     public AnimationClip TransitionClip => m_animator.TransitionClip;
 
     private CombatActorState m_state;
+    public CombatActorState State => m_state;
 
     public CombatActor SourceActor { get; private set; }
     public string SourceName { get; private set; }

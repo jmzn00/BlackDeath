@@ -3,6 +3,12 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Actor/StatusEffects/SilenceEffect")]
 public class SilenceStatusEffect : ActorStatusEffect
 {
+    public override void OnTurnEnd(StatusEffectInstance instance)
+    {
+        instance.TickDuration();
+
+        base.OnTurnEnd(instance);
+    }
     public override bool CanPerformAction(CombatAction action, out string reason)
     {
         reason = "";

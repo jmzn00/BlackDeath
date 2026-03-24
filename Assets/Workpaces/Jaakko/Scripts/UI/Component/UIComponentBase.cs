@@ -1,4 +1,6 @@
-public abstract class UIComponentBase<TGroup> : IUIComponent
+using UnityEngine;
+
+public abstract class UIComponentBase<TGroup> : IUIComponent, IUIInputReceiver
     where TGroup : UIViewGroup
 {
     protected readonly TGroup m_group;
@@ -8,6 +10,9 @@ public abstract class UIComponentBase<TGroup> : IUIComponent
         m_game = game;
         m_group = group;
     }
+    public virtual bool OnCancel() { return false; }
+    public virtual bool OnSubmit() { return false; }
+    public virtual bool OnNavigate(Vector2 dir) {  return false; }
 
     public abstract void Initialize();    
     public abstract void Dispose();

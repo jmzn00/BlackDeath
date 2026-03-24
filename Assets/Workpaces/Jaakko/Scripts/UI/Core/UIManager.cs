@@ -11,15 +11,18 @@ public enum UIInputMode
     Combat
 }
 
-public class UIManager : IManager 
+public class UIManager : IManager
 {
     private GameManager m_game;
+    private InputManager m_input;
     private UIController m_uiController;
     public UIController Controller => m_uiController;
 
     private UIControllerNavigation m_navigation;
     public UIControllerNavigation Navigation => m_navigation;
-    public UIManager(GameManager game) 
+
+    private Stack<IUIInputReceiver> m_uiStack = new Stack<IUIInputReceiver>();
+    public UIManager(GameManager game)
     {
         m_game = game;
     }
@@ -27,6 +30,7 @@ public class UIManager : IManager
     public bool Init()
     {
         m_navigation = new UIControllerNavigation(m_game.Resolve<InputManager>());
+        m_input = m_game.Resolve<InputManager>();
         return true;
     }
     public bool Dispose()
@@ -50,11 +54,11 @@ public class UIManager : IManager
         OnGameStateChanged(m_game.State);
     }
     #endregion    
-    private void OnGameStateChanged(GameState state) 
+    private void OnGameStateChanged(GameState state)
     {
         if (m_uiController == null) return;
 
-        switch (state) 
+        switch (state)
         {
             case GameState.None:
                 m_uiController.ShowComponent<CombatUI>(false);
@@ -68,9 +72,46 @@ public class UIManager : IManager
                 break;
         }
     }
-    public void Update(float dt) 
+    public void PushUI(IUIInputReceiver reciever)
+    {   
+        m_uiStack.Push(reciever);
+    }
+    public void PopUI(IUIInputReceiver reciever)
+    {
+        if (m_uiStack.Count > 0 && m_uiStack.Peek() == reciever)
+        {
+            m_uiStack.Pop();
+        }
+    }
+    private bool m_submitConsumed;
+    public void ConsumeSubmit() 
+    {
+        m_submitConsumed = true;
+    }
+    public void Update(float dt)
     {
         m_navigation.UpdateNavigation();
+
+        if (m_uiStack.Count > 0)
+        {
+            var top = m_uiStack.Peek();
+            ref UIInputState input = ref m_input.GetUIInputState();
+
+            if (input.NavigateUpPressed) top.OnNavigate(Vector2.up);
+            else if (input.NavigateDownPressed) top.OnNavigate(Vector2.down);
+            else if (input.NavigateLeftPressed) top.OnNavigate(Vector2.left);
+            else if (input.NavigateRightPressed) top.OnNavigate(Vector2.right);
+
+            if (!m_submitConsumed && input.SubmitPressed)
+            {
+                top.OnSubmit();
+                m_submitConsumed = true;
+            }
+            if (input.SubmitReleased)
+                m_submitConsumed = false;
+            
+            if (input.CancelPressed) top.OnCancel();
+        }
     }
 }
 public class UIControllerNavigation 

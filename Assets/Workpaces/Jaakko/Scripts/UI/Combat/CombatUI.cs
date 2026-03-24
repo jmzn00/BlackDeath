@@ -2,7 +2,13 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
 using System;
-using System.Linq;
+public enum CombatUIState 
+{
+    ActionTypeSelecting,
+    ActionSelecting,
+    TargetSelecting,
+    None
+}
 public class CombatUI : UIComponentBase<CombatUIViewGroup>
 {
     private InputManager m_input;
@@ -12,7 +18,6 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
     private TargetView m_targetView;
     private DamageView m_damageView;
 
-    private ActionViewState m_actionViewState;
     private List<Button> m_buttons = new();
 
     private CombatActor m_currentActor;
@@ -22,7 +27,10 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
 
     private List<CombatActor> m_currentParticipants;
     private int m_currentTargetIndex = 0;
-    public CombatUI(GameManager game, CombatUIViewGroup group) 
+
+    private CombatUIState m_state;
+
+    public CombatUI(GameManager game, CombatUIViewGroup group)
         : base(game, group)
     {
         m_actionView = group.ActionView;
@@ -50,87 +58,92 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
         m_damageView.Init();
 
         m_input.OnSelectTarget += SelectTarget;
-        m_input.OnUIInputAction += OnUIInputAction;
-    }
-    private void OnUIInputAction(UIInputAction action) 
-    {
-        switch (action) 
-        {
-            case UIInputAction.Submit:
-                SubmitAction();
-                break;
-            case UIInputAction.Cancel:
-                GoBack();
-                break;
-        }
     }
     public override void Dispose()
     {
         m_actionView.OnButtonCreated -= ButtonCreated;
         m_actionView.OnButtonRemoved -= ButtonRemoved;
 
-        m_input.OnUIInputAction -= OnUIInputAction;
         m_input.OnSelectTarget -= SelectTarget;
 
         CombatEvents.OnTurnStarted -= TurnStart;
         CombatEvents.OnTurnEnded -= TurnEnd;
         CombatEvents.OnCombatActorsChanged -= ActorsChanged;
     }
-    private void ActorsChanged(List<CombatActor> actors) 
+    public override bool OnSubmit()
     {
-        m_currentParticipants = new List<CombatActor>(actors);        
+        switch (m_state)
+        {
+            case CombatUIState.ActionTypeSelecting:
+            case CombatUIState.ActionSelecting:
+                return true;
+            case CombatUIState.TargetSelecting:
+                SubmitAction();
+                return true;
+        }
+        return false;
     }
-    private void SelectTarget(float value) 
+    public override bool OnCancel()
+    {
+        GoBack();
+        return true;
+    }
+    private void ActorsChanged(List<CombatActor> actors)
+    {
+        m_currentParticipants = new List<CombatActor>(actors);
+    }
+    private void SelectTarget(float value)
     {
         if (m_game.State != GameState.Combat) return;
 
-        if (m_currentParticipants == null) 
+        if (m_currentParticipants == null)
         {
             Debug.LogWarning($"Cannot Select Target, participants is NULL");
             return;
         }
-        if (m_currentAction == null) 
+        if (m_currentAction == null)
         {
             Debug.LogWarning($"Cannot Select Target, Action is NULL");
             return;
         }
-
         List<CombatActor> validTargets
             = m_currentAction.GetValidTargets(m_currentActor,
             m_currentParticipants);
-        
-        if (validTargets.Count == 0) 
+
+        if (validTargets.Count == 0)
         {
             Debug.LogWarning($"CombatUI: No valid Targets");
             return;
         }
 
-        if (value > 0) 
+        if (value > 0)
         {
             m_currentTargetIndex++;
             if (m_currentTargetIndex >= validTargets.Count)
                 m_currentTargetIndex = 0;
         }
-        else if (value < 0) 
+        else if (value < 0)
         {
             m_currentTargetIndex--;
             if (m_currentTargetIndex < 0)
                 m_currentTargetIndex = validTargets.Count - 1;
-        }        
+        }
+
         m_currentTarget = validTargets[m_currentTargetIndex];
         m_targetView.ChangeTarget(m_currentTarget);
         m_targetView.SetPosition(m_currentTarget.transform.position);
+
         m_currentActor.ChangeTarget(m_currentTarget);
     }
-    private void SubmitAction(CombatActor target = null) 
+    private void SubmitAction(CombatActor target = null)
     {
-        if (m_currentActor == null 
+        if (m_currentActor == null
             || m_currentAction == null) return;
-        if (target != null) 
+        if (target != null)
         {
             m_currentTarget = target;
         }
-        if (m_currentTarget == null) return;        
+        if (m_currentTarget == null) return;
 
         ActionContext ctx = new ActionContext
         {
@@ -138,31 +151,30 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
             Target = m_currentTarget,
             Action = m_currentAction
         };
-        
         m_currentActor.
             ActionProvider.SetAction(ctx);
 
         m_targetView.Hide();
     }
-    private void GoBack() 
+    private void GoBack()
     {
         if (m_currentActor == null) return;
-            
-        switch (m_actionViewState) 
+
+        switch (m_state)
         {
-            case ActionViewState.ActionType:
+            case CombatUIState.ActionTypeSelecting:
 
                 break;
-            case ActionViewState.ActionSelect:
+            case CombatUIState.ActionSelecting:
                 m_actionView.ClearActions();
                 m_actionView.ShowActionTypes(m_currentActor.Actions);
                 break;
-            case ActionViewState.Selected:
-
+            case CombatUIState.TargetSelecting:
+                
                 break;
         }
     }
-    private void TurnStart(CombatActor actor) 
+    private void TurnStart(CombatActor actor)
     {
         if (actor.Team == Team.Enemy) return;
 
@@ -177,12 +189,11 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
         m_actionView.OnActionTypeSelected += ActionTypeSelected;
         m_actionView.OnActionSelected += ActionSelected;
 
-        m_actionViewState = ActionViewState.ActionType;        
-
         // for camera
-        m_currentActor.ChangeState(CombatActorState.ActionSelecting); 
+        m_currentActor.ChangeState(CombatActorState.ActionSelecting);
+        m_state = CombatUIState.ActionTypeSelecting;
     }
-    private void TurnEnd(CombatActor actor) 
+    private void TurnEnd(CombatActor actor)
     {
         if (actor.Team == Team.Enemy) return;
 
@@ -199,40 +210,41 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
     private void ActionTypeSelected(Type type)
     {
         m_actionView.ShowActionsOfType(type, m_currentActor.Actions);
-        m_actionViewState = ActionViewState.ActionSelect;
+        m_state = CombatUIState.ActionSelecting;
     }
-    private void ActionSelected(CombatAction action) 
-    {        
-        // check if any status effects block action
+    private void ActionSelected(CombatAction action)
+    {
         if (!action.CanExecute(m_currentActor,
             out string reason))
         {
+            // display this in ui later. ScreenSpace?
             Debug.Log($"{action.actionName} cannot be performed: {reason}");
             return;
         }
 
+        // jank fix for action button submit / submit action in the same frame
+        m_ui.ConsumeSubmit();
+
         m_actionView.Hide();
-        m_actionViewState = ActionViewState.Selected;
         m_currentAction = action;
 
-        switch (action.targetType) 
+        switch (action.targetType)
         {
             case TargetType.Self:
                 SubmitAction(m_currentActor);
                 break;
             case TargetType.Enemy:
-                m_targetView.View();
-                m_currentActor.ChangeState(CombatActorState.Targeting);
-                break;
             case TargetType.Ally:
                 m_targetView.View();
                 m_currentActor.ChangeState(CombatActorState.Targeting);
+                m_state = CombatUIState.TargetSelecting;
+                SelectTarget(0);
                 break;
-        }               
+        }
     }
-    private void ButtonCreated(Button button) 
+    private void ButtonCreated(Button button)
     {
-        if (m_buttons.Contains(button)) 
+        if (m_buttons.Contains(button))
         {
             Debug.LogWarning($"CombatUI: Trying to add a button that already exists");
             return;
@@ -248,33 +260,35 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
             m_ui.Navigation.Clear();
         }
     }
-    private void ButtonRemoved(Button button) 
+    private void ButtonRemoved(Button button)
     {
-        if (!m_buttons.Contains(button)) 
+        if (!m_buttons.Contains(button))
         {
             //Debug.LogWarning($"Trying to remove button that does not exist");
             return;
         }
         m_buttons.Remove(button);
-        if (m_buttons.Count > 0) 
+        if (m_buttons.Count > 0)
         {
             m_ui.Navigation.UpdateButtons(m_buttons, m_buttons[0].gameObject);
         }
-        else 
+        else
         {
             m_ui.Navigation.Clear();
         }
-        
+
     }
-    public override void Toggle(bool show) 
+    public override void Toggle(bool show)
     {
-        if (show) 
+        if (show)
         {
             m_actionView.View();
+            m_ui.PushUI(this);
         }
-        else 
+        else
         {
             m_actionView.Hide();
+            m_ui.PopUI(this);
         }
     }
     public override bool IsVisible()

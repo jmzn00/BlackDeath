@@ -70,18 +70,20 @@ public class DamageSystem
         Debug.Log($"{source.SourceName} applied {amount} healing to {target.name}");
         target.Health.ApplyHealth(amount);
     }
-    public void ActorTurnStart(CombatActor actor) 
-    {        
-        foreach (var i in actor.CurrentStatusEffects) 
+    public void ActorTurnStart(CombatActor actor)
+    {
+        for (int i = actor.CurrentStatusEffects.Count - 1; i >= 0; i--)
         {
-            i.TurnStart();
+            StatusEffectInstance instance = actor.CurrentStatusEffects[i];
+            instance.TurnStart();
         }
     }
     public void ActorTurnEnd(CombatActor actor) 
     {
-        foreach (var i in actor.CurrentStatusEffects) 
+        for (int i = actor.CurrentStatusEffects.Count - 1; i >= 0; i--) 
         {
-            i.TurnEnd();
-        }
+            StatusEffectInstance instance = actor.CurrentStatusEffects[i];
+            instance.TurnEnd();
+        }        
     }
 }

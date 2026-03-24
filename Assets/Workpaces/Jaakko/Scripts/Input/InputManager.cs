@@ -38,6 +38,10 @@ public struct UIInputState
     internal bool _verticalUsedLastFrame;
     internal bool _horizontalUsedLastFrame;
 
+    public bool SubmitPressed;
+    public bool SubmitReleased;
+    public bool CancelPressed;
+
 }
 public class InputManager : IManager
 {
@@ -48,7 +52,7 @@ public class InputManager : IManager
     private InputSystem_Actions m_inputActions;
     public InputSystem_Actions InputActions => m_inputActions;
 
-    public event Action<UIInputAction> OnUIInputAction;
+    public event Func<UIInputAction, bool> OnUIInputAction;
     public event Action<float> OnSelectTarget;
 
     public InputManager() 
@@ -67,6 +71,11 @@ public class InputManager : IManager
     {
         if (!m_active) return;
 
+        HandleInput();
+        HandleUIInput();
+    }
+    private void HandleInput() 
+    {
         m_inputState.InputDirection =
             m_inputActions.Player.Move.ReadValue<Vector2>();
         m_inputState.JumpPressed =
@@ -74,10 +83,10 @@ public class InputManager : IManager
         m_inputState.JumpHeld =
             m_inputActions.Player.Jump.IsPressed();
 
-        m_inputState.DashPressedThisFrame = 
+        m_inputState.DashPressedThisFrame =
             m_inputActions.Player.Dash.WasPressedThisFrame();
 
-        m_inputState.DashPressed = 
+        m_inputState.DashPressed =
             m_inputActions.Player.Dash.IsPressed();
 
         m_inputState.CrouchPressed =
@@ -86,10 +95,10 @@ public class InputManager : IManager
         m_inputState.InteractPressedThisFrame =
             m_inputActions.Player.Interact.WasPressedThisFrame();
 
-        m_inputState.ParryPressed = 
+        m_inputState.ParryPressed =
             m_inputActions.Combat.Parry.IsPressed();
 
-        m_inputState.DodgePressed = 
+        m_inputState.DodgePressed =
             m_inputActions.Combat.Dodge.IsPressed();
 
         m_inputState.ParryPressedThisFrame =
@@ -97,19 +106,16 @@ public class InputManager : IManager
 
         m_inputState.DodgePressedThisFrame =
             m_inputActions.Combat.Dodge.WasPressedThisFrame();
-
-
-        if (m_inputActions.UI.Submit.WasPressedThisFrame())
-            OnUIInputAction?.Invoke(UIInputAction.Submit);
-        if (m_inputActions.UI.Cancel.WasPressedThisFrame())
-            OnUIInputAction?.Invoke(UIInputAction.Cancel);
-
-        HandleUIInput();
-
-
     }
     private void HandleUIInput() 
     {
+        m_uiInputState.SubmitPressed =
+            m_inputActions.UI.Submit.WasPressedThisFrame();
+        m_uiInputState.SubmitReleased = 
+            !m_inputActions.UI.Submit.IsPressed();
+        m_uiInputState.CancelPressed =
+            m_inputActions.UI.Cancel.WasPressedThisFrame();
+
         Vector2 raw = m_inputActions.UI.Navigate.ReadValue<Vector2>();
         m_uiInputState.InputDirection = raw;
 
