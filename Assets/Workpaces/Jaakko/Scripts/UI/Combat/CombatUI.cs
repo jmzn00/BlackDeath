@@ -224,6 +224,10 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
                 m_targetView.View();
                 m_currentActor.ChangeState(CombatActorState.Targeting);
                 break;
+            case TargetType.Ally:
+                m_targetView.View();
+                m_currentActor.ChangeState(CombatActorState.Targeting);
+                break;
         }               
     }
     private void ButtonCreated(Button button) 

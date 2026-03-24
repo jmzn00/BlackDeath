@@ -28,9 +28,13 @@ public class StatusEffectInstance : IDamageSource
     {
         RemainingTurns--;
 
-        if (Template.damage != 0) 
+        if (Template.damage > 0) 
         {
             ApplyDamage(Template.damage);
+        }
+        if (Template.heal > 0) 
+        {
+            ApplyHeal(Template.heal);
         }
         if (RemainingTurns <= 0) 
         {            
@@ -48,12 +52,17 @@ public class StatusEffectInstance : IDamageSource
     {
         m_damage.ApplyDamage(amount, this, SourceActor);
     }
+    private void ApplyHeal(float amount) 
+    {
+        m_damage.ApplyHeal(amount, this, SourceActor);
+    }
     
 }
 public abstract class ActorStatusEffect : ScriptableObject
 {
     public int duration = 1;
     public float damage = 0;
+    public float heal = 0;
     public string displayName;
     public bool isStackable = false;
 

@@ -63,7 +63,16 @@ public class ActionSystem
 
             Debug.LogWarning("AS: Can not Finish, Actor is not Source");
             return;
-        }        
+        }
+        
+        // this is a temp fix for ally / self target skills
+        // as they dont currently open / close the window
+        if (m_currentAction.Action.targetType == TargetType.Self ||
+            m_currentAction.Action.targetType == TargetType.Ally) 
+        {
+            CombatEvents.ActionResolved(m_currentAction, ActionResult.Confirmed);
+        }
+
         OnActionFinished?.Invoke(m_currentAction);
         m_currentAction = null;
     }

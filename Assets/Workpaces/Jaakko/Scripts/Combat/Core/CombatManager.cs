@@ -80,7 +80,7 @@ public class CombatManager : IManager
         {
             m_transition.OnTransitionFinished -= TransitionFinished;
         }
-        CombatEvents.OnActionResolved += m_damage.ActionResolved;
+        CombatEvents.OnActionResolved -= m_damage.ActionResolved;
         return true;
     }
     #endregion
@@ -119,7 +119,7 @@ public class CombatManager : IManager
     private void ActionSubmitted(ActionContext actx)
     {
         if (actx.Action == null) 
-        {
+        {            
             ActionFinished(actx);
             return;
         }

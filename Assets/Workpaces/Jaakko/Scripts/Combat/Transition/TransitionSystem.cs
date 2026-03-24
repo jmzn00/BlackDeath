@@ -71,7 +71,7 @@ public class TransitionSystem
             return;
         }
 
-        if (source == target)
+        if (source.Team == target.Team)
         {
             Finish();
             return;
