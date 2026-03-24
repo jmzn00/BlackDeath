@@ -55,7 +55,7 @@ public class CombatPortrait : MonoBehaviour
     }
     public void Dispose()
     {
-        m_actor.OnStatusEffectsChanged -= UpdateStatusEffects;
+        //m_actor.OnStatusEffectsChanged -= UpdateStatusEffects;
 
         m_button.onClick.RemoveAllListeners();
 
@@ -71,16 +71,16 @@ public class CombatPortrait : MonoBehaviour
         if (actor.Actor.actorSprite != null)
             m_actorSprite.sprite = actor.Actor.actorSprite;
 
-        UpdateStatusEffects(actor.StatusEffects);
+        UpdateStatusEffects(actor.CurrentStatusEffects);
     }
-    void UpdateStatusEffects(List<ActorStatusEffect> effects)
+    void UpdateStatusEffects(List<StatusEffectInstance> effects)
     {
         string text = "Status Effects: ";
         if (effects != null && effects.Count > 0)
         {
             foreach (var e in effects)
             {
-                text += $"\n {e.displayName} R:{e.RemainingTurns}";
+                text += $"\n {e.Template.displayName} R:{e.RemainingTurns}";
             }
         }
         m_statusEffectsText.text = text;

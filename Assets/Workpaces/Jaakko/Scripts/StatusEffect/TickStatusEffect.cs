@@ -3,22 +3,21 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Actor/StatusEffects/TickStatusEffect")]
 public class TickStatusEffect : ActorStatusEffect
 {
-    public float tickDamage = 2f;
-    protected override void OnApply()
+    public override void OnApply(StatusEffectInstance instance)
     {        
-        base.OnApply();
+        base.OnApply(instance);
     }
-    protected override void OnTurnStart()
+    public override void OnTurnStart(StatusEffectInstance instance)
     {        
-        base.OnTurnStart();
+        base.OnTurnStart(instance);
     }
-    protected override void OnTurnEnd()
+    public override void OnTurnEnd(StatusEffectInstance instance)
     {
-        Owner.Health.ApplyDamage(tickDamage);
-        base.OnTurnEnd();
+        instance.TickDuration();     
+        base.OnTurnEnd(instance);
     }
-    protected override void OnExpire()
+    public override void OnExpire(StatusEffectInstance instance)
     {
-        base.OnExpire();
+        base.OnExpire(instance);
     }
 }

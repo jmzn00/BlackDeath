@@ -38,14 +38,14 @@ public class TargetView : MonoBehaviour, IUIComponentView
         m_targetNameText.text = target.name;
         
         ClearImages();
-        foreach (var e in target.StatusEffects) 
+        foreach (var i in target.CurrentStatusEffects) 
         {
-            if (e.statusEffectSprite == null)
+            if (i.Template.statusEffectSprite == null)
                 continue;
 
             Image image = Instantiate(m_statusEffectImagePrefab
                 , m_statusEffectImageAnchor);
-            image.sprite = e.statusEffectSprite;
+            image.sprite = i.Template.statusEffectSprite;
             m_statusEffectImages.Add(image);
         }
     }

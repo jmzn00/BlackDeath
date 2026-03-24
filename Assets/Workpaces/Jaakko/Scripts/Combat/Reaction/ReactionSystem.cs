@@ -95,8 +95,11 @@ public class ReactionSystem
             m_context.Target.ReactionProvider.TryReact(this, p);
         }
     }
-    public void ReceiveReaction(CombatActor actor, InputPrompt prompt) 
+    public void ReceiveReaction(ReactionCommand command) 
     {
+        CombatActor actor = command.Source;
+        InputPrompt prompt = command.Prompt;
+
         if (!m_window.IsOpen) 
         {
             Debug.LogWarning("Cannot recive reaction while window is closed");

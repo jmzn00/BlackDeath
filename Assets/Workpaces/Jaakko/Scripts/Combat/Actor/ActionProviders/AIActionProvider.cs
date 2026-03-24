@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,6 +14,19 @@ public class AIActionProvider : IActionProvider
     public AIActionProvider(AICombatActor aiActor) 
     {
         m_actor = aiActor;
+    }
+    private ICombatCommand m_command;
+    public event Action<AttackCommand> OnCommandReady;
+    public void Begin(CombatActor actor, List<CombatActor> participants) 
+    {
+        if (m_hasActed) return;
+
+        if (m_coroutine == null)
+            m_coroutine = actor.StartCoroutine(WaitAndAct(actor, participants));
+    }
+    public ICombatCommand GetCommand() 
+    {
+        return m_command;
     }
     public void RequestAction(CombatActor actor, List<CombatActor> participants) 
     {
@@ -87,8 +101,10 @@ public class AIActionProvider : IActionProvider
                 Action = bestAction,
                 Target = bestTarget
             };
-        }
-        m_actor.SubmitAction(m_actor, bestTarget, bestAction);                
+        }        
+        OnCommandReady?.Invoke(new AttackCommand(m_actor, bestTarget, bestAction));
+        
+        //m_actor.SubmitAction(m_actor, bestTarget, bestAction);                
         m_coroutine = null;
         m_hasActed = false;
     }

@@ -20,9 +20,9 @@ public class SkillAction : CombatAction
     [Tooltip("Effects applied to the USER (self-buffs) on use.")]
     public StatusEffect[] selfEffects;
 
-    public override bool Resolve(ActionContext context, Action OnComplete)
+    public override bool Resolve(ActionContext context)
     {
-        context.Source.PlayAction(context, OnComplete);
+        context.Source.PlayAction(context);
         return true;
     }
 }

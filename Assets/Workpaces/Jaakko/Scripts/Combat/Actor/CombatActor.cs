@@ -18,7 +18,7 @@ public enum ControlType
     Ai
 }
 [RequireComponent(typeof(Actor))]
-public class CombatActor : MonoBehaviour, IActorComponent
+public class CombatActor : MonoBehaviour, IActorComponent, IDamageSource
 {
     private CombatManager m_combatManager;
     public bool IsDead { get; protected set; }
@@ -41,11 +41,11 @@ public class CombatActor : MonoBehaviour, IActorComponent
     public IActionProvider ActionProvider => m_actionProvider;
 
     private IReactionProvider m_reactionProvider;
-    public IReactionProvider ReactionProvider => m_reactionProvider;
+    public IReactionProvider ReactionProvider => m_reactionProvider;    
 
-    private List<ActorStatusEffect> m_statusEffects = new List<ActorStatusEffect>();
-    public List<ActorStatusEffect> StatusEffects => m_statusEffects;
-    public event Action<List<ActorStatusEffect>> OnStatusEffectsChanged;
+    private List<StatusEffectInstance> m_currentStatusEffects = new();
+    public List<StatusEffectInstance> CurrentStatusEffects => m_currentStatusEffects;
+    public event Action<List<StatusEffectInstance>> OnStatusEffectsChanged;
 
     private HealthComponent m_health;
     public HealthComponent Health => m_health;
@@ -65,6 +65,8 @@ public class CombatActor : MonoBehaviour, IActorComponent
 
     private CombatActorState m_state;
 
+    public CombatActor SourceActor { get; private set; }
+    public string SourceName { get; private set; }
     #region IActionProvider
     protected void SetActionProvider(IActionProvider provider)
     {
@@ -87,6 +89,10 @@ public class CombatActor : MonoBehaviour, IActorComponent
 
         m_combatManager.OnTurnStart += TurnStart;
         m_combatManager.OnTurnEnd += TurnEnd;
+
+        SourceActor = this;
+        SourceName = name;
+
         OnInitliazed(game);
         return true;
     }
@@ -172,7 +178,6 @@ public class CombatActor : MonoBehaviour, IActorComponent
         {
             return;
         }
-        HandleStatusEffectsTurnStart();
     }
     public void TurnEnd(CombatActor actor) 
     {
@@ -180,7 +185,6 @@ public class CombatActor : MonoBehaviour, IActorComponent
         {
             return;
         }
-        HandleStatusEffectsTurnEnd();
     }
     private void CombatStarted()
     {
@@ -202,8 +206,10 @@ public class CombatActor : MonoBehaviour, IActorComponent
     public void SubmitAction(CombatActor source,
         CombatActor target, CombatAction action)
     {
+        /*
         m_combatManager.Action.SubmitAction(this,
             target, action);
+        */
     }
     #endregion
     #region Animation
@@ -215,7 +221,7 @@ public class CombatActor : MonoBehaviour, IActorComponent
     {
         m_animator.PlayTransition();
     }
-    public void PlayAction(ActionContext ctx, Action onComplete)
+    public void PlayAction(ActionContext ctx)
     {
         if (ctx.Source == ctx.Target)
         {
@@ -248,69 +254,44 @@ public class CombatActor : MonoBehaviour, IActorComponent
     }
     #endregion
     #region StatusEffect
-    private void HandleStatusEffectsTurnStart()
-    {
-        if (m_statusEffects == null || m_statusEffects.Count == 0) return;
-
-        List<ActorStatusEffect> effects = new List<ActorStatusEffect>(m_statusEffects);
-        foreach (var e in effects)
-        {
-            if (e == null) return;
-            e.TurnStart();
-        }
-        if (IsDead)
-        {
-            CombatEvents.ActorDied(this);
-        }
-    }
-    private void HandleStatusEffectsTurnEnd()
-    {
-        for (int i = m_statusEffects.Count - 1; i >= 0; i--)
-        {
-            var effect = m_statusEffects[i];
-            effect.TurnEnd();
-
-            if (effect.TickDuration())
-            {
-                effect.Expire();
-                m_statusEffects.RemoveAt(i);
-                Destroy(effect);
-            }
-        }
-        if (IsDead)
-        {
-            CombatEvents.ActorDied(this);
-        }
-        OnStatusEffectsChanged?.Invoke(m_statusEffects);
-    }
     private void ClearStatusEffects() 
     {
-        foreach (var effect in m_statusEffects)
-            Destroy(effect);
+        foreach (var i in CurrentStatusEffects)
+            i.Expire();
 
-        m_statusEffects.Clear();
+        m_currentStatusEffects.Clear();
     }
-    public void ApplyStatus(ActorStatusEffect effect)
+    public StatusEffectInstance GetInstance(ActorStatusEffect e) 
     {
-        ActorStatusEffect instance = Instantiate(effect);
-        instance.Initialize(this);
-
-        var existing = m_statusEffects.Find(e =>
-            e.GetType() == instance.GetType() &&
-            e.displayName == instance.displayName);
-
-        if (existing != null)
+        foreach (var i in CurrentStatusEffects) 
         {
-            if (effect.IsStackable)
+            if (i.Template == e) 
             {
-                existing.AddDuration(instance.duration);
-                OnStatusEffectsChanged?.Invoke(m_statusEffects);
+                return i;
             }
-            return;
         }
-
-        m_statusEffects.Add(instance);
-        OnStatusEffectsChanged?.Invoke(m_statusEffects);
+        return null;
+    }
+    public bool HasEffect(ActorStatusEffect effect) 
+    {
+        foreach (var i in CurrentStatusEffects) 
+        {
+            if (i.Template == effect) 
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    public void ApplyEffect(StatusEffectInstance instance) 
+    {
+        m_currentStatusEffects.Add(instance);
+        OnStatusEffectsChanged?.Invoke(m_currentStatusEffects);
+    }
+    public void RemoveEffect(StatusEffectInstance instance) 
+    {
+        m_currentStatusEffects.Remove(instance);
+        OnStatusEffectsChanged?.Invoke(m_currentStatusEffects);
     }
     #endregion
 }

@@ -1,16 +1,65 @@
-using Unity.Collections;
 using UnityEngine;
+using UnityEngine.UIElements;
+public class StatusEffectInstance : IDamageSource
+{
+    public CombatActor SourceActor { get; }
+    public string SourceName { get; }
+
+    public int RemainingTurns;
+    private DamageSystem m_damage;
+    public readonly ActorStatusEffect Template;
+
+    public StatusEffectInstance(ActorStatusEffect effect, CombatActor owner
+        , DamageSystem damage) 
+    {
+        Template = effect;
+
+        SourceActor = owner;
+        SourceName = Template.displayName;
+        m_damage = damage;
+
+        RemainingTurns = effect.duration;
+    }
+    public void TurnStart() => Template.OnTurnStart(this);
+    public void TurnEnd() => Template.OnTurnEnd(this);
+    public void Expire() => Template.Expire();
+
+    public bool TickDuration() 
+    {
+        RemainingTurns--;
+
+        if (Template.damage != 0) 
+        {
+            ApplyDamage(Template.damage);
+        }
+        if (RemainingTurns <= 0) 
+        {            
+            Template.OnExpire(this);
+            SourceActor.RemoveEffect(this);
+            return true;
+        }
+        return false;
+    }
+    public void UpdateDuration(int amount) 
+    {
+        RemainingTurns += amount;
+    }
+    private void ApplyDamage(float amount) 
+    {
+        m_damage.ApplyDamage(amount, this, SourceActor);
+    }
+    
+}
 public abstract class ActorStatusEffect : ScriptableObject
 {
     public int duration = 1;
+    public float damage = 0;
     public string displayName;
-    [SerializeField] private bool m_isStackable = false;
-    [TextArea(4, 10)]
-    public string description;
+    public bool isStackable = false;
 
     public CombatActor Owner {  get; private set; }
     public int RemainingTurns { get; protected set; }
-    public bool IsStackable => m_isStackable;
+    public bool IsStackable => isStackable;
 
     public Sprite statusEffectSprite;
 
@@ -19,6 +68,14 @@ public abstract class ActorStatusEffect : ScriptableObject
         reason = "";
         return true;
     }
+    public virtual void OnApply(StatusEffectInstance instance) { }
+    public virtual void OnTurnStart(StatusEffectInstance instance) { }
+    public virtual void OnTurnEnd(StatusEffectInstance instance) { }
+    public virtual void OnExpire(StatusEffectInstance instance) { }
+
+
+
+
     public void AddDuration(int amount) 
     {
         RemainingTurns += amount;
@@ -27,28 +84,24 @@ public abstract class ActorStatusEffect : ScriptableObject
     {
         Owner = owner;
         RemainingTurns = duration;
-        OnApply();
+        //OnApply();
     }
     public void TurnStart() 
     {
-        OnTurnStart();
+        //OnTurnStart();
     }
     public void TurnEnd() 
     {
-        OnTurnEnd();
+        //OnTurnEnd();
     }
     public bool TickDuration()
     {
         RemainingTurns--;
         return RemainingTurns <= 0;
     }
-    protected virtual void OnApply() { }
-    protected virtual void OnTurnStart() { }
-    protected virtual void OnTurnEnd() { }
-    protected virtual void OnExpire() { }    
     public void Expire() 
     {
-        OnExpire();
+        //OnExpire();
     }
     
 }

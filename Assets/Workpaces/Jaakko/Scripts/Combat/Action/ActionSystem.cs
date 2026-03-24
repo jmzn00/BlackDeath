@@ -48,10 +48,8 @@ public class ActionSystem
         }
         m_reaction.Close();
 
-        ActionResult res = m_reaction.ResolveResults();
-        m_currentAction.Action.ResolveResult(m_currentAction, res);        
+        ActionResult res = m_reaction.ResolveResults();        
         CombatEvents.ActionResolved(m_currentAction, res);
-        Debug.Log($"{m_currentAction.Source.name} performed {m_currentAction.Action.actionName} on {m_currentAction.Target.name} result: {res}");
     }
 
     public void NotifyActionFinished(CombatActor actor) 
@@ -74,7 +72,6 @@ public class ActionSystem
         m_context.CurrentActor.ActionProvider.
             RequestAction(m_context.CurrentActor, m_context.Actors.ToList());
     }
-    public event Action TempAction; // REMOVE
     public void Resolve() 
     {
         if (m_currentAction == null) 
@@ -82,17 +79,19 @@ public class ActionSystem
             Debug.LogWarning($"Trying to Resolve Null Action");
             return;
         }
-        m_currentAction.Action.Resolve(m_currentAction, TempAction);
+        m_currentAction.Action.Resolve(m_currentAction);
     }
-    public void SubmitAction(CombatActor source, 
-        CombatActor target,
-        CombatAction action)
+    public void SubmitAction(AttackCommand attackCommand)
     {
         if (m_currentAction != null) 
         {
             Debug.LogWarning("Cannot Submit Action, Action already Set");
             return;
         }
+        CombatAction action = attackCommand.Action;
+        CombatActor source = attackCommand.Source;
+        CombatActor target = attackCommand.Target;
+
         if (action == null) 
         {
             OnActionSubmitted?.Invoke(new ActionContext 

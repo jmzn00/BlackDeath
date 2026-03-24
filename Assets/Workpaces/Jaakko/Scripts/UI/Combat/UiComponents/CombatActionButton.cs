@@ -9,8 +9,6 @@ public class CombatActionButton : MonoBehaviour
     [SerializeField] private TMP_Text m_actionNameText;
     [SerializeField] private TMP_Text m_actionDesciptionText;
 
-    public event Action<CombatAction> OnActionSelected;
-
     public void UpdateAction(CombatAction action) 
     {
         m_actionNameText.text = action.actionName;

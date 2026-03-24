@@ -28,7 +28,11 @@ public class CombatManager : IManager
     private ReactionSystem m_reaction;
     private ActionSystem m_action;
     private TransitionSystem m_transition;
+    private DamageSystem m_damage;
     public ActionSystem Action => m_action;
+
+    private CombatCommandDispatcher m_commandDispatcher;
+    private CombatCommandProcessor m_commandProcessor;
 
     public event Action OnCombatStarted;
     public event Action<CombatResult> OnCombatEnded;
@@ -75,7 +79,8 @@ public class CombatManager : IManager
         if (m_transition != null) 
         {
             m_transition.OnTransitionFinished -= TransitionFinished;
-        }                
+        }
+        CombatEvents.OnActionResolved += m_damage.ActionResolved;
         return true;
     }
     #endregion
@@ -91,15 +96,23 @@ public class CombatManager : IManager
         OnCombatStarted?.Invoke();
 
         m_context = new CombatContext(actors);
-        m_turn = new TurnSystem(m_context);
-        m_reaction = new ReactionSystem();
 
+        m_turn = new TurnSystem(m_context);
+
+        m_reaction = new ReactionSystem();
         m_action = new ActionSystem(m_context, m_reaction);
         m_action.OnActionFinished += ActionFinished;
         m_action.OnActionSubmitted += ActionSubmitted;
-
+        
         m_transition = new TransitionSystem(area);
         m_transition.OnTransitionFinished += TransitionFinished;
+
+        m_damage = new DamageSystem();
+
+        m_commandDispatcher = new CombatCommandDispatcher(m_action, m_reaction);
+        m_commandProcessor = new CombatCommandProcessor(actors, m_commandDispatcher);
+
+        CombatEvents.OnActionResolved += m_damage.ActionResolved;
            
         NextTurn();
     }

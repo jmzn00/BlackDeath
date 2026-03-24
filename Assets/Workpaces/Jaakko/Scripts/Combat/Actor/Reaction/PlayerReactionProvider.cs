@@ -1,8 +1,10 @@
+using System;
 using UnityEngine;
 
 public class PlayerReactionProvider : IReactionProvider
 {
     private CombatActor m_actor;
+    public event Action<ReactionCommand> OnCommandReady;
     public PlayerReactionProvider(CombatActor actor) 
     {
         m_actor = actor;
@@ -17,6 +19,6 @@ public class PlayerReactionProvider : IReactionProvider
         {
             return;
         }
-        reactionSystem.ReceiveReaction(m_actor, prompt);        
+        OnCommandReady?.Invoke(new ReactionCommand(m_actor, prompt));      
     }
 }

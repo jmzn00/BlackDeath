@@ -40,7 +40,6 @@ public class InteractionComponent : MonoBehaviour, IActorComponent
         return null;
     }
     [SerializeField] private LayerMask m_actorLayerMask;
-    [SerializeField] private float m_interactionDistance = 5f;
     private void Update()
     {
         if (m_actor == null) return;

@@ -74,9 +74,9 @@ public abstract class CombatAction : ScriptableObject
         reason = "";
         // Add AP Check Here
 
-        foreach (var e in source.StatusEffects) 
+        foreach (var i in source.CurrentStatusEffects) 
         {            
-            if (!e.CanPerformAction(this, out string r)) 
+            if (!i.Template.CanPerformAction(this, out string r)) 
             {
                 reason += r + "\n";
                 blocked = true;
@@ -84,49 +84,22 @@ public abstract class CombatAction : ScriptableObject
         }        
         return !blocked;
     }
-    public abstract bool Resolve(ActionContext context, Action OnComplete);
-
-    public virtual void ResolveResult(ActionContext ctx,  ActionResult result) 
-    {
-        switch (result) 
-        {
-            case ActionResult.Hit:
-                OnHit(ctx);
-                break;
-            case ActionResult.Dodged:
-                OnDodged(ctx);
-                break;
-            case ActionResult.Parried:
-                OnParried(ctx);
-                break;
-            case ActionResult.Confirmed:
-                OnConfirmed(ctx);
-                break;
-            case ActionResult.None:
-                OnNone(ctx);
-                break;
-        }
-    } 
-    protected virtual void OnHit(ActionContext ctx) 
-    {
-        ctx.Target.Health.ApplyDamage(baseDamage);          
+    public abstract bool Resolve(ActionContext context);
+    public virtual float OnHit() 
+    {        
+        return baseDamage;
     }
-    protected virtual void OnDodged(ActionContext ctx) 
+    public virtual void OnDodged() 
     {
         
     }
-    protected virtual void OnParried(ActionContext ctx) 
+    public virtual float OnParried() 
     {
-        ctx.Source.Health.ApplyDamage(baseDamage);
+        return baseDamage;
     }
-    protected virtual void OnConfirmed(ActionContext ctx) 
+    public virtual float OnConfirmed() 
     {
-        ctx.Target.Health.ApplyDamage(baseDamage * confirmDamageMultipler);
-
-        foreach (var e in AppliedEffects)
-        {
-            ctx.Target.ApplyStatus(e);
-        }
+        return baseDamage * confirmDamageMultipler;        
     }
     protected virtual void OnNone(ActionContext ctx) 
     {

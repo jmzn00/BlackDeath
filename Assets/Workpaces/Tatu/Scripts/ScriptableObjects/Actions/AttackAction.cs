@@ -14,9 +14,9 @@ public class AttackAction : CombatAction
     [Tooltip("Extra damage added when the reactive prompt is hit successfully.")]
     public int bonusDamageOnSuccess = 1;
 
-    public override bool Resolve(ActionContext context, Action OnComplete)
+    public override bool Resolve(ActionContext context)
     {
-        context.Source.PlayAction(context, OnComplete);
+        context.Source.PlayAction(context);
         return true;
     }
 }

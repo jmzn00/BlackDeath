@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 public class AIReactionProvider : IReactionProvider
@@ -10,6 +10,8 @@ public class AIReactionProvider : IReactionProvider
 
 
     private CombatActor m_actor;
+
+    public event Action<ReactionCommand> OnCommandReady;
     public AIReactionProvider(AiReactionSettings settings, CombatActor actor)
     {
         m_actor = actor;
@@ -36,25 +38,28 @@ public class AIReactionProvider : IReactionProvider
         if (reactionSystem == null || prompt == null) return;
         if (m_reacted) return;
 
-        float roll = Random.value * 100f;
+        float roll = UnityEngine.Random.value * 100f;
         switch (prompt.inputType)
         {
             case PromptInputType.Parry:
                 if (roll < parryPercentage) 
                 {
-                    reactionSystem.ReceiveReaction(m_actor, prompt);
+                    //reactionSystem.ReceiveReaction(m_actor, prompt);
+                    OnCommandReady?.Invoke(new ReactionCommand(m_actor, prompt));
                 }                
                 break;
             case PromptInputType.Dodge:
                 if (roll < dodgePercentage) 
                 {
-                    reactionSystem.ReceiveReaction(m_actor, prompt);
+                    //reactionSystem.ReceiveReaction(m_actor, prompt);
+                    OnCommandReady?.Invoke(new ReactionCommand(m_actor, prompt));
                 }                
                 break;
             case PromptInputType.Confirm:
                 if (roll < confirmPercentage)
                 {
-                    reactionSystem.ReceiveReaction(m_actor, prompt);
+                    //reactionSystem.ReceiveReaction(m_actor, prompt);
+                    OnCommandReady?.Invoke(new ReactionCommand(m_actor, prompt));
                 }                    
                 break;
         }
