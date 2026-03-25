@@ -62,15 +62,15 @@ public class DamageSystem
     public void ApplyDamage(float amount, IDamageSource source, CombatActor target) 
     {
         Debug.Log($"{source.SourceName} applied {amount} damage to {target.name}");
-
-        CombatEvents.DamageApplied(target, amount);
+        if (amount > 0f)
+            CombatEvents.DamageApplied(target, amount);
         target.Health.ApplyDamage(amount);
     }
     public void ApplyHeal(float amount, IDamageSource source, CombatActor target) 
     {
         Debug.Log($"{source.SourceName} applied {amount} healing to {target.name}");
-
-        CombatEvents.HealApplied(target, amount);
+        if (amount > 0f)
+            CombatEvents.HealApplied(target, amount);
         target.Health.ApplyHealth(amount);
     }
     public void ActorTurnStart(CombatActor actor)
