@@ -36,6 +36,7 @@ public static class CombatEvents
 
     // DAMAGE
     public static event Action<CombatActor, float>OnDamageApplied;
+    public static event Action<CombatActor, float>OnHealthApplied;
     public static void TransitionStarted() 
     {
         OnTransitionStarted?.Invoke();
@@ -107,5 +108,9 @@ public static class CombatEvents
     public static void DamageApplied(CombatActor actor, float damage) 
     {
         OnDamageApplied?.Invoke(actor, damage);
+    }
+    public static void HealApplied(CombatActor actor, float damage) 
+    {
+        OnHealthApplied?.Invoke(actor, damage);
     }
 }
