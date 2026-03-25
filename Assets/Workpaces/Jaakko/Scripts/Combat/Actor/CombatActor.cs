@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 public enum CombatActorState 
@@ -82,7 +83,7 @@ public class CombatActor : MonoBehaviour, IActorComponent, IDamageSource
     public bool Initialize(GameManager game)
     {
         m_actor = GetComponent<Actor>();
-        IsPlayer = m_actor.IsPlayable;
+
         m_combatManager = game.Resolve<CombatManager>();
 
         m_combatManager.OnCombatStarted += CombatStarted;
@@ -140,11 +141,10 @@ public class CombatActor : MonoBehaviour, IActorComponent, IDamageSource
     {
         return null;
     }
-    #endregion
-    #region UiSelection
+    #endregion    
 
-    // ui calls
-    public void ChangeState(CombatActorState state) 
+    // for CombatCameraMode
+    public void ChangeState(CombatActorState state) // temp
     {
         if (m_state == state) return;
 
@@ -154,12 +154,11 @@ public class CombatActor : MonoBehaviour, IActorComponent, IDamageSource
         // Fire global event for camera system
         CombatEvents.ActorStateChanged(this, state);
     }
-    // ui calls
-    public void ChangeTarget(CombatActor actor) 
+    // for CombatCamerMode
+    public void ChangeTarget(CombatActor actor) // temp
     {
         OnCurrentTargetChanged?.Invoke(actor);
-    }
-    #endregion
+    }    
     #region Combat  
     void OnHealthChanged(float value)
     {
@@ -201,16 +200,7 @@ public class CombatActor : MonoBehaviour, IActorComponent, IDamageSource
         if (c != null) 
         {
             c.enabled = true;
-        }
-        
-    }
-    public void SubmitAction(CombatActor source,
-        CombatActor target, CombatAction action)
-    {
-        /*
-        m_combatManager.Action.SubmitAction(this,
-            target, action);
-        */
+        }        
     }
     #endregion
     #region Animation
@@ -224,11 +214,13 @@ public class CombatActor : MonoBehaviour, IActorComponent, IDamageSource
     }
     public void PlayAction(ActionContext ctx)
     {
+        /*
         if (ctx.Source == ctx.Target)
         {
             ActionFinished();
             return;
         }
+        */
         if (ctx.Action.animationClip == null)
         {
             Debug.LogWarning("AnimationClip is NULL");
@@ -236,6 +228,17 @@ public class CombatActor : MonoBehaviour, IActorComponent, IDamageSource
             return;
         }
         OnPlayRequested?.Invoke(ctx.Action.animationClip);
+
+        if (m_animationTimeout == null)
+            StartCoroutine(AnimationTimeout(ctx.Action.animationClip.length * 1.25f));
+    }
+    private Coroutine m_animationTimeout;
+    private IEnumerator AnimationTimeout(float clipLength) 
+    {
+        yield return new WaitForSeconds(clipLength);
+
+        ActionFinished();
+        m_animationTimeout = null;
     }
     // called by m_animator
     public void CloseWindow()

@@ -517,8 +517,8 @@ MonoBehaviour:
   m_controlType: 1
   m_visual: {fileID: 9059011711645081977}
   m_actions:
-  - {fileID: 11400000, guid: 5f3da3ccbd845ad469fc6cfbf7f5107b, type: 2}
   - {fileID: 11400000, guid: 4f242df511265bf4eb90ed3d4a7fb590, type: 2}
+  - {fileID: 11400000, guid: 5f3da3ccbd845ad469fc6cfbf7f5107b, type: 2}
   m_reactionSettings:
     dodgePercentage: 10
     parryPercentage: 0

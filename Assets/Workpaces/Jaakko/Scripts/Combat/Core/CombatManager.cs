@@ -71,16 +71,7 @@ public class CombatManager : IManager
     }
     public bool Dispose()
     {
-        if (m_action != null) 
-        {
-            m_action.OnActionFinished -= ActionFinished;
-            m_action.OnActionSubmitted -= ActionSubmitted;
-        }
-        if (m_transition != null) 
-        {
-            m_transition.OnTransitionFinished -= TransitionFinished;
-        }
-        CombatEvents.OnActionResolved -= m_damage.ActionResolved;
+        CleanupSystems();
         return true;
     }
     #endregion
@@ -187,15 +178,31 @@ public class CombatManager : IManager
         {
             result = CombatResult.Won;
         }
-
+        Debug.Log($"Combat ended with result {result}");
+        CleanupSystems();
         m_game.SetState(GameState.None);
-
-        m_area.EndBattle(result);
+        
         OnCombatEnded?.Invoke(result);
         ChangeState(CombatState.Inactive);
-        CombatEvents.CombatEnded(result);        
+        CombatEvents.CombatEnded(result);
 
+        m_area.EndBattle(result);
         m_area = null;
+    }
+    private void CleanupSystems() 
+    {
+        // add dispose systems
+        
+        if (m_action != null)
+        {
+            m_action.OnActionFinished -= ActionFinished;
+            m_action.OnActionSubmitted -= ActionSubmitted;
+        }
+        if (m_transition != null)
+        {
+            m_transition.OnTransitionFinished -= TransitionFinished;
+        }
+        CombatEvents.OnActionResolved -= m_damage.ActionResolved;
     }
     public void ChangeState(CombatState state) 
     {
