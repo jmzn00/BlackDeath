@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using UnityEditorInternal;
+using UnityEditor;
 
 public static class CombatEvents
 {
@@ -20,12 +20,54 @@ public static class CombatEvents
     public static event Action<ActionContext> OnActionFinished;
     public static event Action<ActionContext> OnActionSubmitted;
     public static event Action<ActionContext, ActionResult> OnActionResolved;
+    public static event Action<CombatActor, CombatActor> OnActorTargetChanged; // Source, Target
+    #region Action
+    public static void ActionSubmitted(ActionContext ctx)
+    {
+        OnActionSubmitted?.Invoke(ctx);
+    }
+    public static void ActionResolved(ActionContext ctx, ActionResult res)
+    {
+        OnActionResolved?.Invoke(ctx, res);
+    }
+    public static void ActionFinished(ActionContext ctx)
+    {
+        OnActionFinished?.Invoke(ctx);
+    }
+    public static void ActorTargetChanged(CombatActor source, CombatActor target) 
+    {
+        OnActorTargetChanged?.Invoke(source, target);
+    }
+    #endregion
 
     // REACTION
     public static event Action<ActionContext> OnReactionWindowOpened;
     public static event Action<ActionContext> OnReactionWindowClosed;
     public static event Action<ActionContext, ActionResult> OnReactionResolved;
-
+    public static event Action<InputPrompt> OnDefenderPromptOpened;
+    public static event Action<InputPrompt> OnAttackerPromptOpened; 
+    #region Reaction
+    public static void ReactionWindowOpened(ActionContext ctx)
+    {
+        OnReactionWindowOpened?.Invoke(ctx);
+    }
+    public static void ReactionWindowClosed(ActionContext ctx)
+    {
+        OnReactionWindowClosed?.Invoke(ctx);
+    }
+    public static void ReactionResolved(ActionContext ctx, ActionResult res)
+    {
+        OnReactionResolved?.Invoke(ctx, res);
+    }
+    public static void DefenderPromptOpened(InputPrompt prompt) 
+    {
+        OnDefenderPromptOpened?.Invoke(prompt);
+    }
+    public static void AttackerPromptOpened(InputPrompt prompt) 
+    {
+        OnAttackerPromptOpened?.Invoke(prompt);
+    }
+    #endregion
     // TURN
     public static event Action<CombatActor> OnTurnStarted;
     public static event Action<CombatActor> OnTurnEnded;
@@ -33,18 +75,32 @@ public static class CombatEvents
     // TRANSITION
     public static event Action OnTransitionStarted;
     public static event Action OnTransitionEnded;
+    #region Transition
+    public static void TransitionStarted()
+    {
+        OnTransitionStarted?.Invoke();
+    }
+    public static void TransitionEnded()
+    {
+        OnTransitionEnded?.Invoke();
+    }
+    #endregion
 
     // DAMAGE
     public static event Action<CombatActor, float>OnDamageApplied;
     public static event Action<CombatActor, float>OnHealthApplied;
-    public static void TransitionStarted() 
+    #region Damage
+    public static void DamageApplied(CombatActor actor, float damage)
     {
-        OnTransitionStarted?.Invoke();
+        OnDamageApplied?.Invoke(actor, damage);
     }
-    public static void TransitionEnded() 
+    public static void HealApplied(CombatActor actor, float damage)
     {
-        OnTransitionEnded?.Invoke();
+        OnHealthApplied?.Invoke(actor, damage);
     }
+    #endregion
+
+
 
     public static void CombatStarted() 
     {
@@ -73,44 +129,15 @@ public static class CombatEvents
     {
         OnTurnEnded?.Invoke(actor);
     }
-    public static void ActionSubmitted(ActionContext ctx) 
-    {
-        OnActionSubmitted?.Invoke(ctx);
-    }
-    public static void ActionResolved(ActionContext ctx, ActionResult res) 
-    {
-        OnActionResolved?.Invoke(ctx, res);
-    }
+    
     public static void ActorDied(CombatActor actor) 
     {
         OnActorDied?.Invoke(actor);
     }
-    public static void ReactionWindowOpened(ActionContext ctx) 
-    {
-        OnReactionWindowOpened?.Invoke(ctx);
-    }
-    public static void ReactionWindowClosed(ActionContext ctx) 
-    {
-        OnReactionWindowClosed?.Invoke(ctx);
-    }
-    public static void ReactionResolved(ActionContext ctx, ActionResult res) 
-    {
-        OnReactionResolved?.Invoke(ctx, res);
-    }
-    public static void ActionFinished(ActionContext ctx) 
-    {
-        OnActionFinished?.Invoke(ctx);
-    }
+    
     public static void CombatActorsChanged(List<CombatActor> actors) 
     {
         OnCombatActorsChanged?.Invoke(actors);
     }
-    public static void DamageApplied(CombatActor actor, float damage) 
-    {
-        OnDamageApplied?.Invoke(actor, damage);
-    }
-    public static void HealApplied(CombatActor actor, float damage) 
-    {
-        OnHealthApplied?.Invoke(actor, damage);
-    }
+
 }

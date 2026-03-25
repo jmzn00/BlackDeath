@@ -17,6 +17,7 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
     private ActionView m_actionView;
     private TargetView m_targetView;
     private DamageView m_damageView;
+    private ReactionView m_reactionView;
 
     private List<Button> m_buttons = new();
 
@@ -36,10 +37,12 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
         m_actionView = group.ActionView;
         m_targetView = group.TargetView;
         m_damageView = group.DamageView;
+        m_reactionView = group.ReactionView;
 
         m_targetView.Hide();
         m_actionView.Hide();
         m_damageView.Hide();
+        m_reactionView.Hide();
 
         m_input = game.Resolve<InputManager>();
         m_ui = game.Resolve<UIManager>();
@@ -52,6 +55,9 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
         CombatEvents.OnTurnStarted += TurnStart;
         CombatEvents.OnTurnEnded += TurnEnd;
         CombatEvents.OnCombatActorsChanged += ActorsChanged;
+
+        CombatEvents.OnAttackerPromptOpened += AttackerPromptOpened;
+        CombatEvents.OnReactionWindowClosed += ReactionWindowClosed;
 
         m_actionView.Init();
         m_targetView.Init();
@@ -69,6 +75,15 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
         CombatEvents.OnTurnStarted -= TurnStart;
         CombatEvents.OnTurnEnded -= TurnEnd;
         CombatEvents.OnCombatActorsChanged -= ActorsChanged;
+    }
+    private void AttackerPromptOpened(InputPrompt prompt) 
+    {
+        m_reactionView.AttackerPromptOpened(prompt);
+        m_reactionView.View();
+    }
+    private void ReactionWindowClosed(ActionContext ctx) 
+    {
+        m_reactionView.Hide();
     }
     public override bool OnSubmit()
     {
@@ -133,7 +148,7 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
         m_targetView.ChangeTarget(m_currentTarget);
         m_targetView.SetPosition(m_currentTarget.transform.position);
 
-        m_currentActor.ChangeTarget(m_currentTarget);
+        CombatEvents.ActorTargetChanged(m_currentActor, m_currentTarget);
     }
     private void SubmitAction(CombatActor target = null)
     {
@@ -190,7 +205,7 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
         m_actionView.OnActionSelected += ActionSelected;
 
         // for camera
-        m_currentActor.ChangeState(CombatActorState.ActionSelecting);
+        CombatEvents.ActorStateChanged(m_currentActor, CombatActorState.ActionSelecting);
         m_state = CombatUIState.ActionTypeSelecting;
     }
     private void TurnEnd(CombatActor actor)
@@ -236,7 +251,7 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
             case TargetType.Enemy:
             case TargetType.Ally:
                 m_targetView.View();
-                m_currentActor.ChangeState(CombatActorState.Targeting);
+                CombatEvents.ActorStateChanged(m_currentActor, CombatActorState.Targeting);
                 m_state = CombatUIState.TargetSelecting;
                 SelectTarget(0);
                 break;

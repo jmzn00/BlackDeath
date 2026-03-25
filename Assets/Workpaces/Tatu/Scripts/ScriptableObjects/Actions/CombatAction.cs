@@ -81,7 +81,13 @@ public abstract class CombatAction : ScriptableObject
                 reason += r + "\n";
                 blocked = true;
             }
-        }        
+        }
+        int sourceAP = source.ActionPoints;
+        if (sourceAP - apCost < 0) 
+        {
+            reason = "Not Enough Action Points";
+            blocked = true;
+        }
         return !blocked;
     }
     public abstract bool Resolve(ActionContext context);

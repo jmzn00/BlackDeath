@@ -52,10 +52,20 @@ public class ReactionSystem
 
         // this can be null if the animation calls open with an empty prompt
         if (m_context.Prompt != null) 
+        {
             m_context.Prompt.action.Enable();
 
-        foreach (var p in m_defensivePrompts)
-            p.action.Enable();        
+            if (ctx.Source.Team == Team.Player)
+                CombatEvents.AttackerPromptOpened(m_context.Prompt);            
+        }            
+
+        foreach (var p in m_defensivePrompts) 
+        {            
+            p.action.Enable();
+
+            if (ctx.Source.Team == Team.Player)
+                CombatEvents.DefenderPromptOpened(p);
+        }            
 
         m_window.Open();
 

@@ -35,7 +35,6 @@ public class CombatActor : MonoBehaviour, IActorComponent, IDamageSource
     public Actor Actor => m_actor;
 
     private AnimatorComponent m_animator;
-    public AnimatorComponent Animator => m_animator;
 
 
     private IActionProvider m_actionProvider;
@@ -51,7 +50,7 @@ public class CombatActor : MonoBehaviour, IActorComponent, IDamageSource
     private HealthComponent m_health;
     public HealthComponent Health => m_health;
 
-    [SerializeField] protected GameObject m_visual; // TEMP
+    [SerializeField] protected GameObject m_visual; // TEMP, Play Death Animation
 
     [SerializeField] private List<CombatAction> m_actions;
     public List<CombatAction> Actions => m_actions;
@@ -59,16 +58,19 @@ public class CombatActor : MonoBehaviour, IActorComponent, IDamageSource
     // event that m_animator listens to
     public event Action<AnimationClip> OnPlayRequested;
 
-    public event Action<CombatActorState> OnCombatActorStateChanged;
-    public event Action<CombatActor> OnCurrentTargetChanged;
-
     public AnimationClip TransitionClip => m_animator.TransitionClip;
-
-    private CombatActorState m_state;
-    public CombatActorState State => m_state;
 
     public CombatActor SourceActor { get; private set; }
     public string SourceName { get; private set; }
+
+    private int m_actionPoints;
+    [SerializeField] private int m_maxActionPoints;
+    public int ActionPoints => m_actionPoints;
+    public int MaxActionPoints => m_maxActionPoints;
+
+    [SerializeField] public int CAP;
+
+
     #region IActionProvider
     protected void SetActionProvider(IActionProvider provider)
     {
@@ -108,7 +110,6 @@ public class CombatActor : MonoBehaviour, IActorComponent, IDamageSource
     }
     public bool Dispose()
     {
-        m_health.OnHealthChanged -= OnHealthChanged;
         m_animator.OnActionAnimationFinished -= ActionFinished;
         OnDispose();
         return true;
@@ -116,7 +117,6 @@ public class CombatActor : MonoBehaviour, IActorComponent, IDamageSource
     public void OnActorComponentsInitialized(Actor actor)
     {
         m_health = m_actor.Get<HealthComponent>();
-        m_health.OnHealthChanged += OnHealthChanged;
 
         m_animator = actor.Get<AnimatorComponent>();
         m_animator.OnActionAnimationFinished += ActionFinished;
@@ -142,35 +142,13 @@ public class CombatActor : MonoBehaviour, IActorComponent, IDamageSource
         return null;
     }
     #endregion    
-
-    // for CombatCameraMode
-    public void ChangeState(CombatActorState state) // temp
-    {
-        if (m_state == state) return;
-
-        m_state = state;
-        OnCombatActorStateChanged?.Invoke(state);
-        
-        // Fire global event for camera system
-        CombatEvents.ActorStateChanged(this, state);
-    }
-    // for CombatCamerMode
-    public void ChangeTarget(CombatActor actor) // temp
-    {
-        OnCurrentTargetChanged?.Invoke(actor);
-    }    
     #region Combat  
-    void OnHealthChanged(float value)
+    public void SetDead(bool value) 
     {
-        if (IsDead) return;
+        IsDead = value;
 
-        if (value <= 0f)
-        {            
-            IsDead = true;
-            CombatEvents.ActorDied(this); // CHANGE
-            if (m_visual) // temp
-                m_visual.SetActive(false); // temp
-        }
+        if (m_visual)
+            m_visual.SetActive(!value);
     }
     public void TurnStart(CombatActor actor)
     {
@@ -191,16 +169,42 @@ public class CombatActor : MonoBehaviour, IActorComponent, IDamageSource
         MovementController c = Actor.Get<MovementController>();
         if (c != null)
             c.enabled = false;
+
+        AddActionPoints(m_maxActionPoints);
     }
     protected virtual void CombatEnded(CombatResult result) 
     {        
         ClearStatusEffects();
 
+        m_combatManager.OnCombatStarted -= CombatStarted;
+        m_combatManager.OnCombatEnded -= CombatEnded;
+
+        m_combatManager.OnTurnStart -= TurnStart;
+        m_combatManager.OnTurnEnd -= TurnEnd;
+
+        m_combatManager = null;
+
         MovementController c = Actor.Get<MovementController>();
         if (c != null) 
         {
             c.enabled = true;
-        }        
+        }
+        m_health.ApplyHealth(m_health.MaxHealth);
+        SetDead(false);
+    }
+    #endregion
+    #region ActionPoint
+    public void AddActionPoints(int amount) 
+    {        
+        m_actionPoints += amount;
+        m_actionPoints = Mathf.Min(m_actionPoints, m_maxActionPoints);
+        CAP = m_actionPoints;
+    }
+    public void RemoveActionPoints(int amount) 
+    {
+        m_actionPoints -= amount;
+        m_actionPoints = Mathf.Max(0, m_actionPoints);
+        CAP = m_actionPoints;
     }
     #endregion
     #region Animation
@@ -214,13 +218,6 @@ public class CombatActor : MonoBehaviour, IActorComponent, IDamageSource
     }
     public void PlayAction(ActionContext ctx)
     {
-        /*
-        if (ctx.Source == ctx.Target)
-        {
-            ActionFinished();
-            return;
-        }
-        */
         if (ctx.Action.animationClip == null)
         {
             Debug.LogWarning("AnimationClip is NULL");

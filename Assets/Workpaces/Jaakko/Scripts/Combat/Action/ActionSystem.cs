@@ -101,6 +101,8 @@ public class ActionSystem
         CombatActor source = attackCommand.Source;
         CombatActor target = attackCommand.Target;
 
+        source.RemoveActionPoints(action.apCost);
+
         if (action == null) 
         {
             OnActionSubmitted?.Invoke(new ActionContext 
@@ -115,8 +117,8 @@ public class ActionSystem
             Source = source,
             Target = target,
             Action = action,
-        };
-        OnActionSubmitted?.Invoke(m_currentAction);
+        };        
+        OnActionSubmitted?.Invoke(m_currentAction);        
     }
     
 }

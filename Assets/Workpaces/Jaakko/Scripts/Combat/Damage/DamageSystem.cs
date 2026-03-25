@@ -64,7 +64,14 @@ public class DamageSystem
         Debug.Log($"{source.SourceName} applied {amount} damage to {target.name}");
         if (amount > 0f)
             CombatEvents.DamageApplied(target, amount);
+
         target.Health.ApplyDamage(amount);
+        
+        if (IsDead(target)) 
+        {
+            target.SetDead(true);
+            CombatEvents.ActorDied(target);
+        }
     }
     public void ApplyHeal(float amount, IDamageSource source, CombatActor target) 
     {
@@ -72,6 +79,14 @@ public class DamageSystem
         if (amount > 0f)
             CombatEvents.HealApplied(target, amount);
         target.Health.ApplyHealth(amount);
+    }
+    private bool IsDead(CombatActor actor) 
+    {
+        if (actor.Health.CurrentHealth <= 0f) 
+        {
+            return true;
+        }
+        return false;
     }
     public void ActorTurnStart(CombatActor actor)
     {

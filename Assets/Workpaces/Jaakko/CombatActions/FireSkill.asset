@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SkillAction
   actionName: FireSkill
   description: 
-  apCost: 0
+  apCost: 1
   animationClip: {fileID: 7400000, guid: c105fac2c4171c54390d8e9111a5c889, type: 2}
   isReactive: 1
   grantsApOnUse: 0
