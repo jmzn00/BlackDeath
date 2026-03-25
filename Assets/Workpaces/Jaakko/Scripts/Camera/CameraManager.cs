@@ -33,6 +33,13 @@ public class CameraManager : IManager
             Debug.LogError("CameraManager: No CinemachineCamera found in scene!");
             return false;
         }
+
+        // Sorting mode so no transparency with sprites
+
+        Camera unityCam = UnityEngine.Camera.main;
+        unityCam.transparencySortMode = TransparencySortMode.CustomAxis;
+        unityCam.transparencySortAxis = new Vector3(0f, 0f, 1f);
+
         //Debug.Log($"CameraManager: Found CinemachineCamera: {m_cinemachineCamera.name}");
         return true;
     }

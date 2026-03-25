@@ -2737,6 +2737,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7885814988000868634}
   - component: {fileID: 2322795241114105902}
+  - component: {fileID: 4748401424200743030}
   m_Layer: 0
   m_Name: Visuals
   m_TagString: Untagged
@@ -2803,6 +2804,19 @@ MonoBehaviour:
     showGizmo: 1
   - color: {r: 0, g: 1, b: 0, a: 1}
     showGizmo: 1
+--- !u!210 &4748401424200743030
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9059011711645081977}
+  m_Enabled: 1
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortAtRoot: 0
+  m_Sort3DAs2D: 0
 --- !u!1 &9151864774468534690
 GameObject:
   m_ObjectHideFlags: 0
