@@ -2081,6 +2081,52 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 459065851}
   m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &495392963
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 495392965}
+  - component: {fileID: 495392964}
+  m_Layer: 0
+  m_Name: CombatEffectManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &495392964
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 495392963}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b935497e8300d8241b2acac61e8a30bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CombatEffectManager
+  damagePopUpPrefab: {fileID: 7260526266250960080, guid: 7aa5120bbc161c44aa6e975abecedc66, type: 3}
+  particleEffect: {fileID: 0}
+--- !u!4 &495392965
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 495392963}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -3.68086, y: 0, z: 2.19032}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &514162263
 GameObject:
   m_ObjectHideFlags: 0
@@ -7509,3 +7555,4 @@ SceneRoots:
   - {fileID: 6923989823571581359}
   - {fileID: 113909499}
   - {fileID: 87860420}
+  - {fileID: 495392965}
