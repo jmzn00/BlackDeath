@@ -63,6 +63,7 @@ public class DamageSystem
     {
         Debug.Log($"{source.SourceName} applied {amount} damage to {target.name}");
 
+        CombatEvents.DamageApplied(target, amount);
         target.Health.ApplyDamage(amount);
     }
     public void ApplyHeal(float amount, IDamageSource source, CombatActor target) 

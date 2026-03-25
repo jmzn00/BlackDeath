@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEditorInternal;
 
 public static class CombatEvents
 {
@@ -33,6 +34,8 @@ public static class CombatEvents
     public static event Action OnTransitionStarted;
     public static event Action OnTransitionEnded;
 
+    // DAMAGE
+    public static event Action<CombatActor, float>OnDamageApplied;
     public static void TransitionStarted() 
     {
         OnTransitionStarted?.Invoke();
@@ -100,5 +103,9 @@ public static class CombatEvents
     public static void CombatActorsChanged(List<CombatActor> actors) 
     {
         OnCombatActorsChanged?.Invoke(actors);
+    }
+    public static void DamageApplied(CombatActor actor, float damage) 
+    {
+        OnDamageApplied?.Invoke(actor, damage);
     }
 }
