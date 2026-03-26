@@ -46,6 +46,9 @@ public abstract class CombatAction : ScriptableObject
     public List<ActorStatusEffect> AppliedEffects = new List<ActorStatusEffect>();
 
     public TargetType targetType;
+
+    [Header("Audio")]
+    public AudioClip clip;
     /// <summary>
     /// Execute this action. Called by Combatant.PlayAction.
     /// Base implementation plays the animation; override for special logic.

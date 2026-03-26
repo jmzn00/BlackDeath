@@ -19,7 +19,7 @@ public class Game : MonoBehaviour
         m_gameManager.Init();
     }
     private void Update()
-    {
+    {        
         m_gameManager.Update(Time.deltaTime);
     }
 }

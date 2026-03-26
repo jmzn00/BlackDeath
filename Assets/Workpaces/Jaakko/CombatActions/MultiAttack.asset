@@ -22,5 +22,7 @@ MonoBehaviour:
   confirmDamageMultipler: 1.5
   AppliedEffects: []
   targetType: 2
+  clip: {fileID: 8300000, guid: 0e1af24dd7d2e3d429bb789867c89057, type: 3}
   damage: 1
   bonusDamageOnSuccess: 2
+  ApAmount: 1
