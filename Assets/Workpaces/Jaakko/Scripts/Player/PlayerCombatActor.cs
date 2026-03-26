@@ -45,17 +45,6 @@ public class PlayerCombatActor : CombatActor
     {
         base.CombatEnded(result);
 
-        if (IsDead)
-            IsDead = false;
-
-        if (m_visual) 
-        {
-            m_visual.SetActive(true);
-        }
-        else 
-        {
-            Debug.Log($"NO VISUAL ON {name}");
-        }
         Health.ApplyHealth(Health.MaxHealth);
     }
 }

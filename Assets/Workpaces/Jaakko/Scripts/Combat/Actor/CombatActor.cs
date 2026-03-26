@@ -68,8 +68,6 @@ public class CombatActor : MonoBehaviour, IActorComponent, IDamageSource
     public int ActionPoints => m_actionPoints;
     public int MaxActionPoints => m_maxActionPoints;
 
-    [SerializeField] public int CAP;
-
     public event Action<int> OnActionPointsChanged;
 
 
@@ -201,14 +199,12 @@ public class CombatActor : MonoBehaviour, IActorComponent, IDamageSource
         m_actionPoints += amount;
         m_actionPoints = Mathf.Min(m_actionPoints, m_maxActionPoints);
         OnActionPointsChanged?.Invoke(m_actionPoints);
-        CAP = m_actionPoints;
     }
     public void RemoveActionPoints(int amount) 
     {
         m_actionPoints -= amount;
         m_actionPoints = Mathf.Max(0, m_actionPoints);
         OnActionPointsChanged?.Invoke(m_actionPoints);
-        CAP = m_actionPoints;
     }
     #endregion
     #region Animation

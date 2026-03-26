@@ -16,6 +16,8 @@ public class StatusEffectPortrait : MonoBehaviour
 
         if (m_instance.Template.statusEffectSprite != null)
             m_statusImage.sprite = m_instance.Template.statusEffectSprite;
+
+        m_durationText.text = $"{instance.RemainingTurns}";
     }
     private void DurationChanged(int duration) 
     {
