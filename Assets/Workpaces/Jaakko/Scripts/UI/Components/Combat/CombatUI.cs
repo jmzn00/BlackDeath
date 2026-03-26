@@ -177,16 +177,16 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
 
         CombatEvents.ActorTargetChanged(m_currentActor, m_currentTarget);
     }
-    private void SubmitAction(CombatActor target = null)
+    private void SubmitAction()
     {
         if (m_currentActor == null
             || m_currentAction == null) return;
-        if (target != null)
+        if (m_currentAction.targetType == TargetType.Self) 
         {
-            m_currentTarget = target;
+            m_currentTarget = m_currentActor;
         }
-        if (m_currentTarget == null) return;
 
+        if (m_currentTarget == null) return;
         ActionContext ctx = new ActionContext
         {
             Source = m_currentActor,
@@ -273,7 +273,7 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
         switch (action.targetType)
         {
             case TargetType.Self:
-                SubmitAction(m_currentActor);
+                SubmitAction();
                 break;
             case TargetType.Enemy:
             case TargetType.Ally:

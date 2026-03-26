@@ -13,6 +13,8 @@ public class DamageSystem
     {
         float finalDamage = 0f;
         CombatActor reciever = ctx.Target;
+
+        Debug.Log($"DS: {ctx.Action.actionName} result {result}, target : {ctx.Target.name}");
         switch (result) 
         {
             case ActionResult.Confirmed:

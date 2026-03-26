@@ -87,6 +87,7 @@ public class CombatManager : IManager
         OnCombatStarted?.Invoke();
 
         m_context = new CombatContext(actors);
+        m_damage = new DamageSystem();
 
         m_turn = new TurnSystem(m_context);
 
@@ -94,16 +95,13 @@ public class CombatManager : IManager
         m_action = new ActionSystem(m_context, m_reaction);
         m_action.OnActionFinished += ActionFinished;
         m_action.OnActionSubmitted += ActionSubmitted;
-        
+        m_action.OnActionResolved += m_damage.ActionResolved;
+
         m_transition = new TransitionSystem(area);
         m_transition.OnTransitionFinished += TransitionFinished;
 
-        m_damage = new DamageSystem();
-
         m_commandDispatcher = new CombatCommandDispatcher(m_action, m_reaction);
         m_commandProcessor = new CombatCommandProcessor(actors, m_commandDispatcher);
-
-        CombatEvents.OnActionResolved += m_damage.ActionResolved;
            
         NextTurn();
     }
@@ -197,12 +195,12 @@ public class CombatManager : IManager
         {
             m_action.OnActionFinished -= ActionFinished;
             m_action.OnActionSubmitted -= ActionSubmitted;
+            m_action.OnActionResolved += m_damage.ActionResolved;
         }
         if (m_transition != null)
         {
             m_transition.OnTransitionFinished -= TransitionFinished;
         }
-        CombatEvents.OnActionResolved -= m_damage.ActionResolved;
     }
     public void ChangeState(CombatState state) 
     {
