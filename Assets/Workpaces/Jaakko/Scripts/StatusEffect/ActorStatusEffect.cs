@@ -1,5 +1,5 @@
+using System;
 using UnityEngine;
-using UnityEngine.UIElements;
 public class StatusEffectInstance : IDamageSource
 {
     public CombatActor SourceActor { get; }
@@ -8,6 +8,8 @@ public class StatusEffectInstance : IDamageSource
     public int RemainingTurns;
     private DamageSystem m_damage;
     public readonly ActorStatusEffect Template;
+
+    public event Action<int> OnDurationChanged;
 
     public StatusEffectInstance(ActorStatusEffect effect, CombatActor owner
         , DamageSystem damage) 
@@ -27,7 +29,7 @@ public class StatusEffectInstance : IDamageSource
     public bool TickDuration() 
     {
         RemainingTurns--;
-
+        OnDurationChanged?.Invoke(RemainingTurns);
         if (Template.damage > 0) 
         {
             ApplyDamage(Template.damage);
@@ -41,7 +43,7 @@ public class StatusEffectInstance : IDamageSource
             Template.OnExpire(this);
             SourceActor.RemoveEffect(this);
             return true;
-        }
+        }        
         return false;
     }
     public void UpdateDuration(int amount) 

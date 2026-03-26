@@ -18,6 +18,7 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
     private TargetView m_targetView;
     private DamageView m_damageView;
     private ReactionView m_reactionView;
+    private StatusView m_statusView;
 
     private List<Button> m_buttons = new();
 
@@ -38,11 +39,13 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
         m_targetView = group.TargetView;
         m_damageView = group.DamageView;
         m_reactionView = group.ReactionView;
+        m_statusView = group.StatusView;
 
         m_targetView.Hide();
         m_actionView.Hide();
         m_damageView.Hide();
         m_reactionView.Hide();
+        m_statusView.Hide();
 
         m_input = game.Resolve<InputManager>();
         m_ui = game.Resolve<UIManager>();
@@ -59,9 +62,16 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
         CombatEvents.OnAttackerPromptOpened += AttackerPromptOpened;
         CombatEvents.OnReactionWindowClosed += ReactionWindowClosed;
 
+        CombatEvents.OnActorDied += ActorDied;
+
+        CombatEvents.OnCombatStarted += CombatStarted;
+        CombatEvents.OnCombatEnded += CombatEnded;
+
         m_actionView.Init();
         m_targetView.Init();
         m_damageView.Init();
+        m_reactionView.Init();
+        m_statusView.Init();
 
         m_input.OnSelectTarget += SelectTarget;
     }
@@ -75,6 +85,18 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
         CombatEvents.OnTurnStarted -= TurnStart;
         CombatEvents.OnTurnEnded -= TurnEnd;
         CombatEvents.OnCombatActorsChanged -= ActorsChanged;
+        CombatEvents.OnActorDied -= ActorDied;
+
+        CombatEvents.OnCombatStarted -= CombatStarted;
+        CombatEvents.OnCombatEnded -= CombatEnded;
+    }
+    private void CombatStarted() 
+    {
+        m_statusView.View();
+    }
+    private void CombatEnded(CombatResult res) 
+    {
+        m_statusView.Hide();
     }
     private void AttackerPromptOpened(InputPrompt prompt) 
     {
@@ -106,6 +128,11 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
     private void ActorsChanged(List<CombatActor> actors)
     {
         m_currentParticipants = new List<CombatActor>(actors);
+        m_statusView.ActorsChanged(m_currentParticipants);
+    }
+    private void ActorDied(CombatActor actor) 
+    {
+        m_statusView.ActorDied(actor);
     }
     private void SelectTarget(float value)
     {
@@ -253,6 +280,7 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
                 m_targetView.View();
                 CombatEvents.ActorStateChanged(m_currentActor, CombatActorState.Targeting);
                 m_state = CombatUIState.TargetSelecting;
+                m_currentTargetIndex = 0;
                 SelectTarget(0);
                 break;
         }

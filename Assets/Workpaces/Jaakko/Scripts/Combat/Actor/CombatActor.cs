@@ -70,6 +70,8 @@ public class CombatActor : MonoBehaviour, IActorComponent, IDamageSource
 
     [SerializeField] public int CAP;
 
+    public event Action<int> OnActionPointsChanged;
+
 
     #region IActionProvider
     protected void SetActionProvider(IActionProvider provider)
@@ -198,12 +200,14 @@ public class CombatActor : MonoBehaviour, IActorComponent, IDamageSource
     {        
         m_actionPoints += amount;
         m_actionPoints = Mathf.Min(m_actionPoints, m_maxActionPoints);
+        OnActionPointsChanged?.Invoke(m_actionPoints);
         CAP = m_actionPoints;
     }
     public void RemoveActionPoints(int amount) 
     {
         m_actionPoints -= amount;
         m_actionPoints = Mathf.Max(0, m_actionPoints);
+        OnActionPointsChanged?.Invoke(m_actionPoints);
         CAP = m_actionPoints;
     }
     #endregion
@@ -240,18 +244,21 @@ public class CombatActor : MonoBehaviour, IActorComponent, IDamageSource
     // called by m_animator
     public void CloseWindow()
     {
-        m_combatManager.Action.ClosePrompt(this);
+        if (m_combatManager != null)
+            m_combatManager.Action.ClosePrompt(this);
     }
     // called by m_animator
     public void OpenWindow(string promptKey)
     {
-        m_combatManager.Action.OpenPrompt(this, promptKey);
+        if (m_combatManager != null)
+            m_combatManager.Action.OpenPrompt(this, promptKey);
 
     }
     // called by event
     public void ActionFinished()
     {
-        m_combatManager.Action.NotifyActionFinished(this);
+        if(m_combatManager != null)
+            m_combatManager.Action.NotifyActionFinished(this);
     }
     #endregion
     #region StatusEffect

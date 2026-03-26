@@ -8,6 +8,7 @@ public class CombatUIViewGroup : UIViewGroup
     public TargetView TargetView;
     public DamageView DamageView;
     public ReactionView ReactionView;
+    public StatusView StatusView;
 
     public override Type ComponentType => typeof(CombatUI);
 }
