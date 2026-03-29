@@ -208,8 +208,7 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
 
                 break;
             case CombatUIState.ActionSelecting:
-                m_actionView.ClearActions();
-                m_actionView.ShowActionTypes(m_currentActor.Actions);
+                m_actionView.ShowTypeButtons(m_currentActor.Actions);
                 break;
             case CombatUIState.TargetSelecting:
                 
@@ -220,20 +219,23 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
     {
         if (actor.Team == Team.Enemy) return;
 
+        
         m_currentActor = actor;
         m_currentAction = null;
         m_currentTarget = null;
 
         m_actionView.View();
-        m_actionView.ShowActionTypes(actor.Actions);
         m_actionView.SetPosition(actor.transform.position);
 
         m_actionView.OnActionTypeSelected += ActionTypeSelected;
         m_actionView.OnActionSelected += ActionSelected;
 
+        m_actionView.ShowTypeButtons(actor.Actions);
+
         // for camera
         CombatEvents.ActorStateChanged(m_currentActor, CombatActorState.ActionSelecting);
         m_state = CombatUIState.ActionTypeSelecting;
+        
     }
     private void TurnEnd(CombatActor actor)
     {
@@ -251,8 +253,8 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
     }
     private void ActionTypeSelected(Type type)
     {
-        m_actionView.ShowActionsOfType(type, m_currentActor.Actions);
         m_state = CombatUIState.ActionSelecting;
+        m_actionView.ShowActionsOfType(type, m_currentActor.Actions);
     }
     private void ActionSelected(CombatAction action)
     {

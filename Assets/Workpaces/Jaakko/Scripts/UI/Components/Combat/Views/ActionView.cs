@@ -21,15 +21,15 @@ public class ActionView : MonoBehaviour, IUIComponentView
     [SerializeField] private Transform m_actionAnchor;
 
     [Header("Position")]
-    [SerializeField] private Vector3 m_positionOffset;
-
-    private Dictionary<Type, Button> m_actionTypeMap = new();
+    [SerializeField] private Vector3 m_positionOffset;    
 
     public event Action<Button> OnButtonCreated;
     public event Action<Button> OnButtonRemoved;
 
     public event Action<Type> OnActionTypeSelected;
     public event Action<CombatAction> OnActionSelected;
+
+    
     #region IUIComponentView
     public void View()
     {
@@ -37,104 +37,140 @@ public class ActionView : MonoBehaviour, IUIComponentView
     }
     public void Hide()
     {
-        ClearActions();
-        HideActionTypes();
-
         gameObject.SetActive(false);        
     }
     #endregion
-    private void SetButtonActive(Button button, bool active) 
-    {
-        button.gameObject.SetActive(active);
-        if (active)
-            OnButtonCreated?.Invoke(button);
-        else
-            OnButtonRemoved?.Invoke(button);
-    }
     public void Init() 
     {
-        CreateActionTypeButton<SkillAction>("Skills");
-        CreateActionTypeButton<AttackAction>("Attack");
-        CreateActionTypeButton<SkipTurnAction>("Skip");
+        m_typeButtons = new();
+        m_actionButtons = new();
+
+        CreateTypeButton(typeof(SkillAction), "SkillAction");
+        CreateTypeButton(typeof(AttackAction), "AttackAction");
+        CreateTypeButton(typeof(SkipTurnAction), "SkipAction");
+
+        for (int i = 0; i < 6; i++) 
+        {
+            CreateActionButton();
+        }        
     }
     public void SetPosition(Vector3 position) 
     {
         transform.position = position + m_positionOffset;
     }
-    public void ShowActionTypes(List<CombatAction> actions) 
+    private Dictionary<Type, Button> m_typeButtons;
+    private Dictionary<CombatActionButton, Button> m_actionButtons;
+    private void CreateActionButton() 
     {
-        HideActionTypes();
+        CombatActionButton cab = Instantiate(m_actionButtonPrefab, m_actionAnchor);
+        Button button = cab.GetComponent<Button>();
 
-        var availableTypes = new HashSet<Type>();
+        TMP_Text text = cab.GetComponentInChildren<TMP_Text>();
+        if (text != null)
+            text.ForceMeshUpdate(); // build mesh once
 
-        foreach (var action in actions) 
-        {
-            if (action is SkillAction) availableTypes.Add(typeof(SkillAction));
-            else if (action is AttackAction) availableTypes.Add(typeof(AttackAction));
-            else if (action is SkipTurnAction) availableTypes.Add(typeof(SkipTurnAction));
-        }
+        m_actionButtons[cab] = button;
 
-        foreach (var type in availableTypes) 
-        {
-            if (m_actionTypeMap.TryGetValue(type, out var button)) 
-            {
-                SetButtonActive(button, true);
-            }
-        }
+        cab.gameObject.SetActive(false);
     }
-    private void CreateActionTypeButton<T>(string label) where T : CombatAction
+    private void CreateTypeButton(Type type, string label) 
     {
         Button button = Instantiate(m_typeButtonPrefab, m_typeAnchor);
         TMP_Text text = button.GetComponentInChildren<TMP_Text>();
-        text.text = label;
+        if (text != null)
+            text.SetText(label);
 
         button.onClick.AddListener(() =>
         {
-            OnActionTypeSelected?.Invoke(typeof(T));
+            OnActionTypeSelected?.Invoke(type);
         });
-        m_actionTypeMap[typeof(T)] = button;
-        SetButtonActive(button, false);
-        button.gameObject.name = "Button " + label;
+
+        m_typeButtons[type] = button;
+        ToggleButton(button, false);        
     }
-    public void ShowActionsOfType(Type type, List<CombatAction> actions) 
+
+    public void ShowTypeButtons(List<CombatAction> actions) 
     {
-        HideActionTypes();
-        ClearActions();
+        HideTypeButtons();
+        HideActionButtons();
+        
+        HashSet<Type> availableTypes = new();
+
         foreach (var action in actions) 
         {
-            if (action.GetType() != type) continue;
+            availableTypes.Add(action.GetType());
+        }
+        
+        foreach (var type in availableTypes) 
+        {
+            if (m_typeButtons.TryGetValue(type, out Button button)) 
+            {
+                ToggleButton(button, true);
+            }
+        }
+        
+        
+    }
+    private void HideTypeButtons() 
+    {
+        foreach (var btn in m_typeButtons.Values)
+            ToggleButton(btn, false);
+    }
+    private void HideActionButtons() 
+    {
+        foreach (var btn in m_actionButtons.Values)
+            ToggleButton(btn, false);
+    }
 
-            var combatActionButton
-                = Instantiate(m_actionButtonPrefab, m_actionAnchor);
+    public void ShowActionsOfType(Type type, List<CombatAction> actions) 
+    {
+        HideTypeButtons();
+        HideActionButtons();
 
-            combatActionButton.UpdateAction(action);
+        int index = 0;
 
-            Button button = combatActionButton.GetComponent<Button>();
+        foreach (var action in actions) 
+        {
+            if (!type.IsAssignableFrom(action.GetType()))
+                continue;
+
+            if (index >= m_actionButtons.Count) 
+            {
+                // should spawn more
+                break;
+            }
+
+            var pair = new List<KeyValuePair<CombatActionButton
+                , Button>>(m_actionButtons)[index];
+
+            CombatActionButton cab = pair.Key;
+            Button button = pair.Value;
+
+            cab.UpdateAction(action);
+
+            button.onClick.RemoveAllListeners();
             button.onClick.AddListener(() =>
             {
                 OnActionSelected?.Invoke(action);
             });
-            SetButtonActive(button, true);
-        }  
-    }
-    private void HideActionTypes()
-    {
-        foreach (var kvp in m_actionTypeMap)
-        {
-            SetButtonActive(kvp.Value, false);
+
+            cab.gameObject.SetActive(true);
+            ToggleButton(button, true);
+
+            index++;
         }
     }
-    public void ClearActions()
-    {
-        foreach (Transform child in m_actionAnchor)
+    private void ToggleButton(Button button, bool value) 
+    {                
+        if (value) 
         {
-            Button b = child.gameObject.GetComponent<Button>();
-            if (b != null) 
-            {
-                b.onClick.RemoveAllListeners();
-                SetButtonActive(b, false);
-            }            
-            Destroy(child.gameObject);
+            OnButtonCreated?.Invoke(button);
+            button.gameObject.SetActive(true);
         }
+        else 
+        {
+            OnButtonRemoved?.Invoke(button);
+            button.gameObject.SetActive(false);
+        }        
     }
 }

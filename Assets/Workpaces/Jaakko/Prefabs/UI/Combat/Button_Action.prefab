@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 3261260184071201034}
   - component: {fileID: 16883088128772150}
   - component: {fileID: 8740324363258517665}
+  - component: {fileID: 4192497259040154143}
   m_Layer: 0
   m_Name: Button_Action
   m_TagString: Untagged
@@ -136,6 +137,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   m_actionNameText: {fileID: 7258253317348926622}
   m_actionDesciptionText: {fileID: 175349161864932428}
+--- !u!225 &4192497259040154143
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2797454975775008962}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &3379667701163078197
 GameObject:
   m_ObjectHideFlags: 0

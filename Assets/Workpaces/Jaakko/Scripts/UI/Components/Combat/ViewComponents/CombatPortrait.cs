@@ -37,8 +37,10 @@ public class CombatPortrait : MonoBehaviour
 
         m_actor.OnStatusEffectsChanged += StatusEffectsChanged;
     }
-    private void OnDestroy()
+    public void Dispose() 
     {
+        if (m_actor == null) return;
+
         m_actor.Health.OnHealthChanged -= HealthChanged;
         m_actor.OnActionPointsChanged -= ApChanged;
     }
@@ -47,16 +49,19 @@ public class CombatPortrait : MonoBehaviour
         int max = Mathf.CeilToInt(m_actor.Health.MaxHealth);
         int health = Mathf.CeilToInt(newHealth);
 
+        string text = $"{health} / {max}";
         m_healthSlider.value = health;
-        m_healthText.text = $"{health} / {max}";
+        m_healthText.SetText(text);
     }
     private void ApChanged(int newValue) 
     {
+        string text = $"{newValue} / {m_actor.MaxActionPoints}";
         m_apSlider.value = newValue;
-        m_apText.text = $"{newValue} / {m_actor.MaxActionPoints}";
+        m_apText.SetText(text);
     }
     private void StatusEffectsChanged(List<StatusEffectInstance> effects) 
     {
+        
         foreach (Transform child in m_statusAnchor) 
         {
             Destroy(child.gameObject);
@@ -68,6 +73,7 @@ public class CombatPortrait : MonoBehaviour
                 m_statusAnchor);
             p.Bind(e);
         }
+        
     }
     
 }

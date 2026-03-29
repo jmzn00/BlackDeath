@@ -9,7 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f3887e8723cf2314aaf6a02dc5954cbd, type: 3}
+  m_Script: {fileID: 11500000, guid: 65f161edcf478ca46bc930f75680de10, type: 3}
   m_Name: SilenceSkill
   m_EditorClassIdentifier: Assembly-CSharp::SkillAction
   actionName: Silence Skill
@@ -19,10 +19,11 @@ MonoBehaviour:
   isReactive: 1
   grantsApOnUse: 0
   baseDamage: 1
-  confirmDamageMultipler: 1
+  confirmDamageMultipler: 1.5
   AppliedEffects:
   - {fileID: 11400000, guid: 1e00e8df307b0d9469d906410a575a8e, type: 2}
   targetType: 2
+  clip: {fileID: 0}
   damage: 0
   bonusDamageOnSuccess: 0
   targetEffects: []

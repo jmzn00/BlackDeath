@@ -52,6 +52,7 @@ public class CombatArea : MonoBehaviour
     }
     public void StartBattle()
     {
+        
         CombatEvents.CombatStarted();
 
         if (m_combatPreferences.m_enemies[0] == null)
@@ -77,7 +78,7 @@ public class CombatArea : MonoBehaviour
 
             setIndex++;
         }
-
+        
         int enemyCount = prefs.m_enemies.Length;
         int spawnPoints = prefs.m_enemySpawnPoints.Length;
 
@@ -103,7 +104,9 @@ public class CombatArea : MonoBehaviour
             }
         }
         m_spawned = true;
+        
         m_combatManager.StartCombat(combatActors, this);
+        
     }
     public void EndBattle(CombatResult result) 
     {

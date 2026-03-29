@@ -7,42 +7,71 @@ public class StatusView : MonoBehaviour, IUIComponentView
     [Header("Prefabs")]
     [SerializeField] private CombatPortrait m_portraitPrefab;
 
-    private Dictionary<CombatActor, CombatPortrait> m_portraits;
+    private List<CombatPortrait> m_portraits;
+    private Dictionary<CombatActor, CombatPortrait> m_portraitLookup;
 
     public void Init() 
     { 
         if (m_portraits != null) 
         {
-            foreach (var kvp in m_portraits) 
+            foreach (var p in m_portraits) 
             {
-                Destroy(kvp.Value);
+                Destroy(p.gameObject);
             }
             m_portraits.Clear();
         }
         m_portraits = new();
+        m_portraitLookup = new();
+
+        for (int i = 0; i < 4; i++) 
+        {
+            CreatePortrait();
+        }
     }
     public void View() { gameObject.SetActive(true); }
     public void Hide() { gameObject.SetActive(false); }
+    private void CreatePortrait() 
+    {
+        CombatPortrait p = Instantiate(m_portraitPrefab, transform);
+        m_portraits.Add(p);
+        TogglePortrait(p, false);
+    }
+    private void TogglePortrait(CombatPortrait p, bool value) 
+    {
+        p.gameObject.SetActive(value);
+    }
 
     public void ActorsChanged(List<CombatActor> actors) 
     {
         List<CombatActor> allies = new List<CombatActor>(actors
             .Where(a => a.Team == Team.Player));
 
-        foreach (var a in allies) 
+        if (allies.Count > m_portraits.Count) 
         {
-            CombatPortrait p = Instantiate(m_portraitPrefab, transform);
-            p.Bind(a);
+            int diff = allies.Count - m_portraits.Count;
 
-            m_portraits[a] = p;
+            for (int i = 0; i < diff; i++) 
+            {
+                CreatePortrait();
+            }
+        }
+
+        for (int i = 0; i < allies.Count; i++) 
+        {
+            CombatPortrait p = m_portraits[i];
+            CombatActor a = allies[i];
+
+            p.Bind(a);
+            m_portraitLookup[a] = p;
+            TogglePortrait(p, true);
         }
     }
     public void ActorDied(CombatActor actor) 
     {
-        if (m_portraits.TryGetValue(actor, out CombatPortrait portrait))
+        if (m_portraitLookup.TryGetValue(actor, out CombatPortrait p)) 
         {
-            Destroy(portrait.gameObject);
-            m_portraits.Remove(actor);
+            p.Dispose();
+            TogglePortrait(p, false);
         }
     }
 }

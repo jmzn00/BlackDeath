@@ -1,4 +1,3 @@
-using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,6 +10,7 @@ public class CombatActionButton : MonoBehaviour
 
     public void UpdateAction(CombatAction action) 
     {
+        
         m_actionNameText.text = action.actionName;
 
         string description = $"Applies {action.baseDamage} damage with " +
@@ -35,5 +35,6 @@ public class CombatActionButton : MonoBehaviour
         }
         m_actionDesciptionText.text = description;
         name = "Button " + action.actionName;
+        
     }
 }

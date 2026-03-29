@@ -15,10 +15,11 @@ MonoBehaviour:
   actionName: Skip Turn
   description: 
   apCost: 0
-  animationClip: {fileID: 0}
+  animationClip: {fileID: 7400000, guid: 6237323bf1378af43a63e6523222f8f8, type: 2}
   isReactive: 1
   grantsApOnUse: 0
   baseDamage: 0
   confirmDamageMultipler: 0
   AppliedEffects: []
   targetType: 0
+  clip: {fileID: 0}

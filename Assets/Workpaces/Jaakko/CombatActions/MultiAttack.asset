@@ -9,20 +9,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 96d9e96d290a56b4e8357d28e7a18676, type: 3}
+  m_Script: {fileID: 11500000, guid: 8ce69bea004d10248b490ecd7d16709b, type: 3}
   m_Name: MultiAttack
   m_EditorClassIdentifier: Assembly-CSharp::AttackAction
-  actionName: MultiAttack
+  actionName: Multi Hit
   description: 
   apCost: 0
   animationClip: {fileID: 7400000, guid: c105fac2c4171c54390d8e9111a5c889, type: 2}
   isReactive: 1
   grantsApOnUse: 0
   baseDamage: 1
-  confirmDamageMultipler: 1.5
+  confirmDamageMultipler: 1.2
   AppliedEffects: []
   targetType: 2
   clip: {fileID: 8300000, guid: 0e1af24dd7d2e3d429bb789867c89057, type: 3}
   damage: 1
-  bonusDamageOnSuccess: 2
+  bonusDamageOnSuccess: 1
   ApAmount: 1

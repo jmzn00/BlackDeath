@@ -31,16 +31,6 @@ public class UIController : MonoBehaviour
             else m_visibleComponents.Remove(comp);
         }
     }  
-    public bool IsVisibe<T>() where T : IUIComponent 
-    {
-        var comp = m_uiComponents.OfType<T>().FirstOrDefault();
-        if (comp != null) 
-        {
-            return comp.IsVisible();
-        }
-        Debug.LogWarning("Couldnt Find Component");
-        return false;
-    }
     void BuildModules() 
     {
         var groups = FindObjectsByType<UIViewGroup>(FindObjectsSortMode.None)

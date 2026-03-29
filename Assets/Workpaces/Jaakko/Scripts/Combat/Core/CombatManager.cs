@@ -78,14 +78,14 @@ public class CombatManager : IManager
     public void StartCombat(List<CombatActor> actors, CombatArea area)
     {
         if (m_state != CombatState.Inactive) return;
-
+        
         CombatEvents.CombatActorsChanged(actors);
 
         m_area = area;
         ChangeState(CombatState.Active);
         m_game.SetState(GameState.Combat);
         OnCombatStarted?.Invoke();
-
+        
         m_context = new CombatContext(actors);
         m_damage = new DamageSystem();
 
@@ -102,8 +102,9 @@ public class CombatManager : IManager
 
         m_commandDispatcher = new CombatCommandDispatcher(m_action, m_reaction);
         m_commandProcessor = new CombatCommandProcessor(actors, m_commandDispatcher);
-           
+          
         NextTurn();
+        
     }
     private void ActionSubmitted(ActionContext actx)
     {
