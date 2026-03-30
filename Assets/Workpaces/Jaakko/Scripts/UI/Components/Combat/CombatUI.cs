@@ -218,7 +218,7 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
     private void TurnStart(CombatActor actor)
     {
         if (actor.Team == Team.Enemy) return;
-
+        
         
         m_currentActor = actor;
         m_currentAction = null;

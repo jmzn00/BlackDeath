@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 public class SpawnPreferences 
 {
@@ -70,7 +69,7 @@ public class PoolManager : IManager
             var pooled = obj.GetComponent<PooledObject>();
             if (pooled == null) 
             {
-                obj.AddComponent<PooledObject>().Init(this, prefab);
+                obj.AddComponent<PooledObject>();
             }
             pooled.Init(this, prefab);
         }

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using static InputSystem_Actions;
 
 [System.Serializable]
 public class CombatPreferences 
@@ -23,23 +24,60 @@ public class CombatArea : MonoBehaviour
     private ActorManager m_actorManager;
     private BoxCollider m_boxCollider;
     private bool m_areaCompleted;
-    private bool m_spawned;
+    private bool m_started;
 
     [Header("Flags")]
     [SerializeField] private string m_conditionFlag;
     [SerializeField] private string m_setFlag;
+
+    private List<CombatActor> m_enemies;
 
     public void Initialize(GameManager game) 
     {
         m_combatManager = game.Resolve<CombatManager>();
         m_actorManager = game.Resolve<ActorManager>();
         m_dialogueManger = game.Resolve<DialogueManager>();
-        m_spawned = false;
+
+        m_started = false;  
 
         CombatEvents.OnCombatEnded += AreaFinished;
+
+        SpawnEnemies();
+    }
+    private void SpawnEnemies() 
+    {
+        m_enemies = new();
+
+        CombatPreferences prefs = m_combatPreferences;
+
+        int enemyCount = prefs.m_enemies.Length;
+        int spawnPoints = prefs.m_enemySpawnPoints.Length;
+
+        int spawned = 0;
+        for (int i = 0; i < spawnPoints; i++)
+        {
+            int index = i % enemyCount;
+
+            ActorSpawnPreferences asp = new ActorSpawnPreferences
+            {
+                prefab = prefs.m_enemies[index],
+                position = prefs.m_enemySpawnPoints[i].position,
+                rotation = prefs.m_enemySpawnPoints[i].rotation
+            };
+            Actor enemy = m_actorManager.Spawn(asp);
+            spawned++;
+            if (enemy != null)
+            {
+                CombatActor ca = enemy.Get<CombatActor>();
+                if (ca != null)
+                    m_enemies.Add(ca);
+            }
+        }
     }
     private void AreaFinished(CombatResult result) 
     {
+        if (!m_started) return;
+
         switch (result) 
         {
             case CombatResult.Won:
@@ -51,8 +89,7 @@ public class CombatArea : MonoBehaviour
         }
     }
     public void StartBattle()
-    {
-        
+    {        
         CombatEvents.CombatStarted();
 
         if (m_combatPreferences.m_enemies[0] == null)
@@ -79,32 +116,12 @@ public class CombatArea : MonoBehaviour
             setIndex++;
         }
         
-        int enemyCount = prefs.m_enemies.Length;
-        int spawnPoints = prefs.m_enemySpawnPoints.Length;
-
-        int spawned = 0;
-        for (int i = 0; i < spawnPoints; i++)
+        foreach (var a in m_enemies) 
         {
-            int index = i % enemyCount;
-
-            ActorSpawnPreferences asp = new ActorSpawnPreferences
-            {
-                prefab = prefs.m_enemies[index],
-                position = prefs.m_enemySpawnPoints[i].position,
-                rotation = prefs.m_enemySpawnPoints[i].rotation
-            };
-            Actor enemy = m_actorManager.Spawn(asp);    
-            spawned++;
-            if (enemy != null)
-            {
-                enemy.name = "enemy " + spawned;
-                CombatActor ca = enemy.Get<CombatActor>();
-                if (ca != null)
-                    combatActors.Add(ca);
-            }
+            combatActors.Add(a);
         }
-        m_spawned = true;
-        
+       
+        m_started = true;
         m_combatManager.StartCombat(combatActors, this);
         
     }
@@ -117,20 +134,17 @@ public class CombatArea : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
-        if (m_areaCompleted || m_spawned) return;
+        if (m_areaCompleted || m_started) return;
 
-        // if the area has a condition flag and player does
-        // not have the flag then they cannot start the battle
-        if (other.CompareTag("Player")) 
+        if (!other.CompareTag("Player")) return;
+
+        if (!string.IsNullOrEmpty(m_conditionFlag))
         {
-            if (!string.IsNullOrEmpty(m_conditionFlag))
-            {
-                if (!m_dialogueManger.HasFlag(m_conditionFlag))
-                    return;
-            }
-
-            StartBattle();
+            if (!m_dialogueManger.HasFlag(m_conditionFlag))
+                return;
         }
+
+        StartBattle();
     }
     private void OnDrawGizmos()
     {

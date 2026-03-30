@@ -107,6 +107,7 @@ public class Actor : MonoBehaviour, IActor
             m_components[comp.GetType()] = comp;
         }
         OnActorComponentsInitialized();
+
         m_playerInputSource = new PlayerInputSource(game.Resolve<InputManager>());
         m_aiInputSource = new AIInputSource(transform);
         m_actorManager = game.Resolve<ActorManager>();
@@ -136,44 +137,23 @@ public class Actor : MonoBehaviour, IActor
         foreach (var comp in m_components.Values)
             comp.SaveData(data);
     }
-
-    // Dynamically add a component
     public T AddComponent<T>() where T : Component, IActorComponent
     {
         var comp = gameObject.AddComponent<T>();
         m_components[typeof(T)] = comp;
         return comp;
     }
-
-    // Get a component by generic type
     public T Get<T>() where T : class, IActorComponent
     {
-        // Try exact-type lookup first
         if (m_components.TryGetValue(typeof(T), out var comp))
             return comp as T;
 
-        // Fallback: return the first stored component that is assignable to T
         foreach (var kv in m_components)
         {
             if (kv.Value is T matched)
                 return matched;
         }
 
-        return null;
-    }
-
-    // Get a component by Type
-    public IActorComponent Get(Type type)
-    {
-        if (m_components.TryGetValue(type, out var comp))
-            return comp;
-
-        // Fallback: find any stored component whose concrete type is assignable to requested type
-        foreach (var kv in m_components)
-        {
-            if (type.IsAssignableFrom(kv.Key))
-                return kv.Value;
-        }
         return null;
     }
 }
