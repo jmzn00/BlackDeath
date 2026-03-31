@@ -43,7 +43,7 @@ Animator:
   m_GameObject: {fileID: 7033920502150300334}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: d76086fafa6463245867fc2b8d6dead9, type: 2}
+  m_Controller: {fileID: 9100000, guid: b9e2ac68b893bed4382beb0da5118216, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -65,7 +65,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8653719598885068355, guid: ded315b627f472b408a7efb124abf04f, type: 3}
       propertyPath: m_Name
-      value: fanaticvillager_leader_final
+      value: Visuals
       objectReference: {fileID: 0}
     - target: {fileID: -7552582706839291426, guid: ded315b627f472b408a7efb124abf04f, type: 3}
       propertyPath: m_LocalPosition.x
