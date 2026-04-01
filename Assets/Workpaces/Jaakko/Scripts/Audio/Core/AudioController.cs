@@ -22,6 +22,7 @@ public class AudioController : MonoBehaviour
             return;
         }
         I = this;
+        DontDestroyOnLoad(this);
     }
     private void OnDestroy()
     {
