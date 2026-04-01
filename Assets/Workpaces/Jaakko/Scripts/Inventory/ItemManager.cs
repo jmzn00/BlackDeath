@@ -22,6 +22,10 @@ public class ItemManager : IManager
         }
         return true;
     }
+    public void OnSceneLoaded(SceneData data) 
+    {
+    
+    }
     public void OnManagersInitialzied()
     {
 

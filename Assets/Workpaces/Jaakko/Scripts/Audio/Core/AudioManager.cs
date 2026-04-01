@@ -38,6 +38,10 @@ public class AudioManager : IManager
             new CombatAudioModule(this)
         };
     }
+    public void OnSceneLoaded(SceneData data) 
+    {
+    
+    }
     public void Update(float dt)
     {
         for (int i = 0; i < m_modules.Count; i++) 

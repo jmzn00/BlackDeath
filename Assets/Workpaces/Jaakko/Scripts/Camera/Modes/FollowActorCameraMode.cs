@@ -42,7 +42,9 @@ public class FollowActorCameraMode : ICameraMode
     public void Enter() 
     {
         Debug.Log("Follow Actor Camera Mode: Enter");
-        
+
+        m_camera = m_cameraManager.Camera; // ADDED TO FIX SCENE LOAD 
+
         OnActorChanged(m_actorManager.CurrentControlled);
         m_actorManager.OnActorControlChanged += OnActorChanged;
         

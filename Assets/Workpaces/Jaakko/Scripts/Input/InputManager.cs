@@ -74,6 +74,10 @@ public class InputManager : IManager
         HandleInput();
         HandleUIInput();
     }
+    public void OnSceneLoaded(SceneData data) 
+    {
+    
+    }
     private void HandleInput() 
     {
         m_inputState.InputDirection =

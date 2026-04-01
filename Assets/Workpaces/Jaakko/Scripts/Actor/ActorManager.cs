@@ -52,6 +52,13 @@ public class ActorManager : IManager
     {
         m_game = game;
     }
+    public void OnSceneLoaded(SceneData data) 
+    {
+        if (data.IsGameplay) 
+        {
+            GatherActorsInScene();
+        }
+    }
     public List<ActorSaveData> SaveAllActors() 
     {
         // slow
@@ -81,6 +88,10 @@ public class ActorManager : IManager
         return true;
     }
     public void OnManagersInitialzied() 
+    {        
+
+    }
+    private void GatherActorsInScene() 
     {
         m_actors = new List<IActor>();
         IActor[] actorsInScene = GameObject.
@@ -96,19 +107,18 @@ public class ActorManager : IManager
         m_party = m_actors.OfType<Actor>()
             .Where(a => a.IsPlayable)
             .ToList();
-        if (m_party.Count > 0) 
+        if (m_party.Count > 0)
         {
-            foreach (var a in m_party) 
+            foreach (var a in m_party)
             {
                 if (a.CompareTag("Player"))
                     SetControlledActor(a);
             }
             if (m_currentControlled == null)
                 SetControlledActor(m_party[0]);
-        }            
+        }
         else
             Debug.LogWarning("No playable actors found in scene!");
-
     }
     public bool Dispose() 
     {

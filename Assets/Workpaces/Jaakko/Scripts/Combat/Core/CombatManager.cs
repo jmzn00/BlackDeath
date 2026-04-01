@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 using UnityEngine;
+using UnityEngine.UIElements;
 public enum CombatState
 {
     Active,
@@ -57,17 +58,24 @@ public class CombatManager : IManager
     {
         return true;
     }
+    public void OnSceneLoaded(SceneData data) 
+    {
+        if (data.IsGameplay) 
+        {
+            List<CombatArea> areas =
+                GameObject.
+                 FindObjectsByType<CombatArea>
+                (FindObjectsSortMode.None).
+                ToList();
+            foreach (CombatArea area in areas)
+            {
+                area.Initialize(m_game);
+            }
+        }
+    }
     public void OnManagersInitialzied()
     {
-        List<CombatArea> areas =
-            GameObject.
-            FindObjectsByType<CombatArea>
-            (FindObjectsSortMode.None).
-            ToList();
-        foreach (CombatArea area in areas)
-        {
-            area.Initialize(m_game);
-        }
+
     }
     public bool Dispose()
     {

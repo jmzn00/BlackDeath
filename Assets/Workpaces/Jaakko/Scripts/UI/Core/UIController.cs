@@ -12,6 +12,8 @@ public class UIController : MonoBehaviour
 
     public void Initialize(GameManager game) 
     {
+        DontDestroyOnLoad(this);
+
         m_game = game;
 
         BuildModules();

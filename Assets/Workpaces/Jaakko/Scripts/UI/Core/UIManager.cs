@@ -33,6 +33,13 @@ public class UIManager : IManager
         m_input = m_game.Resolve<InputManager>();
         return true;
     }
+    public void OnSceneLoaded(SceneData data) 
+    {
+        if (data.IsGameplay) 
+        {
+            m_uiController.ShowComponent<MainMenuUI>(false);
+        }
+    }
     public bool Dispose()
     {
         if (m_uiController)

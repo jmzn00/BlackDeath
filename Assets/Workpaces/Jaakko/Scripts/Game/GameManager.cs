@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 public enum GameState 
 {
     None,
@@ -24,7 +25,10 @@ public class GameManager : IManager
         m_state = state;
         OnStateChanged?.Invoke(state);
     }
+    public void OnSceneLoaded(SceneData data)
+    {
 
+    }
     public bool Init() 
     {
         m_container = new Container();
@@ -49,12 +53,16 @@ public class GameManager : IManager
 
         InitManagers();
         PopulateServices();
+
+        SceneManager.sceneLoaded += SceneLoaded;
         return true;
     }
     public bool Dispose() 
     {
         DisposeManagers();
         Services.Clear();
+
+        SceneManager.sceneLoaded -= SceneLoaded;
         return true;
     }
     public void Update(float dt) 
@@ -62,6 +70,37 @@ public class GameManager : IManager
         for (int i = 0; i < m_managers.Count; i++)
             m_managers[i].Update(dt);
     }
+    public void SaveGame(int slot) 
+    {
+        var save = Resolve<SaveManager>();
+
+        SceneData data = new SceneData(SceneManager.GetActiveScene().name,
+            true);
+
+        save.Save(slot, data);
+    }
+    public void LoadGame(SaveSlotMeta meta) 
+    {
+        var save = Resolve<SaveManager>();
+        save.SetCurrentSlot(meta.Slot);
+
+        SceneManager.LoadScene(meta.SceneName);
+    }
+    private void SceneLoaded(Scene scene, LoadSceneMode mode) 
+    {
+        bool isGame = true;
+        // not type safe but works for now
+        if (scene.name == "Scene_MainMenu") 
+        {
+            isGame = false;
+        }
+        SceneData data = new SceneData(scene.name, isGame);
+
+        foreach (var m in m_managers)
+            m.OnSceneLoaded(data);
+
+        Debug.Log($"Scene: {scene.name} loaded. isGame:: {isGame}");
+    }    
     private void InitManagers() 
     {
         foreach (var m in m_managers) 

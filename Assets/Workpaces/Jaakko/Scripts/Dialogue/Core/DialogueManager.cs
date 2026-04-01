@@ -36,6 +36,10 @@ public class DialogueManager : IManager
         m_nodeLookup = nodes.ToDictionary(n => n.id, n => n);
         return true;
     }
+    public void OnSceneLoaded(SceneData data) 
+    {
+    
+    }
     public bool Dispose() 
     {
         return true;

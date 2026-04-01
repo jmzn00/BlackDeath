@@ -16,6 +16,7 @@ public class PoolManager : IManager
         m_game = game;
     }
     public void OnManagersInitialzied() { }
+    public void OnSceneLoaded(SceneData data) { }
     public bool Init() 
     {
         m_pools = new();

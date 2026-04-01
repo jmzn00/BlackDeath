@@ -43,17 +43,11 @@ public class CombatCameraMode : ICameraMode
         m_camera = cameraManager.Camera;
         m_actorTargets = new Dictionary<CombatActor, CameraTarget>();
 
-        Debug.Log("CombatCameraMode: Constructor called");
-
         // Load presets from Resources
         m_presets = Resources.Load<CameraPresetsConfig>("CameraPresets");
         if (m_presets == null)
         {
             Debug.LogError("CombatCameraMode: CameraPresetsConfig not found in Resources folder!");
-        }
-        else
-        {
-            Debug.Log("CombatCameraMode: Loaded CameraPresetsConfig successfully");
         }
     }
 
@@ -68,7 +62,7 @@ public class CombatCameraMode : ICameraMode
         //Debug.Log("========================================");
         //Debug.Log("=== Combat Camera Mode: ENTER ===");
         //Debug.Log("========================================");
-
+        m_camera = m_cameraManager.Camera; // FIX FOR SCENE LOAD
         m_isFirstTurn = true;
 
         // Subscribe to combat events

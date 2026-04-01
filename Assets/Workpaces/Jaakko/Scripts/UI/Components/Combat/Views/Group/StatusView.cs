@@ -9,7 +9,6 @@ public class StatusView : MonoBehaviour, IUIComponentView
 
     private List<CombatPortrait> m_portraits;
     private Dictionary<CombatActor, CombatPortrait> m_portraitLookup;
-
     public void Init() 
     { 
         if (m_portraits != null) 
