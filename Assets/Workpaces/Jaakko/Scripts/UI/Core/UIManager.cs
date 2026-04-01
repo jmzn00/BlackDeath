@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -31,6 +32,8 @@ public class UIManager : IManager
     {
         m_navigation = new UIControllerNavigation(m_game.Resolve<InputManager>());
         m_input = m_game.Resolve<InputManager>();
+
+        m_input.OnUIInputAction += HandleUIInput;
         return true;
     }
     public void OnSceneLoaded(SceneData data) 
@@ -61,6 +64,17 @@ public class UIManager : IManager
         OnGameStateChanged(m_game.State);
     }
     #endregion    
+    bool HandleUIInput(UIInputAction action) 
+    {
+        switch (action) 
+        {
+            case UIInputAction.Menu:
+                m_uiController.ShowComponent<MainMenuUI>(true);
+                return true;
+            default:
+                return false;
+        }
+    }
     private void OnGameStateChanged(GameState state)
     {
         if (m_uiController == null) return;

@@ -7,8 +7,8 @@ public class LoadView : MonoBehaviour, IUIComponentView
     {
         
     }
-    public void View() { transform.parent.gameObject.SetActive(true); }
-    public void Hide() { transform.parent.gameObject.SetActive(false); }
+    public void View() { gameObject.SetActive(true); }
+    public void Hide() { gameObject.SetActive(false); }
     public SaveSlotButton CreateSlot(SaveSlotMeta meta) 
     {
         return Instantiate(m_slotPrefab, transform);

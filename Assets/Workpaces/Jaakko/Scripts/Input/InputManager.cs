@@ -3,7 +3,8 @@ using UnityEngine;
 public enum UIInputAction
 {
     Submit,
-    Cancel
+    Cancel,
+    Menu
 }
 public struct InputState 
 {
@@ -119,6 +120,11 @@ public class InputManager : IManager
             !m_inputActions.UI.Submit.IsPressed();
         m_uiInputState.CancelPressed =
             m_inputActions.UI.Cancel.WasPressedThisFrame();
+        
+        if (m_inputActions.UI.OpenMenu.WasPressedThisFrame()) 
+        {
+            OnUIInputAction?.Invoke(UIInputAction.Menu);
+        }
 
         Vector2 raw = m_inputActions.UI.Navigate.ReadValue<Vector2>();
         m_uiInputState.InputDirection = raw;

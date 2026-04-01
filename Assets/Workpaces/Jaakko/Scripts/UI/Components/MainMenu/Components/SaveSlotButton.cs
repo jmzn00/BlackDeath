@@ -10,9 +10,9 @@ public class SaveSlotButton : MonoBehaviour
     [SerializeField] private TMP_Text m_sceneText;
     [SerializeField] private TMP_Text m_timeText;
 
-    public event Action<SaveSlotMeta> OnPressed;
+    public event Action<SaveSlotMeta, int> OnPressed;
 
-    public void Bind(SaveSlotMeta meta) 
+    public void Bind(SaveSlotMeta meta, int index) 
     {
         if (meta.HasData) 
         {
@@ -27,10 +27,10 @@ public class SaveSlotButton : MonoBehaviour
             meta.SceneName = "Scene_Gameplay";
             meta.HasData = true;
         }
-            m_button.onClick.AddListener(() =>
-            {
-                OnPressed?.Invoke(meta);
-            });
+        m_button.onClick.AddListener(() =>
+        {
+            OnPressed?.Invoke(meta, index);
+        });
     }
     private void OnDestroy()
     {
