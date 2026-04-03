@@ -136,7 +136,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthComponent
   ch: 5
-  m_maxHealth: 8
+  m_maxHealth: 1
 --- !u!114 &3814527889666782412
 MonoBehaviour:
   m_ObjectHideFlags: 0

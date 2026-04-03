@@ -1,4 +1,5 @@
-[System.Serializable]
+using UnityEngine;
+
 public class AiActor : Actor
 {
     public override void Init(GameManager game)
@@ -6,5 +7,13 @@ public class AiActor : Actor
         base.Init(game);
 
         AddComponent<InventoryComponent>();
+    }
+    private void OnDestroy()
+    {
+        var am = m_game.Resolve<ActorManager>();
+        if (!am.Unregister(this)) 
+        {
+            Debug.Log($"{name} failed to unregister OnDestroy");
+        }
     }
 }

@@ -16,7 +16,7 @@ public class MainView : MonoBehaviour, IUIComponentView
     {
         m_startButton.onClick.AddListener(() =>
         {
-            OnButtonClicked?.Invoke(MainMenuState.Start);
+            OnButtonClicked?.Invoke(MainMenuState.Load);
         });
         m_saveButton.onClick.AddListener(() =>
         {

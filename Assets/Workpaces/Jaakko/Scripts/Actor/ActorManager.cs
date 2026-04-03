@@ -61,11 +61,14 @@ public class ActorManager : IManager
     }
     public List<ActorSaveData> SaveAllActors() 
     {
-        // slow
-        return m_actors
-            .Select(actor
-            => actor.Save())
-            .ToList();
+        List<ActorSaveData> save = new List<ActorSaveData>();
+        for (int i = 0; i < m_actors.Count; i++) 
+        {
+            if (m_actors[i] == null)
+                continue;
+            save.Add(m_actors[i].Save());
+        }
+        return save;
     }
     public void LoadAllActors(List<ActorSaveData> actorDataList) 
     {

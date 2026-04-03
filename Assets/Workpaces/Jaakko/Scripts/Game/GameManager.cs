@@ -98,8 +98,6 @@ public class GameManager : IManager
 
         foreach (var m in m_managers)
             m.OnSceneLoaded(data);
-
-        Debug.Log($"Scene: {scene.name} loaded. isGame:: {isGame}");
     }    
     private void InitManagers() 
     {

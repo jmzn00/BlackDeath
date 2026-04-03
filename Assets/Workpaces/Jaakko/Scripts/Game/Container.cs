@@ -33,8 +33,6 @@ public class Container
     {
         return m_instances.Values.OfType<T>();
     }
-
-    // Added: allow registering an existing instance so Resolve won't create a new one.
     public void RegisterInstance<T>(T instance) where T : class
     {
         if (instance == null) throw new ArgumentNullException(nameof(instance));

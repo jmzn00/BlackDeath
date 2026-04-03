@@ -19,7 +19,7 @@ public class SaveSlotButton : MonoBehaviour
             m_sceneText.SetText(meta.SceneName);
             m_timeText.SetText(meta.TimeStamp);
         }
-        else 
+        else // empty save slot
         {
             m_sceneText.SetText("NEW SAVE");
             m_timeText.SetText("NEW SAVE");

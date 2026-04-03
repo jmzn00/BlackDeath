@@ -20,7 +20,7 @@ public class Actor : MonoBehaviour, IActor
     public Transform TrackingTarget => m_trackingTarget;
     public Sprite actorSprite; // TEMP
 
-    private GameManager m_game;
+    protected GameManager m_game;
     public GameManager Game => m_game;
 
     private IInputSource m_inputSource;

@@ -5,7 +5,6 @@ public enum MainMenuState
 {
     Main,
     Settings,
-    Start,
     Load,
     Save,
     Quit
@@ -31,6 +30,7 @@ public class MainMenuUI : UIComponentBase<MainMenuGroup>
 
         m_mainView.OnButtonClicked += ChangeState;
         m_settingsView.OnButtonClicked += ChangeState;
+        m_loadView.OnButtonClicked += ChangeState;
     }    
     public override void Initialize() 
     {
@@ -46,6 +46,7 @@ public class MainMenuUI : UIComponentBase<MainMenuGroup>
     {
         m_mainView.OnButtonClicked -= ChangeState;
         m_settingsView.OnButtonClicked -= ChangeState;
+        m_loadView.OnButtonClicked -= ChangeState;
 
         foreach (var s in m_slots) 
         {
@@ -123,7 +124,7 @@ public class MainMenuUI : UIComponentBase<MainMenuGroup>
             case MainMenuState.Settings:
                 m_settingsView.View();
                 break;
-            case MainMenuState.Start:
+            case MainMenuState.Load:
                 m_loadView.View();
                 break;
             case MainMenuState.Save:

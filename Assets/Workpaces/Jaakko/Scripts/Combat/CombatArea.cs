@@ -23,7 +23,7 @@ public class CombatArea : MonoBehaviour
     private DialogueManager m_dialogueManger;
     private ActorManager m_actorManager;
     private BoxCollider m_boxCollider;
-    private bool m_areaCompleted;
+    [SerializeField] private bool m_areaCompleted;
     private bool m_started;
 
     [Header("Flags")]
@@ -42,7 +42,8 @@ public class CombatArea : MonoBehaviour
 
         CombatEvents.OnCombatEnded += AreaFinished;
 
-        SpawnEnemies();
+        if (!m_areaCompleted)
+            SpawnEnemies();
     }
     private void SpawnEnemies() 
     {

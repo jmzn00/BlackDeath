@@ -19,7 +19,6 @@ public class SaveSlotMeta
 public class SaveManager : IManager
 {
     private bool m_active;
-    private string m_savePath;
 
     private ActorManager m_actorManager;
     private DialogueManager m_dialogueManager;
@@ -40,8 +39,6 @@ public class SaveManager : IManager
     }
     public bool Init() 
     {
-        //m_game = gameManager;
-        m_savePath = Path.Combine(Application.persistentDataPath, "savegame.json");
         m_active = true;        
 
         return true;
@@ -49,6 +46,7 @@ public class SaveManager : IManager
     public void OnSceneLoaded(SceneData data) 
     {
         if (!data.IsGameplay) return;
+
         if (m_currentSlot >= 0) 
         {
             Load(m_currentSlot);
