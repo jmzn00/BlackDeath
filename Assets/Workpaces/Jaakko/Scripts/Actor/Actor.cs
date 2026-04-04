@@ -83,7 +83,8 @@ public class Actor : MonoBehaviour, IActor
         ActorSaveData data = new ActorSaveData()
         {
             ActorID = ActorID,
-            Position = transform.position
+            Position = transform.position,
+            ActorName = name
         };
         SaveActorComponentData(data);
         return data;

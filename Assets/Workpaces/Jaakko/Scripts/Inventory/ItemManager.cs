@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -5,9 +6,19 @@ public class ItemManager : IManager
 {
     private Dictionary<string, ItemDefinition> m_itemDatabase = new();
 
+    public event Action OnReady;
+    public bool IsReady { get; private set; }
+
     public ItemManager() 
     {
         
+    }
+    private void SetReady() 
+    {
+        if (IsReady) return;
+
+        IsReady = true;
+        OnReady?.Invoke();
     }
     public bool Init() 
     {
@@ -24,7 +35,8 @@ public class ItemManager : IManager
     }
     public void OnSceneLoaded(SceneData data) 
     {
-    
+        IsReady = false;
+        SetReady();
     }
     public void OnManagersInitialzied()
     {

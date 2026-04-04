@@ -3,6 +3,8 @@ using UnityEngine.InputSystem;
 
 public class InteractionComponent : MonoBehaviour, IActorComponent
 {
+    [SerializeField] private LayerMask m_actorLayerMask;
+
     private Actor m_actor;
     private IInputSource m_inputSource;
 
@@ -16,8 +18,7 @@ public class InteractionComponent : MonoBehaviour, IActorComponent
     }
     public void OnActorComponentsInitialized(Actor actor)
     {
-        m_actor = actor;
-        
+        m_actor = actor;      
     }
     public bool Dispose()
     {
@@ -30,16 +31,7 @@ public class InteractionComponent : MonoBehaviour, IActorComponent
     public void SaveData(ActorSaveData data)
     {
 
-    }
-    public void Load(object data)
-    {
-
-    }
-    public object Save()
-    {
-        return null;
-    }
-    [SerializeField] private LayerMask m_actorLayerMask;
+    }     
     private void Update()
     {
         if (m_actor == null) return;
@@ -51,17 +43,11 @@ public class InteractionComponent : MonoBehaviour, IActorComponent
 
             if (Physics.Raycast(ray, out RaycastHit hit, 100f, m_actorLayerMask)) 
             {
-                Actor target = hit.collider.GetComponentInParent<Actor>();
+                IInteractable interactable = hit.collider.GetComponentInParent<IInteractable>();
 
-                if (target != null && target != m_actor) 
-                {
-                    DialogueActor dialogueActor = target.Get<DialogueActor>();
-                    if (dialogueActor != null) 
-                    {
-                        dialogueActor.StartDialogue(m_actor.Get<DialogueActor>()
-                            , dialogueActor);
-                    }
-                }
+                if (interactable == null) return;
+
+                interactable.InteractEnter(m_actor);
             }
         }
 

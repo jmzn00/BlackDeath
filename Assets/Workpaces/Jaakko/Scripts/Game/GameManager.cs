@@ -18,6 +18,9 @@ public class GameManager : IManager
     public GameState State => m_state;
     public event Action<GameState> OnStateChanged;
 
+    public event Action OnReady;
+    public bool IsReady { get; }
+
     public void SetState(GameState state) 
     {
         if (state == m_state) return;
@@ -88,6 +91,8 @@ public class GameManager : IManager
     }
     private void SceneLoaded(Scene scene, LoadSceneMode mode) 
     {
+        m_readyManagers = 0;
+
         bool isGame = true;
         // not type safe but works for now
         if (scene.name == "Scene_MainMenu") 
@@ -107,8 +112,17 @@ public class GameManager : IManager
             {
                 Debug.LogError($"Manager {m} failed to Init");
             }
+            else 
+            {
+                m.OnReady += ManagerReady;
+            }
         }
         OnManagersInitialzied(); 
+    }
+    private int m_readyManagers;
+    private void ManagerReady() 
+    {
+        m_readyManagers++;
     }
     public void OnManagersInitialzied()
     {

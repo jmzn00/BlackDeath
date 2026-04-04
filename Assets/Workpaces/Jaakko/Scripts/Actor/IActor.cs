@@ -5,6 +5,7 @@ using UnityEngine;
 [Serializable]
 public class ActorSaveData
 {
+    public string ActorName;
     public string ActorID;
     public Vector3 Position;
 

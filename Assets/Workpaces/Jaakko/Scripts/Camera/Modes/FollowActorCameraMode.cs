@@ -41,8 +41,6 @@ public class FollowActorCameraMode : ICameraMode
 
     public void Enter() 
     {
-        Debug.Log("Follow Actor Camera Mode: Enter");
-
         m_camera = m_cameraManager.Camera; // ADDED TO FIX SCENE LOAD 
 
         OnActorChanged(m_actorManager.CurrentControlled);
@@ -54,7 +52,6 @@ public class FollowActorCameraMode : ICameraMode
 
     public void Exit() 
     {
-        Debug.Log("Follow Actor Camera Mode: Exit");
         m_actorManager.OnActorControlChanged -= OnActorChanged;
     }
 
@@ -74,7 +71,6 @@ public class FollowActorCameraMode : ICameraMode
         // Set follow target
         m_camera.Follow = actor.TrackingTarget;
         
-        Debug.Log($"Camera following actor: {actor.name}");
     }
 
     private void ApplyExplorationPreset()
@@ -99,8 +95,6 @@ public class FollowActorCameraMode : ICameraMode
             followZoom.Damping = m_explorationPreset.zoomDamping;
             followZoom.FovRange = m_explorationPreset.fovRange;
         }
-
-        Debug.Log("Applied exploration camera preset");
     }
 
     private void UpdateCameraSettings()

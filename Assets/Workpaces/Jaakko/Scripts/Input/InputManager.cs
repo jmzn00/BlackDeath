@@ -56,9 +56,19 @@ public class InputManager : IManager
     public event Func<UIInputAction, bool> OnUIInputAction;
     public event Action<float> OnSelectTarget;
 
+    public event Action OnReady;
+    public bool IsReady { get; private set; }
+
     public InputManager() 
     {
         
+    }
+    private void SetReady() 
+    {
+        if (IsReady) return;
+
+        IsReady = true;
+        OnReady?.Invoke();
     }
     public ref InputState GetInputState() 
     {
@@ -77,7 +87,8 @@ public class InputManager : IManager
     }
     public void OnSceneLoaded(SceneData data) 
     {
-    
+        IsReady = false;
+        SetReady();
     }
     private void HandleInput() 
     {

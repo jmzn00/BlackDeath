@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 public class SpawnPreferences 
@@ -11,15 +12,31 @@ public class PoolManager : IManager
     private GameManager m_game;
 
     private Dictionary<GameObject, Queue<GameObject>> m_pools;
+
+    public event Action OnReady;
+    public bool IsReady { get; private set; }   
+    private void SetReady() 
+    {
+        if (IsReady) return;
+
+        IsReady = true;
+        OnReady?.Invoke();
+    }
     public PoolManager(GameManager game) 
     {
         m_game = game;
     }
     public void OnManagersInitialzied() { }
-    public void OnSceneLoaded(SceneData data) { }
+    public void OnSceneLoaded(SceneData data) 
+    {
+        IsReady = false;
+
+        SetReady();
+    }
     public bool Init() 
     {
         m_pools = new();
+
         return true;
     }
     public bool Dispose() 

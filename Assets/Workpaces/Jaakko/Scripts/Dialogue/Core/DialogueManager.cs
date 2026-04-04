@@ -25,6 +25,8 @@ public class DialogueManager : IManager
 
     private DialogueContext m_context;
 
+    public event Action OnReady;
+    public bool IsReady { get; private set; }
     public DialogueManager(GameManager game) 
     {
         m_game = game;
@@ -38,7 +40,8 @@ public class DialogueManager : IManager
     }
     public void OnSceneLoaded(SceneData data) 
     {
-    
+        IsReady = false;
+        SetReady();
     }
     public bool Dispose() 
     {
@@ -100,5 +103,12 @@ public class DialogueManager : IManager
     public bool HasFlag(string flag) 
     {
         return m_flags.Contains(flag);
+    }
+    private void SetReady() 
+    {
+        if (IsReady) return;
+
+        IsReady = true;
+        OnReady?.Invoke();
     }
 }

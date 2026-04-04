@@ -22,7 +22,15 @@ public class ActorManager : IManager
     public Actor CurrentControlled => m_currentControlled;    
 
     public event Action<Actor> OnActorControlChanged;
+    public event Action OnReady;
+    public bool IsReady { get; private set; }
+    private void SetReady(bool value)
+    {
+        if (IsReady) return;
 
+        IsReady = true;
+        OnReady?.Invoke();
+    }
     public void SetControlledActor(Actor actor) 
     {
         if (actor == null || !m_party.Contains(actor)) 
@@ -54,10 +62,12 @@ public class ActorManager : IManager
     }
     public void OnSceneLoaded(SceneData data) 
     {
+        IsReady = false;
         if (data.IsGameplay) 
         {
             GatherActorsInScene();
         }
+        SetReady(true);
     }
     public List<ActorSaveData> SaveAllActors() 
     {
@@ -81,7 +91,7 @@ public class ActorManager : IManager
             }
             else 
             {
-                Debug.LogWarning($"Actor with ID {data.ActorID} not found in scene!");
+                Debug.LogWarning($"Actor {data.ActorName} with ID {data.ActorID} not found in scene!");
             }
         }
     }
@@ -167,13 +177,18 @@ public class ActorManager : IManager
         Actor a = GameObject.Instantiate(prefs.prefab, prefs.position
             , prefs.rotation);
         a.Init(m_game);
+        return a;
+        // dont register runtime spawned actors, they dont need save data
+        /*
         IActor ia = a.GetComponent<IActor>();
+        
         if (ia != null) 
         {
             Register(ia, m_game);
             return a;
         }
-        Debug.LogWarning("IAcor is NULL while spawning Actor");
-        return null;        
+        else
+            return null;
+        */
     }
 }

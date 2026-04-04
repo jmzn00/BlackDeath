@@ -7,6 +7,7 @@ public class GameSaveData
 {
     public List<ActorSaveData> Actors = new List<ActorSaveData>();
     public DialogueSaveData Dialogue;
+    public CombatSaveData Combat;
 }
 [Serializable]
 public class SaveSlotMeta 
@@ -22,15 +23,27 @@ public class SaveManager : IManager
 
     private ActorManager m_actorManager;
     private DialogueManager m_dialogueManager;
+    private CombatManager m_combatManager;
 
     private int m_currentSlot = -1;
 
     private int m_maxSlots = 5;
 
-    public SaveManager(ActorManager actorManager, DialogueManager dialogueManager) 
+    public event Action OnReady;
+    public bool IsReady { get; private set; }
+
+    public SaveManager(ActorManager actorManager, DialogueManager dialogueManager, CombatManager combatManager) 
     {
         m_actorManager = actorManager;
         m_dialogueManager = dialogueManager;
+        m_combatManager = combatManager;
+    }
+    private void SetReady()
+    {
+        if (IsReady) return;
+
+        IsReady = true;
+        OnReady?.Invoke();
     }
 
     public void Update(float dt) 
@@ -46,11 +59,14 @@ public class SaveManager : IManager
     public void OnSceneLoaded(SceneData data) 
     {
         if (!data.IsGameplay) return;
-
+        IsReady = false;
+        
         if (m_currentSlot >= 0) 
         {
             Load(m_currentSlot);
         }
+        
+        SetReady();
     }
     public void OnManagersInitialzied()
     {
@@ -115,7 +131,8 @@ public class SaveManager : IManager
         var save = new GameSaveData()
         {
             Actors = m_actorManager.SaveAllActors(),
-            Dialogue = m_dialogueManager.Save()
+            Dialogue = m_dialogueManager.Save(),
+            Combat = m_combatManager.Save()
         };
         string json = JsonUtility.ToJson(save, true);
         File.WriteAllText(GetSavePath(slot), json);
@@ -124,8 +141,9 @@ public class SaveManager : IManager
         m_currentSlot = slot;
         Debug.Log($"Saved to slot {slot}");        
     }
-    public void Load(int slot) 
+    public void Load(int slot   ) 
     {
+        m_currentSlot = slot;
         string path = GetSavePath(slot);
 
         if (!File.Exists(path)) 
@@ -139,6 +157,7 @@ public class SaveManager : IManager
 
         m_actorManager.LoadAllActors(save.Actors);
         m_dialogueManager.Load(save.Dialogue);
+        m_combatManager.Load(save.Combat);
 
         m_currentSlot = slot;
         Debug.Log($"Loaded from slot {slot}");

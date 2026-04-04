@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 using UnityEngine;
-using UnityEngine.UIElements;
 public enum CombatState
 {
     Active,
@@ -16,6 +15,11 @@ public enum CombatResult
 {
     Won,
     Lost
+}
+[Serializable]
+public class CombatSaveData 
+{
+    public List<string> CompletedAreas = new();
 }
 public class CombatManager : IManager
 {
@@ -42,9 +46,47 @@ public class CombatManager : IManager
 
     private CombatArea m_area;
 
+    private List<CombatArea> m_areasInScene;
+
+    private CombatSaveData m_save;
+
+    public event Action OnReady;
+    public bool IsReady { get; private set; }
+
     public CombatManager(GameManager game)
     {
         m_game = game;
+    }
+    public CombatSaveData Save() 
+    {
+        return m_save;
+    }
+    // at the point of Load() we have already loaded into a gameplay scene
+    public void Load(CombatSaveData data) 
+    {
+        IsReady = false;
+        m_save = data;
+
+        m_areasInScene =
+            GameObject.
+             FindObjectsByType<CombatArea>
+            (FindObjectsSortMode.None).
+            ToList();
+
+        foreach (CombatArea area in m_areasInScene)
+        {
+            if (m_save != null)
+            {
+                foreach (string id in m_save.CompletedAreas)
+                {
+                    Debug.Log($"Area with ID {id} is Completed");
+                    if (id == area.ID)
+                        area.SetCompleted(true);
+                }
+            }
+            area.Initialize(m_game);
+        }
+        SetReady();
     }
     #region IManager
     public void Update(float dt)
@@ -60,18 +102,6 @@ public class CombatManager : IManager
     }
     public void OnSceneLoaded(SceneData data) 
     {
-        if (data.IsGameplay) 
-        {
-            List<CombatArea> areas =
-                GameObject.
-                 FindObjectsByType<CombatArea>
-                (FindObjectsSortMode.None).
-                ToList();
-            foreach (CombatArea area in areas)
-            {
-                area.Initialize(m_game);
-            }
-        }
     }
     public void OnManagersInitialzied()
     {
@@ -185,7 +215,6 @@ public class CombatManager : IManager
         {
             result = CombatResult.Won;
         }
-        Debug.Log($"Combat ended with result {result}");
         CleanupSystems();
         m_game.SetState(GameState.None);
         
@@ -193,7 +222,19 @@ public class CombatManager : IManager
         ChangeState(CombatState.Inactive);
         CombatEvents.CombatEnded(result);
 
-        m_area.EndBattle(result);
+        if (result == CombatResult.Won) 
+        {
+            if (m_save == null) 
+            {
+                m_save = new CombatSaveData();
+            }
+            if (!m_save.CompletedAreas.Contains(m_area.ID)) 
+            {
+                m_save.CompletedAreas.Add(m_area.ID);
+            }
+            
+        }
+
         m_area = null;
     }
     private void CleanupSystems() 
@@ -204,7 +245,7 @@ public class CombatManager : IManager
         {
             m_action.OnActionFinished -= ActionFinished;
             m_action.OnActionSubmitted -= ActionSubmitted;
-            m_action.OnActionResolved += m_damage.ActionResolved;
+            m_action.OnActionResolved -= m_damage.ActionResolved;
         }
         if (m_transition != null)
         {
@@ -217,5 +258,14 @@ public class CombatManager : IManager
 
         m_state = state;
         CombatEvents.CombatStateChanged(m_state);
+    }
+    public void SetReady() 
+    {
+        if (IsReady) return;
+
+        IsReady = true;
+
+        if (IsReady)
+            OnReady?.Invoke();
     }
 }

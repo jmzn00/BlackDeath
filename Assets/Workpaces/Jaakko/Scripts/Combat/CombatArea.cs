@@ -1,6 +1,7 @@
+using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
-using static InputSystem_Actions;
 
 [System.Serializable]
 public class CombatPreferences 
@@ -14,6 +15,7 @@ public class CombatPreferences
     public Transform m_partyActionPoint;
     public Transform m_enemyActionPoint;
 }
+
 [RequireComponent(typeof(BoxCollider))]
 public class CombatArea : MonoBehaviour
 {
@@ -23,27 +25,74 @@ public class CombatArea : MonoBehaviour
     private DialogueManager m_dialogueManger;
     private ActorManager m_actorManager;
     private BoxCollider m_boxCollider;
-    [SerializeField] private bool m_areaCompleted;
+
+    private List<CombatActor> m_enemies;
+
+    private bool m_areaCompleted;
     private bool m_started;
 
     [Header("Flags")]
     [SerializeField] private string m_conditionFlag;
     [SerializeField] private string m_setFlag;
 
-    private List<CombatActor> m_enemies;
+    [SerializeField] private string m_areaID;
+    public string ID => m_areaID;
 
+    private bool m_initialized = false;
+
+#if UNITY_EDITOR
+    private void OnValidate()
+    {
+        if (string.IsNullOrEmpty(m_areaID)
+            || IsDuplicateID(m_areaID)) 
+        {
+            m_areaID = Guid.NewGuid().ToString();
+            UnityEditor.EditorUtility.SetDirty(this);
+        }        
+    }
+    private bool IsDuplicateID(string id) 
+    {
+        CombatArea[] areas = FindObjectsByType<CombatArea>(FindObjectsSortMode.None);
+        if (areas == null || areas.Length <= 1)
+            return false;
+        foreach (CombatArea area in areas) 
+        {
+            if (area.ID == id)
+                return true;
+        }
+        return false;
+    }
+#endif
+    // combat manager will call this if the area was completed in 
+    // the current save, this will dictate if the area can be entered
+    // and if enemies will be spawned on Initialize
+    public void SetCompleted(bool completed) 
+    {
+        m_areaCompleted = completed;
+    }
     public void Initialize(GameManager game) 
     {
+        if (m_areaCompleted) 
+        {
+            gameObject.SetActive(false);
+            return;
+        }
+
+
         m_combatManager = game.Resolve<CombatManager>();
         m_actorManager = game.Resolve<ActorManager>();
         m_dialogueManger = game.Resolve<DialogueManager>();
+
+        if (m_boxCollider == null)
+            m_boxCollider = GetComponent<BoxCollider>();
 
         m_started = false;  
 
         CombatEvents.OnCombatEnded += AreaFinished;
 
-        if (!m_areaCompleted)
-            SpawnEnemies();
+        SpawnEnemies();
+
+        m_initialized = true;
     }
     private void SpawnEnemies() 
     {
@@ -77,19 +126,20 @@ public class CombatArea : MonoBehaviour
     }
     private void AreaFinished(CombatResult result) 
     {
-        if (!m_started) return;
+        if (!m_started) return;        
 
         switch (result) 
         {
             case CombatResult.Won:
-                m_areaCompleted = true;
+                if (!string.IsNullOrEmpty(m_setFlag))
+                    m_dialogueManger.SetFlag(m_setFlag);
                 break;
             case CombatResult.Lost:
-
+                // invoke an event to end the game
                 break;
         }
     }
-    public void StartBattle()
+    public void StartCombat()
     {        
         CombatEvents.CombatStarted();
 
@@ -124,18 +174,13 @@ public class CombatArea : MonoBehaviour
        
         m_started = true;
         m_combatManager.StartCombat(combatActors, this);
-        
-    }
-    public void EndBattle(CombatResult result) 
-    {
-        if (result == CombatResult.Won) 
-        {
-            m_dialogueManger.SetFlag(m_setFlag);
-        }
+
+        m_boxCollider.enabled = false;
     }
     private void OnTriggerEnter(Collider other)
     {
-        if (m_areaCompleted || m_started) return;
+        if (m_areaCompleted || m_started
+            || !m_initialized) return;
 
         if (!other.CompareTag("Player")) return;
 
@@ -145,7 +190,7 @@ public class CombatArea : MonoBehaviour
                 return;
         }
 
-        StartBattle();
+        StartCombat();
     }
     private void OnDrawGizmos()
     {

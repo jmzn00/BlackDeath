@@ -14,7 +14,6 @@ public class DamageSystem
         float finalDamage = 0f;
         CombatActor reciever = ctx.Target;
 
-        Debug.Log($"DS: {ctx.Action.actionName} result {result}, target : {ctx.Target.name}");
         switch (result) 
         {
             case ActionResult.Confirmed:
@@ -63,7 +62,6 @@ public class DamageSystem
     }
     public void ApplyDamage(float amount, IDamageSource source, CombatActor target) 
     {
-        Debug.Log($"{source.SourceName} applied {amount} damage to {target.name}");
         if (amount > 0f)
             CombatEvents.DamageApplied(target, amount);
 

@@ -70,7 +70,6 @@ public class ActionSystem
 
         // this is a temp fix for ally / self target skills
         // as they dont currently open / close the window
-        Debug.Log($"{m_currentAction.Action.actionName} finished t: {m_currentAction.Target.name}");
 
         if (m_currentAction.Action.targetType == TargetType.Self ||
             m_currentAction.Action.targetType == TargetType.Ally)
@@ -108,7 +107,6 @@ public class ActionSystem
         CombatActor source = attackCommand.Source;
         CombatActor target = attackCommand.Target;
 
-        Debug.Log($"{action.actionName} submit t: {target.name}");
         source.RemoveActionPoints(action.apCost);
 
         if (action == null)

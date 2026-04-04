@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.Cinemachine;
@@ -18,6 +19,9 @@ public class CameraManager : IManager
     private List<ICameraMode> m_cameraModes;
 
     private ICameraMode m_mode;
+
+    public event Action OnReady;
+    public bool IsReady { get; private set; }
     public CameraManager(ActorManager actorManager, CombatManager combatManager, GameManager gameManager) 
     {
         m_actorManager = actorManager;
@@ -27,6 +31,8 @@ public class CameraManager : IManager
     }    
     public void OnSceneLoaded(SceneData data) 
     {
+        IsReady = false;
+
         if (data.IsGameplay)
         {
             m_cinemachineCamera = GameObject.FindFirstObjectByType<CinemachineCamera>();
@@ -44,7 +50,6 @@ public class CameraManager : IManager
             var defaultMode = m_cameraModes.FirstOrDefault();
             if (defaultMode != null)
             {
-                Debug.Log($"CameraManager: Setting default mode to {defaultMode.GetType().Name}");
                 SetMode(defaultMode);
             }
             else
@@ -52,6 +57,7 @@ public class CameraManager : IManager
                 Debug.LogError("CameraManager: No camera modes available!");
             }
         }
+        SetReady();
     }
     public bool Init() 
     {
@@ -94,11 +100,18 @@ public class CameraManager : IManager
     {
         if (m_mode != null)
         {
-            Debug.Log($"CameraManager: Exiting {m_mode.GetType().Name}");
             m_mode.Exit();
         }
         
         m_mode = mode;
         m_mode.Enter();
+    }
+    private void SetReady()
+    {
+        if (IsReady) return;
+
+        IsReady = true;
+
+        OnReady?.Invoke();
     }
 }

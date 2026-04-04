@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DialogueActor : MonoBehaviour, IActorComponent
+public class DialogueActor : MonoBehaviour, IActorComponent, IInteractable
 {
     [SerializeField] private DialogueNode m_startNode;
 
@@ -44,13 +44,19 @@ public class DialogueActor : MonoBehaviour, IActorComponent
 
         data.DialogueNodeID = m_currentNode.id;
     }
-    public void Load(object data) 
+    public void InteractEnter(Actor actor) 
     {
-        
+        DialogueActor da = actor.Get<DialogueActor>();
+        if (da == null) 
+        {
+            Debug.Log($"{actor.name} trying to start dialogue with no DialogueActor Component");
+            return;
+        }
+        StartDialogue(da, this);
     }
-    public object Save() 
+    public void InteractExit(Actor actor) 
     {
-        return null;
+    
     }
     public void StartDialogue(DialogueActor listner, DialogueActor speaker) 
     {

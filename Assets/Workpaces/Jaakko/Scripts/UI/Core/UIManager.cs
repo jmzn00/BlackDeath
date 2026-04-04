@@ -23,9 +23,19 @@ public class UIManager : IManager
     public UIControllerNavigation Navigation => m_navigation;
 
     private Stack<IUIInputReceiver> m_uiStack = new Stack<IUIInputReceiver>();
+
+    public event Action OnReady;
+    public bool IsReady { get; private set; }
     public UIManager(GameManager game)
     {
         m_game = game;
+    }
+    private void SetReady()
+    {
+        if (IsReady) return;
+
+        IsReady = true;
+        OnReady?.Invoke();
     }
     #region IManager
     public bool Init()
@@ -38,10 +48,12 @@ public class UIManager : IManager
     }
     public void OnSceneLoaded(SceneData data) 
     {
+        IsReady = false;
         if (data.IsGameplay) 
         {
             m_uiController.ShowComponent<MainMenuUI>(false);
         }
+        SetReady();
     }
     public bool Dispose()
     {
@@ -62,6 +74,8 @@ public class UIManager : IManager
 
         m_game.OnStateChanged += OnGameStateChanged;
         OnGameStateChanged(m_game.State);
+
+
     }
     #endregion    
     bool HandleUIInput(UIInputAction action) 
@@ -93,6 +107,7 @@ public class UIManager : IManager
                 break;
         }
     }
+
     public void PushUI(IUIInputReceiver reciever)
     {   
         m_uiStack.Push(reciever);

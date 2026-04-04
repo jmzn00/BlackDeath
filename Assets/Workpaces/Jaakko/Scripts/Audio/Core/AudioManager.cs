@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,12 +9,17 @@ public class AudioManager : IManager
     public AudioController Controller => m_controller;
 
     private List<IAudioModule> m_modules;
+
+    public event Action OnReady;
+    public bool IsReady { get; private set; }
     public AudioManager(GameManager game) 
     {
         m_game = game;
     }
     public bool Init() 
     {
+        IsReady = false;
+
         m_controller = GameObject
             .FindFirstObjectByType<AudioController>();
         
@@ -37,6 +43,8 @@ public class AudioManager : IManager
         {
             new CombatAudioModule(this)
         };
+
+        SetReady(true);
     }
     public void OnSceneLoaded(SceneData data) 
     {
@@ -75,5 +83,13 @@ public class AudioManager : IManager
                 return t;
         }
         return null;
+    }
+    private void SetReady(bool value) 
+    {
+        if (IsReady) return;
+
+        IsReady = true;
+
+        OnReady?.Invoke();
     }
 }
