@@ -91,8 +91,8 @@ MonoBehaviour:
     fovRange: {x: 40, y: 60}
   exploration:
     presetName: Exploration
-    positionOffset: {x: 0, y: 3, z: -5}
-    rotation: {x: 23.733267, y: 359.84213, z: 0.0000000036431589}
+    positionOffset: {x: 0, y: 3, z: -8}
+    rotation: {x: 15.536374, y: -0.000027954135, z: 0}
     fieldOfView: 60
     orthographicSize: 2
     followDamping: 1.5
