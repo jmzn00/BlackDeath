@@ -8,12 +8,4 @@ public class AiActor : Actor
 
         AddComponent<InventoryComponent>();
     }
-    private void OnDestroy()
-    {
-        var am = m_game.Resolve<ActorManager>();
-        if (!am.Unregister(this)) 
-        {
-
-        }
-    }
 }
