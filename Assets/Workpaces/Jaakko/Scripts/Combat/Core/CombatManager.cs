@@ -61,29 +61,21 @@ public class CombatManager : IManager
     {
         return m_save;
     }
-    // at the point of Load() we have already loaded into a gameplay scene
     public void Load(CombatSaveData data) 
     {
         IsReady = false;
         m_save = data;
 
-        m_areasInScene =
-            GameObject.
-             FindObjectsByType<CombatArea>
-            (FindObjectsSortMode.None).
-            ToList();
-
-        foreach (CombatArea area in m_areasInScene)
+        foreach (var area in m_areasInScene) 
         {
-            if (m_save != null)
+            if (m_save != null) 
             {
-                foreach (string id in m_save.CompletedAreas)
+                foreach (var completed in m_save.CompletedAreas)
                 {
-                    Debug.Log($"Area with ID {id} is Completed");
-                    if (id == area.ID)
+                    if (completed == area.ID)
                         area.SetCompleted(true);
                 }
-            }
+            }            
             area.Initialize(m_game);
         }
         SetReady();
@@ -102,6 +94,11 @@ public class CombatManager : IManager
     }
     public void OnSceneLoaded(SceneData data) 
     {
+        m_areasInScene =
+               GameObject.
+                FindObjectsByType<CombatArea>
+               (FindObjectsSortMode.None).
+               ToList();
     }
     public void OnManagersInitialzied()
     {

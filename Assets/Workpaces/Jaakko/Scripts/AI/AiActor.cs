@@ -13,7 +13,7 @@ public class AiActor : Actor
         var am = m_game.Resolve<ActorManager>();
         if (!am.Unregister(this)) 
         {
-            Debug.Log($"{name} failed to unregister OnDestroy");
+
         }
     }
 }

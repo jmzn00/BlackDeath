@@ -56,7 +56,6 @@ public class DamageSystem
             else
             {
                 target.ApplyEffect(new StatusEffectInstance(e, target, this));
-                Debug.Log($"{target.name} recieved effect {e.displayName}");
             }
         }
     }

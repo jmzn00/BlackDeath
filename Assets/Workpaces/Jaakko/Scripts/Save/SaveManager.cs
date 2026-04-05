@@ -41,7 +41,6 @@ public class SaveManager : IManager
     private void SetReady()
     {
         if (IsReady) return;
-
         IsReady = true;
         OnReady?.Invoke();
     }
@@ -141,6 +140,7 @@ public class SaveManager : IManager
         m_currentSlot = slot;
         Debug.Log($"Saved to slot {slot}");        
     }
+    private GameSaveData m_loadedSave;
     public void Load(int slot   ) 
     {
         m_currentSlot = slot;
@@ -149,17 +149,22 @@ public class SaveManager : IManager
         if (!File.Exists(path)) 
         {
             Debug.Log("No save found, starting fresh");
-            return;
+            m_loadedSave = new GameSaveData();
         }
-        
-        string json = File.ReadAllText(path);
-        GameSaveData save = JsonUtility.FromJson<GameSaveData>(json);
-
-        m_actorManager.LoadAllActors(save.Actors);
-        m_dialogueManager.Load(save.Dialogue);
-        m_combatManager.Load(save.Combat);
+        else 
+        {
+            string json = File.ReadAllText(path);
+            m_loadedSave = JsonUtility.FromJson<GameSaveData>(json);
+        }
 
         m_currentSlot = slot;
-        Debug.Log($"Loaded from slot {slot}");
+    }
+    public void RestoreAfterSceneLoad() 
+    {
+        if (m_loadedSave == null) return;
+
+        m_actorManager.LoadAllActors(m_loadedSave.Actors);
+        m_dialogueManager.Load(m_loadedSave.Dialogue);
+        m_combatManager.Load(m_loadedSave.Combat);
     }
 }

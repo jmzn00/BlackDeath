@@ -72,12 +72,7 @@ public class CombatArea : MonoBehaviour
     }
     public void Initialize(GameManager game) 
     {
-        if (m_areaCompleted) 
-        {
-            gameObject.SetActive(false);
-            return;
-        }
-
+        if (m_areaCompleted) return;
 
         m_combatManager = game.Resolve<CombatManager>();
         m_actorManager = game.Resolve<ActorManager>();
@@ -135,9 +130,10 @@ public class CombatArea : MonoBehaviour
                     m_dialogueManger.SetFlag(m_setFlag);
                 break;
             case CombatResult.Lost:
-                // invoke an event to end the game
+                
                 break;
         }
+        CombatEvents.OnCombatEnded -= AreaFinished;
     }
     public void StartCombat()
     {        

@@ -64,6 +64,8 @@ public class DialogueManager : IManager
     }
     public void Load(DialogueSaveData data)
     {
+        if (data == null) return;
+
         m_flags = data.flags;
     }
     public DialogueNode GetNodeByID(string id) 

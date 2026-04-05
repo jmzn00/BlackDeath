@@ -103,6 +103,8 @@ public class GameManager : IManager
 
         foreach (var m in m_managers)
             m.OnSceneLoaded(data);
+
+        Resolve<SaveManager>().RestoreAfterSceneLoad();
     }    
     private void InitManagers() 
     {

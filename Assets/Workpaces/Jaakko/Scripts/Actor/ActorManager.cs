@@ -82,6 +82,8 @@ public class ActorManager : IManager
     }
     public void LoadAllActors(List<ActorSaveData> actorDataList) 
     {
+        if (actorDataList == null) return;
+
         foreach (var data in actorDataList) 
         {
             IActor actor = m_actors.FirstOrDefault(a => a.ActorID == data.ActorID);
