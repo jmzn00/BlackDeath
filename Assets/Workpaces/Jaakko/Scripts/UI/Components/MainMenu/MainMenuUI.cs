@@ -31,9 +31,13 @@ public class MainMenuUI : UIComponentBase<MainMenuGroup>
         m_mainView.OnButtonClicked += ChangeState;
         m_settingsView.OnButtonClicked += ChangeState;
         m_loadView.OnButtonClicked += ChangeState;
-    }    
+    }        
     public override void Initialize() 
     {
+
+        GameEvents.OnLoadStarted += LoadStarted;
+        GameEvents.OnLoadFinished += LoadFinished;
+        
         m_loadView.Init();
         m_mainView.Init();
         m_settingsView.Init();
@@ -44,6 +48,9 @@ public class MainMenuUI : UIComponentBase<MainMenuGroup>
     }
     public override void Dispose() 
     {
+        GameEvents.OnLoadStarted -= LoadStarted;
+        GameEvents.OnLoadFinished -= LoadFinished;
+
         m_mainView.OnButtonClicked -= ChangeState;
         m_settingsView.OnButtonClicked -= ChangeState;
         m_loadView.OnButtonClicked -= ChangeState;
@@ -70,6 +77,18 @@ public class MainMenuUI : UIComponentBase<MainMenuGroup>
             m_loadView.Hide();
             m_settingsView.Hide();
         }
+    }
+    private void LoadStarted() 
+    {
+        m_mainView.LoadStarted();
+    }
+    private void LoadFinished() 
+    {
+        m_mainView.LoadFinished();
+    }
+    public override void SceneChanged(SceneData data)
+    {
+        m_mainView.SceneChanged(data);
     }
     private void BuildSaveSlots() 
     {

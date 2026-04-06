@@ -11,15 +11,17 @@ public enum GameState
 }
 public class GameManager : IManager
 {
+    public event Action OnReady;
+    public bool IsReady { get; }
+
     private Container m_container;
+
+    private int m_readyManagers;
     private List<IManager> m_managers = new();
 
     private GameState m_state;
     public GameState State => m_state;
     public event Action<GameState> OnStateChanged;
-
-    public event Action OnReady;
-    public bool IsReady { get; }
 
     public void SetState(GameState state) 
     {
@@ -84,6 +86,8 @@ public class GameManager : IManager
     }
     public void LoadGame(SaveSlotMeta meta) 
     {
+        GameEvents.LoadStarted();
+
         var save = Resolve<SaveManager>();
         save.SetCurrentSlot(meta.Slot);
 
@@ -93,10 +97,12 @@ public class GameManager : IManager
     {
         m_readyManagers = 0;
 
+
         bool isGame = true;
         // not type safe but works for now
         if (scene.name == "Scene_MainMenu") 
         {
+            GameEvents.LoadFinished();
             isGame = false;
         }
         SceneData data = new SceneData(scene.name, isGame);
@@ -121,10 +127,12 @@ public class GameManager : IManager
         }
         OnManagersInitialzied(); 
     }
-    private int m_readyManagers;
     private void ManagerReady() 
     {
         m_readyManagers++;
+
+        if (m_readyManagers >= m_managers.Count)
+            GameEvents.LoadFinished();
     }
     public void OnManagersInitialzied()
     {
@@ -139,8 +147,11 @@ public class GameManager : IManager
             {
                 Debug.LogError($"Manager {m} failed to Dispose");
             }
-        }
-            
+            else 
+            {
+                m.OnReady -= ManagerReady;
+            }
+        }            
     }    
     private void PopulateServices() 
     {

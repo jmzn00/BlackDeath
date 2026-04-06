@@ -18,6 +18,10 @@ public class Game : MonoBehaviour
         m_gameManager = new GameManager();
         m_gameManager.Init();
     }
+    private void OnDestroy()
+    {
+        m_gameManager.Dispose();
+    }
     private void Update()
     {        
         m_gameManager.Update(Time.deltaTime);

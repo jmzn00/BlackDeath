@@ -63,7 +63,6 @@ public class CombatManager : IManager
     }
     public void Load(CombatSaveData data) 
     {
-        IsReady = false;
         m_save = data;
 
         foreach (var area in m_areasInScene) 
@@ -94,6 +93,8 @@ public class CombatManager : IManager
     }
     public void OnSceneLoaded(SceneData data) 
     {
+        IsReady = false;
+
         m_areasInScene =
                GameObject.
                 FindObjectsByType<CombatArea>

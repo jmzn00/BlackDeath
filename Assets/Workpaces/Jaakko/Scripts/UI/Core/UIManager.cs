@@ -49,10 +49,7 @@ public class UIManager : IManager
     public void OnSceneLoaded(SceneData data) 
     {
         IsReady = false;
-        if (data.IsGameplay) 
-        {
-            m_uiController.ShowComponent<MainMenuUI>(false);
-        }
+        m_uiController.SceneChanged(data);
         SetReady();
     }
     public bool Dispose()

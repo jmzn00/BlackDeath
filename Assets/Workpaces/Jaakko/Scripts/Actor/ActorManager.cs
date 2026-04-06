@@ -72,6 +72,8 @@ public class ActorManager : IManager
     public List<ActorSaveData> SaveAllActors() 
     {
         List<ActorSaveData> save = new List<ActorSaveData>();
+        if (m_actors == null || m_actors.Count == 0) return save;
+
         for (int i = 0; i < m_actors.Count; i++) 
         {
             if (m_actors[i] == null)

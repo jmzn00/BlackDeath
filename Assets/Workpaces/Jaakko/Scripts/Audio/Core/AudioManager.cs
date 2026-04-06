@@ -18,8 +18,6 @@ public class AudioManager : IManager
     }
     public bool Init() 
     {
-        IsReady = false;
-
         m_controller = GameObject
             .FindFirstObjectByType<AudioController>();
         
@@ -43,12 +41,11 @@ public class AudioManager : IManager
         {
             new CombatAudioModule(this)
         };
-
-        SetReady(true);
     }
     public void OnSceneLoaded(SceneData data) 
     {
-    
+        IsReady = false;
+        SetReady();
     }
     public void Update(float dt)
     {
@@ -84,7 +81,7 @@ public class AudioManager : IManager
         }
         return null;
     }
-    private void SetReady(bool value) 
+    private void SetReady() 
     {
         if (IsReady) return;
 

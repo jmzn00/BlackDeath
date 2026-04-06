@@ -9,6 +9,9 @@ public class MainView : MonoBehaviour, IUIComponentView
     [SerializeField] private Button m_saveButton;
     [SerializeField] private Button m_settingsButton;
     [SerializeField] private Button m_quitButton;
+
+    [Header("Panels")]
+    [SerializeField] private GameObject m_loadPanel;
     
 
     public event Action<MainMenuState> OnButtonClicked;
@@ -30,6 +33,25 @@ public class MainView : MonoBehaviour, IUIComponentView
         {
             OnButtonClicked?.Invoke(MainMenuState.Quit);
         });
+    }
+    public void SceneChanged(SceneData sceneData) 
+    {
+        if (sceneData.IsGameplay) 
+        {
+            m_saveButton.gameObject.SetActive(true);
+        }
+        else 
+        {
+            m_saveButton.gameObject.SetActive(false);
+        }
+    }
+    public void LoadStarted() 
+    {
+        m_loadPanel.SetActive(true);
+    }
+    public void LoadFinished() 
+    {
+        m_loadPanel.SetActive(false);
     }
     public void View() 
     {

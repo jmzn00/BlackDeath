@@ -23,6 +23,17 @@ public class UIController : MonoBehaviour
     {
 
     }
+    public void SceneChanged(SceneData data)
+    {
+        foreach (var c in m_uiComponents) 
+        {
+            c.SceneChanged(data);
+        }
+        if (data.IsGameplay) 
+        {
+            ShowComponent<MainMenuUI>(false);
+        }
+    }
     public void ShowComponent<T>(bool show) where T : IUIComponent
     {
         var comp = m_uiComponents.OfType<T>().FirstOrDefault();
