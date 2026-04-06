@@ -4,7 +4,7 @@ using System.Linq;
 using Unity.Cinemachine;
 using UnityEngine;
 
-public class CameraManager : IManager
+public class CameraManager : ManagerBase
 {
     private ActorManager m_actorManager;
     private CombatManager m_combatManager;
@@ -20,8 +20,6 @@ public class CameraManager : IManager
 
     private ICameraMode m_mode;
 
-    public event Action OnReady;
-    public bool IsReady { get; private set; }
     public CameraManager(ActorManager actorManager, CombatManager combatManager, GameManager gameManager) 
     {
         m_actorManager = actorManager;
@@ -29,7 +27,7 @@ public class CameraManager : IManager
         m_game = gameManager;
         //Debug.Log("CameraManager constructed");
     }    
-    public void OnSceneLoaded(SceneData data) 
+    public override void OnSceneLoaded(SceneData data) 
     {
         IsReady = false;
 
@@ -59,7 +57,7 @@ public class CameraManager : IManager
         }
         SetReady();
     }
-    public bool Init() 
+    public override bool Init() 
     {
         m_container = new Container();
         m_container.RegisterInstance(this);
@@ -74,15 +72,7 @@ public class CameraManager : IManager
 
         return true;
     }
-    public bool Dispose() 
-    {
-        return true;
-    }
-    public void OnManagersInitialzied() 
-    {
-
-    }
-    public void Update(float dt)
+    public override void Update(float dt)
     {                
         if (m_mode == null)
         {
@@ -105,13 +95,5 @@ public class CameraManager : IManager
         
         m_mode = mode;
         m_mode.Enter();
-    }
-    private void SetReady()
-    {
-        if (IsReady) return;
-
-        IsReady = true;
-
-        OnReady?.Invoke();
     }
 }

@@ -14,7 +14,7 @@ public class DialogueContext
     public DialogueActor Speaker;
     public DialogueNode Node;
 }
-public class DialogueManager : IManager
+public class DialogueManager : ManagerBase
 {
     private GameManager m_game;
     private List<string> m_flags = new List<string>();
@@ -24,36 +24,17 @@ public class DialogueManager : IManager
     private Dictionary<string, DialogueNode> m_nodeLookup = new();
 
     private DialogueContext m_context;
-
-    public event Action OnReady;
-    public bool IsReady { get; private set; }
+    
     public DialogueManager(GameManager game) 
     {
         m_game = game;
     }
     #region IManager
-    public bool Init() 
+    public override bool Init() 
     {
         DialogueNode[] nodes = Resources.LoadAll<DialogueNode>("DialogueNodes");
         m_nodeLookup = nodes.ToDictionary(n => n.id, n => n);
         return true;
-    }
-    public void OnSceneLoaded(SceneData data) 
-    {
-        IsReady = false;
-        SetReady();
-    }
-    public bool Dispose() 
-    {
-        return true;
-    }
-    public void OnManagersInitialzied() 
-    {
-    
-    }
-    public void Update(float dt) 
-    {
-        
     }
     #endregion
     public DialogueSaveData Save()
@@ -105,12 +86,5 @@ public class DialogueManager : IManager
     public bool HasFlag(string flag) 
     {
         return m_flags.Contains(flag);
-    }
-    private void SetReady() 
-    {
-        if (IsReady) return;
-
-        IsReady = true;
-        OnReady?.Invoke();
     }
 }

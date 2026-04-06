@@ -12,7 +12,7 @@ public enum UIInputMode
     Combat
 }
 
-public class UIManager : IManager
+public class UIManager : ManagerBase
 {
     private GameManager m_game;
     private InputManager m_input;
@@ -23,22 +23,12 @@ public class UIManager : IManager
     public UIControllerNavigation Navigation => m_navigation;
 
     private Stack<IUIInputReceiver> m_uiStack = new Stack<IUIInputReceiver>();
-
-    public event Action OnReady;
-    public bool IsReady { get; private set; }
     public UIManager(GameManager game)
     {
         m_game = game;
     }
-    private void SetReady()
-    {
-        if (IsReady) return;
-
-        IsReady = true;
-        OnReady?.Invoke();
-    }
     #region IManager
-    public bool Init()
+    public override bool Init()
     {
         m_navigation = new UIControllerNavigation(m_game.Resolve<InputManager>());
         m_input = m_game.Resolve<InputManager>();
@@ -46,13 +36,13 @@ public class UIManager : IManager
         m_input.OnUIInputAction += HandleUIInput;
         return true;
     }
-    public void OnSceneLoaded(SceneData data) 
+    public override void OnSceneLoaded(SceneData data) 
     {
         IsReady = false;
         m_uiController.SceneChanged(data);
         SetReady();
     }
-    public bool Dispose()
+    public override bool Dispose()
     {
         if (m_uiController)
             m_uiController.Dispose();
@@ -61,7 +51,7 @@ public class UIManager : IManager
         m_navigation.Dispose();
         return true;
     }
-    public void OnManagersInitialzied()
+    public override void OnManagersInitialzied()
     {
         m_uiController = GameObject.FindFirstObjectByType<UIController>();
         if (m_uiController)
@@ -121,7 +111,7 @@ public class UIManager : IManager
     {
         m_submitConsumed = true;
     }
-    public void Update(float dt)
+    public override void Update(float dt)
     {
         m_navigation.UpdateNavigation();
 

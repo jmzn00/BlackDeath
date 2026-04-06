@@ -21,7 +21,7 @@ public class CombatSaveData
 {
     public List<string> CompletedAreas = new();
 }
-public class CombatManager : IManager
+public class CombatManager : ManagerBase
 {
     private CombatState m_state = CombatState.Inactive;
     public CombatState State => m_state;
@@ -50,9 +50,6 @@ public class CombatManager : IManager
 
     private CombatSaveData m_save;
 
-    public event Action OnReady;
-    public bool IsReady { get; private set; }
-
     public CombatManager(GameManager game)
     {
         m_game = game;
@@ -80,18 +77,14 @@ public class CombatManager : IManager
         SetReady();
     }
     #region IManager
-    public void Update(float dt)
+    public override void Update(float dt)
     {
         if (m_state == CombatState.Inactive) return;
 
         m_reaction.Update(dt);
         m_transition.Update(dt);
     }
-    public bool Init()
-    {
-        return true;
-    }
-    public void OnSceneLoaded(SceneData data) 
+    public override void OnSceneLoaded(SceneData data) 
     {
         IsReady = false;
 
@@ -101,11 +94,7 @@ public class CombatManager : IManager
                (FindObjectsSortMode.None).
                ToList();
     }
-    public void OnManagersInitialzied()
-    {
-
-    }
-    public bool Dispose()
+    public override bool Dispose()
     {
         CleanupSystems();
         return true;
@@ -256,14 +245,5 @@ public class CombatManager : IManager
 
         m_state = state;
         CombatEvents.CombatStateChanged(m_state);
-    }
-    public void SetReady() 
-    {
-        if (IsReady) return;
-
-        IsReady = true;
-
-        if (IsReady)
-            OnReady?.Invoke();
     }
 }

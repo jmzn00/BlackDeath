@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 public class SpawnPreferences 
@@ -7,44 +6,26 @@ public class SpawnPreferences
     public Quaternion rotation;
     public Transform parent;
 }
-public class PoolManager : IManager
+public class PoolManager : ManagerBase
 {
     private GameManager m_game;
 
     private Dictionary<GameObject, Queue<GameObject>> m_pools;
-
-    public event Action OnReady;
-    public bool IsReady { get; private set; }   
-    private void SetReady() 
-    {
-        if (IsReady) return;
-
-        IsReady = true;
-        OnReady?.Invoke();
-    }
     public PoolManager(GameManager game) 
     {
         m_game = game;
     }
-    public void OnManagersInitialzied() { }
-    public void OnSceneLoaded(SceneData data) 
-    {
-        IsReady = false;
-
-        SetReady();
-    }
-    public bool Init() 
+    public override bool Init() 
     {
         m_pools = new();
 
         return true;
     }
-    public bool Dispose() 
+    public override bool Dispose() 
     {
         m_pools.Clear();
         return true;
     }
-    public void Update(float dt) { }
     public void Release(GameObject obj, GameObject prefab) 
     {
         if (obj == null || prefab == null) 

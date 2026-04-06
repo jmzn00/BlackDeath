@@ -38,10 +38,4 @@ public class Container
         if (instance == null) throw new ArgumentNullException(nameof(instance));
         m_instances[typeof(T)] = instance;
     }
-    // Overload for non-generic usage
-    public void RegisterInstance(object instance)
-    {
-        if (instance == null) throw new ArgumentNullException(nameof(instance));
-        m_instances[instance.GetType()] = instance;
-    }
 }

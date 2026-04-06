@@ -44,7 +44,7 @@ public struct UIInputState
     public bool CancelPressed;
 
 }
-public class InputManager : IManager
+public class InputManager : ManagerBase
 {
     private bool m_active;
     private InputState m_inputState;
@@ -56,19 +56,11 @@ public class InputManager : IManager
     public event Func<UIInputAction, bool> OnUIInputAction;
     public event Action<float> OnSelectTarget;
 
-    public event Action OnReady;
-    public bool IsReady { get; private set; }
+    private bool m_selectTargetUsedLastFrame = false;
 
     public InputManager() 
     {
         
-    }
-    private void SetReady() 
-    {
-        if (IsReady) return;
-
-        IsReady = true;
-        OnReady?.Invoke();
     }
     public ref InputState GetInputState() 
     {
@@ -78,14 +70,33 @@ public class InputManager : IManager
     {
         return ref m_uiInputState;
     }
-    public void Update(float dt) 
+    public override bool Init()
     {
-        if (!m_active) return;
+        CombatEvents.OnCombatStarted += CombatStarted;
+        CombatEvents.OnCombatEnded += CombatEnded;
 
+        m_inputActions = new InputSystem_Actions();
+        m_inputActions.Enable();
+        m_active = true;
+
+        return true;
+    }
+    public override bool Dispose()
+    {
+        m_active = false;
+        CombatEvents.OnCombatStarted -= CombatStarted;
+        CombatEvents.OnCombatEnded -= CombatEnded;
+
+        m_inputActions.Disable();
+        m_inputActions.Dispose();
+        return true;
+    }
+    public override void Update(float dt) 
+    {
         HandleInput();
         HandleUIInput();
     }
-    public void OnSceneLoaded(SceneData data) 
+    public override void OnSceneLoaded(SceneData data) 
     {
         IsReady = false;
         SetReady();
@@ -203,11 +214,6 @@ public class InputManager : IManager
             m_selectTargetUsedLastFrame = false;
         }
     }
-    private bool m_selectTargetUsedLastFrame = false;
-    public void OnManagersInitialzied()
-    {
-
-    }
     private void CombatStarted()
     {
         ToggleInput(false);
@@ -227,26 +233,5 @@ public class InputManager : IManager
         {
             m_inputActions.Player.Enable();
         }
-    }
-    public bool Init()
-    {
-        CombatEvents.OnCombatStarted += CombatStarted;
-        CombatEvents.OnCombatEnded += CombatEnded;
-
-        m_inputActions = new InputSystem_Actions();
-        m_inputActions.Enable();
-        m_active = true;        
-        
-        return true;    
-    }
-    public bool Dispose()
-    {
-        m_active = false;
-        CombatEvents.OnCombatStarted -= CombatStarted;
-        CombatEvents.OnCombatEnded -= CombatEnded;
-
-        m_inputActions.Disable();
-        m_inputActions.Dispose();        
-        return true;
     }   
 }

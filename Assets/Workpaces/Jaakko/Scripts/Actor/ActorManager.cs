@@ -8,7 +8,7 @@ public class ActorSpawnPreferences
     public Vector3 position;
     public Quaternion rotation;
 }
-public class ActorManager : IManager
+public class ActorManager : ManagerBase
 {
     private bool m_active;
     
@@ -22,15 +22,6 @@ public class ActorManager : IManager
     public Actor CurrentControlled => m_currentControlled;    
 
     public event Action<Actor> OnActorControlChanged;
-    public event Action OnReady;
-    public bool IsReady { get; private set; }
-    private void SetReady(bool value)
-    {
-        if (IsReady) return;
-
-        IsReady = true;
-        OnReady?.Invoke();
-    }
     public void SetControlledActor(Actor actor) 
     {
         if (actor == null || !m_party.Contains(actor)) 
@@ -60,14 +51,14 @@ public class ActorManager : IManager
     {
         m_game = game;
     }
-    public void OnSceneLoaded(SceneData data) 
+    public override void OnSceneLoaded(SceneData data) 
     {
         IsReady = false;
         if (data.IsGameplay) 
         {
             GatherActorsInScene();
         }
-        SetReady(true);
+        SetReady();
     }
     public List<ActorSaveData> SaveAllActors() 
     {
@@ -99,15 +90,6 @@ public class ActorManager : IManager
             }
         }
     }
-    public bool Init() 
-    {        
-        m_active = true;
-        return true;
-    }
-    public void OnManagersInitialzied() 
-    {        
-
-    }
     private void GatherActorsInScene() 
     {
         m_actors = new List<IActor>();
@@ -137,19 +119,16 @@ public class ActorManager : IManager
         else
             Debug.LogWarning("No playable actors found in scene!");
     }
-    public bool Dispose() 
+    public override bool Dispose() 
     {
-        m_active = false;
+        if (m_actors == null || m_actors.Count == 0)
+            return true;
 
         foreach (var a in new List<IActor>(m_actors)) 
         {
             Unregister(a);
         }
         return true;
-    }
-    public void Update(float dt) 
-    {
-        if (!m_active) return;
     }
     public bool Register(IActor actor, GameManager game) 
     {

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+
 [Serializable]
 public class GameSaveData
 {
@@ -17,20 +18,16 @@ public class SaveSlotMeta
     public string TimeStamp;
     public bool HasData;
 }
-public class SaveManager : IManager
+public class SaveManager : ManagerBase
 {
-    private bool m_active;
-
     private ActorManager m_actorManager;
     private DialogueManager m_dialogueManager;
     private CombatManager m_combatManager;
 
+    private GameSaveData m_loadedSave;
+
     private int m_currentSlot = -1;
-
     private int m_maxSlots = 5;
-
-    public event Action OnReady;
-    public bool IsReady { get; private set; }
 
     public SaveManager(ActorManager actorManager, DialogueManager dialogueManager, CombatManager combatManager) 
     {
@@ -38,44 +35,17 @@ public class SaveManager : IManager
         m_dialogueManager = dialogueManager;
         m_combatManager = combatManager;
     }
-    private void SetReady()
+    public override void OnSceneLoaded(SceneData data)
     {
-        if (IsReady) return;
-        IsReady = true;
-        OnReady?.Invoke();
-    }
-
-    public void Update(float dt) 
-    {
-        if (!m_active) return;                       
-    }
-    public bool Init() 
-    {
-        m_active = true;        
-
-        return true;
-    }
-    public void OnSceneLoaded(SceneData data) 
-    {
-        if (!data.IsGameplay) return;
         IsReady = false;
-        
-        if (m_currentSlot >= 0) 
+
+        if (m_currentSlot >= 0 && data.IsGameplay)
         {
             Load(m_currentSlot);
         }
-        
-        SetReady();
-    }
-    public void OnManagersInitialzied()
-    {
 
-    }
-    public bool Dispose() 
-    {
-        m_active = false;
-        return true;
-    } 
+        SetReady();
+    }   
     public void SetCurrentSlot(int slot) 
     {
         m_currentSlot = slot;
@@ -138,9 +108,7 @@ public class SaveManager : IManager
 
         WriteMeta(slot, data);
         m_currentSlot = slot;
-        Debug.Log($"Saved to slot {slot}");        
     }
-    private GameSaveData m_loadedSave;
     public void Load(int slot   ) 
     {
         m_currentSlot = slot;
@@ -148,7 +116,6 @@ public class SaveManager : IManager
 
         if (!File.Exists(path)) 
         {
-            Debug.Log("No save found, starting fresh");
             m_loadedSave = new GameSaveData();
         }
         else 

@@ -2,25 +2,15 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ItemManager : IManager
+public class ItemManager : ManagerBase
 {
     private Dictionary<string, ItemDefinition> m_itemDatabase = new();
-
-    public event Action OnReady;
-    public bool IsReady { get; private set; }
 
     public ItemManager() 
     {
         
     }
-    private void SetReady() 
-    {
-        if (IsReady) return;
-
-        IsReady = true;
-        OnReady?.Invoke();
-    }
-    public bool Init() 
+    public override bool Init() 
     {
         ItemDefinition[] items = Resources.LoadAll<ItemDefinition>("Items");
 
@@ -33,23 +23,10 @@ public class ItemManager : IManager
         }
         return true;
     }
-    public void OnSceneLoaded(SceneData data) 
-    {
-        IsReady = false;
-        SetReady();
-    }
-    public void OnManagersInitialzied()
-    {
-
-    }
-    public bool Dispose() 
+    public override bool Dispose() 
     {
         m_itemDatabase.Clear();
         return true;
-    }
-    public void Update(float dt)
-    {
-
     }
     public List<ItemDefinition> GetAllItems()
     {

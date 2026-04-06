@@ -2,21 +2,18 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AudioManager : IManager
+public class AudioManager : ManagerBase
 {
     private GameManager m_game;
     private AudioController m_controller;
     public AudioController Controller => m_controller;
 
     private List<IAudioModule> m_modules;
-
-    public event Action OnReady;
-    public bool IsReady { get; private set; }
     public AudioManager(GameManager game) 
     {
         m_game = game;
     }
-    public bool Init() 
+    public override bool Init() 
     {
         m_controller = GameObject
             .FindFirstObjectByType<AudioController>();
@@ -30,24 +27,19 @@ public class AudioManager : IManager
         m_game.OnStateChanged += GameStateChanged;    
         return true;
     }
-    public bool Dispose() 
+    public override bool Dispose() 
     {
         m_game.OnStateChanged -= GameStateChanged;
         return true;
     }
-    public void OnManagersInitialzied() 
+    public override void OnManagersInitialzied() 
     {
         m_modules = new()
         {
             new CombatAudioModule(this)
         };
     }
-    public void OnSceneLoaded(SceneData data) 
-    {
-        IsReady = false;
-        SetReady();
-    }
-    public void Update(float dt)
+    public override void Update(float dt)
     {
         for (int i = 0; i < m_modules.Count; i++) 
         {
@@ -80,13 +72,5 @@ public class AudioManager : IManager
                 return t;
         }
         return null;
-    }
-    private void SetReady() 
-    {
-        if (IsReady) return;
-
-        IsReady = true;
-
-        OnReady?.Invoke();
     }
 }

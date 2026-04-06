@@ -9,14 +9,11 @@ public enum GameState
     Combat,
     Dialogue
 }
-public class GameManager : IManager
+public class GameManager : ManagerBase
 {
-    public event Action OnReady;
-    public bool IsReady { get; }
-
     private Container m_container;
 
-    private int m_readyManagers;
+    private int m_managersReady;
     private List<IManager> m_managers = new();
 
     private GameState m_state;
@@ -30,11 +27,7 @@ public class GameManager : IManager
         m_state = state;
         OnStateChanged?.Invoke(state);
     }
-    public void OnSceneLoaded(SceneData data)
-    {
-
-    }
-    public bool Init() 
+    public override bool Init() 
     {
         m_container = new Container();
 
@@ -62,7 +55,7 @@ public class GameManager : IManager
         SceneManager.sceneLoaded += SceneLoaded;
         return true;
     }
-    public bool Dispose() 
+    public override bool Dispose() 
     {
         DisposeManagers();
         Services.Clear();
@@ -70,7 +63,7 @@ public class GameManager : IManager
         SceneManager.sceneLoaded -= SceneLoaded;
         return true;
     }
-    public void Update(float dt) 
+    public override void Update(float dt) 
     {
         for (int i = 0; i < m_managers.Count; i++)
             m_managers[i].Update(dt);
@@ -95,7 +88,7 @@ public class GameManager : IManager
     }
     private void SceneLoaded(Scene scene, LoadSceneMode mode) 
     {
-        m_readyManagers = 0;
+        m_managersReady = 0;
 
 
         bool isGame = true;
@@ -125,16 +118,19 @@ public class GameManager : IManager
                 m.OnReady += ManagerReady;
             }
         }
-        OnManagersInitialzied(); 
+        ManagersInitialzied(); 
     }
     private void ManagerReady() 
     {
-        m_readyManagers++;
+        m_managersReady++;
 
-        if (m_readyManagers >= m_managers.Count)
+        if (m_managersReady >= m_managers.Count) 
+        {
             GameEvents.LoadFinished();
+        }
+            
     }
-    public void OnManagersInitialzied()
+    public void ManagersInitialzied()
     {
         foreach (var m in m_managers)
             m.OnManagersInitialzied();
