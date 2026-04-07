@@ -120,11 +120,13 @@ public class MainMenuUI : UIComponentBase<MainMenuGroup>
     }
     private void Load(SaveSlotMeta meta, int index) 
     {
+        if (!meta.HasData) return;
+
         if (m_state == MainMenuState.Save) 
         {
             Save(index);
         }
-        if (meta.HasData) 
+        else 
         {
             m_game.LoadGame(meta);
         }        
