@@ -19,27 +19,30 @@ public class CombatActorStats
 public class CombatStatSystem : CombatSystemBase
 {
     private Dictionary<CombatActor, CombatActorStats> m_stats;    
-    public CombatStatSystem(CombatContext ctx) 
+    public CombatStatSystem() 
+    {        
+    }
+    public override void Init(CombatContext context)
     {
+        CombatEvents.OnDamageApplied += DamageDealt;
+        CombatEvents.OnHealthApplied += HealApplied;
+
         m_stats = new();
 
-        foreach (var actor in ctx.Actors) 
+        foreach (var actor in context.Actors)
         {
             m_stats[actor] = new CombatActorStats()
             {
                 Actor = actor
             };
-        }        
-    }
-    public override void Init()
-    {
-        CombatEvents.OnDamageApplied += DamageDealt;
-        CombatEvents.OnHealthApplied += HealApplied;
+        }
     }
     public override void Dispose()
     {
         CombatEvents.OnDamageApplied -= DamageDealt;
         CombatEvents.OnHealthApplied -= HealApplied;
+
+        m_stats.Clear();
     }
     public IReadOnlyDictionary<CombatActor, CombatActorStats> GetStats()
     {

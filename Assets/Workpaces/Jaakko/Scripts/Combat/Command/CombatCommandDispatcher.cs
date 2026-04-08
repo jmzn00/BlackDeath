@@ -1,4 +1,4 @@
-public class CombatCommandDispatcher
+public class CombatCommandDispatcher : CombatSystemBase
 {
     private ActionSystem m_action;
     private ReactionSystem m_reaction;

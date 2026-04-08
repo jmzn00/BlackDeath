@@ -1,6 +1,6 @@
 public interface ICombatSystem 
 {
-    void Init();
+    void Init(CombatContext context);
     void Dispose();
     void Update(float dt);
 }

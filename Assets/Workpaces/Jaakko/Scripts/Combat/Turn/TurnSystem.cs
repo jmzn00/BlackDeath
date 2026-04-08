@@ -6,12 +6,17 @@ public class TurnSystem : CombatSystemBase
     int m_turnIndex;
 
     private CombatContext m_context;
-    public TurnSystem(CombatContext ctx)
+    public TurnSystem()
     {
-        m_context = ctx;
+        
+    }
+    public override void Init(CombatContext context)
+    {
+        m_context = context;
         m_turnIndex = 0;
         m_actors = m_context.Actors;
-    }   
+    }
+
     public CombatActor Next() 
     {
         int attemps = 0;

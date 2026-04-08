@@ -4,17 +4,26 @@ using System.Collections.Generic;
 
 public class DamageSystem : CombatSystemBase
 {
-    public DamageSystem() 
+    private CombatContext m_context;
+    private ActionSystem m_action;
+    public DamageSystem(ActionSystem action) 
     {
-        
+        m_action = action;        
     }
-    public override void Init()
+    public override void Init(CombatContext context)
     {
+        m_context = context;
+
+        m_action.OnActionResolved += ActionResolved;
+
         CombatEvents.OnTurnStarted += ActorTurnStart;
         CombatEvents.OnTurnEnded += ActorTurnEnd;
     }
     public override void Dispose()
     {
+
+        m_action.OnActionResolved -= ActionResolved;
+
         CombatEvents.OnTurnStarted -= ActorTurnStart;
         CombatEvents.OnTurnEnded -= ActorTurnEnd;
     }

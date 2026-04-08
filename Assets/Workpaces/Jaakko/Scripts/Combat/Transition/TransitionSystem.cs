@@ -4,10 +4,29 @@ using UnityEngine;
 public class TransitionSystem : CombatSystemBase
 {
     CombatArea m_area;
-    public TransitionSystem(CombatArea area) 
+    ActionSystem m_action;
+    CombatManager m_combat;
+    public TransitionSystem(CombatArea area, ActionSystem action
+        , CombatManager combat) 
     {
         m_area = area;
-    }    
+        m_action = action;
+        m_combat = combat;
+    }
+    public void UpdateArea(CombatArea area) 
+    {
+        m_area = area;
+    }
+    public override void Init(CombatContext context)
+    {
+        m_action.OnActionSubmitted += Start;
+        m_action.OnActionFinished += ActionFinished;
+    }
+    public override void Dispose()
+    {
+        m_action.OnActionSubmitted -= Start;
+        m_action.OnActionFinished -= ActionFinished;
+    }
     public event Action OnTransitionFinished;
 
     private Transform m_sourceActor;
@@ -27,7 +46,10 @@ public class TransitionSystem : CombatSystemBase
     private const float DEFAULT_DURATION = 3f;
 
     private bool m_transitionOpen;
-    
+    private void ActionFinished(ActionContext actx) 
+    {
+        Reset();
+    }
     public override void Update(float dt) 
     {
         if (!m_transitionOpen) return;
@@ -62,6 +84,8 @@ public class TransitionSystem : CombatSystemBase
     }
     public void Start(ActionContext actx) 
     {
+        m_combat.ChangeState(CombatState.Transition);
+
         CombatActor source = actx.Source;
         CombatActor target = actx.Target;
         if (source == null || target == null)
@@ -115,6 +139,7 @@ public class TransitionSystem : CombatSystemBase
         m_sourceTime = 0f;
         m_targetTime = 0f;
 
+        m_action.Resolve();
         OnTransitionFinished?.Invoke();
         CombatEvents.TransitionEnded();
     }

@@ -88,11 +88,12 @@ public class CombatActor : MonoBehaviour, IActorComponent, IDamageSource
 
         m_combatManager = game.Resolve<CombatManager>();
 
-        m_combatManager.OnCombatStarted += CombatStarted;
-        m_combatManager.OnCombatEnded += CombatEnded;
+        CombatEvents.OnCombatStarted += CombatStarted;
+        CombatEvents.OnCombatEnded += CombatEnded;
 
-        m_combatManager.OnTurnStart += TurnStart;
-        m_combatManager.OnTurnEnd += TurnEnd;
+
+        CombatEvents.OnTurnStarted += TurnStart;
+        CombatEvents.OnTurnEnded += TurnEnd;
 
         SourceActor = this;
         SourceName = name;
@@ -111,6 +112,9 @@ public class CombatActor : MonoBehaviour, IActorComponent, IDamageSource
     public bool Dispose()
     {
         m_animator.OnActionAnimationFinished -= ActionFinished;
+
+        CombatEvents.OnCombatStarted -= CombatStarted;
+        CombatEvents.OnCombatEnded -= CombatEnded;
         OnDispose();
         return true;
     }
@@ -176,11 +180,11 @@ public class CombatActor : MonoBehaviour, IActorComponent, IDamageSource
     {        
         ClearStatusEffects();
 
-        m_combatManager.OnCombatStarted -= CombatStarted;
-        m_combatManager.OnCombatEnded -= CombatEnded;
+        CombatEvents.OnCombatStarted -= CombatStarted;
+        CombatEvents.OnCombatEnded -= CombatEnded;
 
-        m_combatManager.OnTurnStart -= TurnStart;
-        m_combatManager.OnTurnEnd -= TurnEnd;
+        CombatEvents.OnTurnStarted += TurnStart;
+        CombatEvents.OnTurnEnded += TurnEnd;
 
         m_combatManager = null;
 
@@ -241,20 +245,20 @@ public class CombatActor : MonoBehaviour, IActorComponent, IDamageSource
     public void CloseWindow()
     {
         if (m_combatManager != null)
-            m_combatManager.Action.ClosePrompt(this);
+            m_combatManager.Container.Resolve<ActionSystem>().ClosePrompt(this);
     }
     // called by m_animator
     public void OpenWindow(string promptKey)
     {
         if (m_combatManager != null)
-            m_combatManager.Action.OpenPrompt(this, promptKey);
+            m_combatManager.Container.Resolve<ActionSystem>().OpenPrompt(this, promptKey);
 
     }
     // called by event
     public void ActionFinished()
     {
         if(m_combatManager != null)
-            m_combatManager.Action.NotifyActionFinished(this);
+            m_combatManager.Container.Resolve<ActionSystem>().NotifyActionFinished(this);
     }
     #endregion
     #region StatusEffect

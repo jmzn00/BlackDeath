@@ -1,11 +1,13 @@
 using System;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.InputSystem.iOS;
 
 public class ActionSystem : CombatSystemBase
 {
     private ReactionSystem m_reaction;
     private CombatContext m_context;
+    private CombatManager m_combat;
 
     private ActionContext m_currentAction;
 
@@ -13,11 +15,15 @@ public class ActionSystem : CombatSystemBase
     public event Action<ActionContext> OnActionSubmitted;
 
     public event Action<ActionContext, ActionResult> OnActionResolved;
-    public ActionSystem(CombatContext ctx,
-        ReactionSystem reaction)
+    public ActionSystem(
+        ReactionSystem reaction, CombatManager combat)
     {
         m_reaction = reaction;
-        m_context = ctx;
+        m_combat = combat;
+    }
+    public override void Init(CombatContext context)
+    {
+        m_context = context;
     }
     public void OpenPrompt(CombatActor actor, string promptKey)
     {
@@ -77,11 +83,16 @@ public class ActionSystem : CombatSystemBase
             //CombatEvents.ActionResolved(m_currentAction, ActionResult.Confirmed);
         }
 
+        CombatEvents.TurnEnded(m_currentAction.Source);
+        CombatEvents.ActionFinished(m_currentAction);
+
         OnActionFinished?.Invoke(m_currentAction);
         m_currentAction = null;
     }
     public void TurnStarted()
     {
+        m_combat.ChangeState(CombatState.Action);
+
         m_context.CurrentActor.ActionProvider.
             RequestAction(m_context.CurrentActor, m_context.Actors.ToList());
     }
@@ -105,23 +116,21 @@ public class ActionSystem : CombatSystemBase
         CombatActor source = attackCommand.Source;
         CombatActor target = attackCommand.Target;
 
-        source.RemoveActionPoints(action.apCost);
-
-        if (action == null)
-        {
-            OnActionSubmitted?.Invoke(new ActionContext
-            {
-                Source = source
-            });
-            return;
-        }
-
         m_currentAction = new ActionContext
         {
             Source = source,
             Target = target,
             Action = action,
         };
+
+        if (action == null)
+        {
+            OnActionFinished?.Invoke(m_currentAction);
+            return;
+        }
+
+        source.RemoveActionPoints(action.apCost);
         OnActionSubmitted?.Invoke(m_currentAction);
+        CombatEvents.ActionSubmitted(m_currentAction);
     }
 }

@@ -24,26 +24,10 @@ public class CombatSaveData
 public class CombatManager : ManagerBase
 {
     private CombatState m_state = CombatState.Inactive;
-    public CombatState State => m_state;
 
     private GameManager m_game;
 
     private CombatContext m_context;
-    private TurnSystem m_turn;
-    private ReactionSystem m_reaction;
-    private ActionSystem m_action;
-    private TransitionSystem m_transition;
-    private DamageSystem m_damage;
-    private CombatStatSystem m_stat;
-    public ActionSystem Action => m_action;
-
-    private CombatCommandDispatcher m_commandDispatcher;
-    private CombatCommandProcessor m_commandProcessor;
-
-    public event Action OnCombatStarted;
-    public event Action<CombatResult> OnCombatEnded;
-    public event Action<CombatActor> OnTurnStart;
-    public event Action<CombatActor> OnTurnEnd;
 
     private CombatArea m_area;
 
@@ -53,33 +37,37 @@ public class CombatManager : ManagerBase
 
     private List<CombatSystemBase> m_systems = new();
 
+    private Container m_container;
+    public Container Container => m_container;
+
     public CombatManager(GameManager game)
     {
         m_game = game;
+        m_container = new Container();
     }
-    public CombatSaveData Save() 
+    #region IManager
+    public CombatSaveData Save()
     {
         return m_save;
     }
-    public void Load(CombatSaveData data) 
+    public void Load(CombatSaveData data)
     {
         m_save = data;
 
-        foreach (var area in m_areasInScene) 
+        foreach (var area in m_areasInScene)
         {
-            if (m_save != null) 
+            if (m_save != null)
             {
                 foreach (var completed in m_save.CompletedAreas)
                 {
                     if (completed == area.ID)
                         area.SetCompleted(true);
                 }
-            }            
+            }
             area.Initialize(m_game);
         }
         SetReady();
     }
-    #region IManager
     public override void Update(float dt)
     {
         if (m_state == CombatState.Inactive) return;
@@ -97,9 +85,31 @@ public class CombatManager : ManagerBase
                (FindObjectsSortMode.None).
                ToList();
     }
+    public override bool Init()
+    {
+        m_container.RegisterInstance<CombatManager>(this);
+
+        m_container.Register<TurnSystem>();
+        m_container.Register<ReactionSystem>(); 
+        m_container.Register<ActionSystem>();
+        m_container.Register<TransitionSystem>();
+        m_container.Register<DamageSystem>();
+        m_container.Register<CombatStatSystem>();
+
+        m_container.Register<CombatCommandDispatcher>();
+        m_container.Register<CombatCommandProcessor>();
+
+        m_systems = m_container.GetAll<CombatSystemBase>().ToList();
+
+        CombatEvents.OnActionFinished += ActionFinished;
+        return true;
+    }
     public override bool Dispose()
     {
-        CleanupSystems();
+        CombatEvents.OnActionFinished -= ActionFinished;
+
+        foreach (var s in m_systems)
+            s.Dispose();
         return true;
     }
     #endregion    
@@ -111,80 +121,19 @@ public class CombatManager : ManagerBase
 
         m_area = area;
         ChangeState(CombatState.Active);
-        m_game.SetState(GameState.Combat);
-        OnCombatStarted?.Invoke();
-        
+        m_game.SetState(GameState.Combat);    
+
+        m_container.Resolve<TransitionSystem>().UpdateArea(area);
+
         m_context = new CombatContext(actors);
-        m_damage = new DamageSystem();
-
-        m_turn = new TurnSystem(m_context);
-
-        m_reaction = new ReactionSystem();
-        m_action = new ActionSystem(m_context, m_reaction);
-        m_action.OnActionFinished += ActionFinished;
-        m_action.OnActionSubmitted += ActionSubmitted;
-        m_action.OnActionResolved += m_damage.ActionResolved;
-
-        m_transition = new TransitionSystem(area);
-        m_transition.OnTransitionFinished += TransitionFinished;
-
-        m_stat = new CombatStatSystem(m_context);
-
-        m_action.OnActionResolved += m_stat.ActionResolved;
-
-        m_commandDispatcher = new CombatCommandDispatcher(m_action, m_reaction);
-        m_commandProcessor = new CombatCommandProcessor(actors, m_commandDispatcher);
-
-        m_systems.Add(m_damage);
-        m_systems.Add(m_turn);
-        m_systems.Add(m_reaction);
-        m_systems.Add(m_action);
-        m_systems.Add(m_transition);
-        m_systems.Add(m_stat);
-
         foreach (var s in m_systems)
-            s.Init();
+            s.Init(m_context);
           
         NextTurn();
     }
-    private void ActionSubmitted(ActionContext actx)
-    {
-        if (actx.Action == null) 
-        {            
-            ActionFinished(actx);
-            return;
-        }
-        m_transition.Start(actx);
-        ChangeState(CombatState.Transition);
-
-        CombatEvents.ActionSubmitted(actx);
-    }
-    private void ActionFinished(ActionContext aCtx)
-    {
-        OnTurnEnd?.Invoke(aCtx.Source);
-        CombatEvents.TurnEnded(aCtx.Source);        
-
-        // returns players to their original positions
-        m_transition.Reset();
-
-        if (CheckEnd())
-        {
-            EndCombat();
-        }
-        else
-        {
-            NextTurn();
-            ChangeState(CombatState.Active);
-        }
-    }
-    private void TransitionFinished() 
-    {
-        ChangeState(CombatState.Action);
-        m_action.Resolve();
-    }
     private void NextTurn()
     {
-        CombatActor actor = m_turn.Next();
+        CombatActor actor = m_container.Resolve<TurnSystem>().Next();
         if (actor == null)
         {
             Debug.LogWarning($"Turn System Next() == NULL");
@@ -192,11 +141,22 @@ public class CombatManager : ManagerBase
             return;
         }
         CombatEvents.TurnStarted(actor);
-        OnTurnStart?.Invoke(actor);
 
         m_context.SetCurrentActor(actor);
         m_context.AdvanceTurn();
-        m_action.TurnStarted();
+
+        m_container.Resolve<ActionSystem>().TurnStarted();
+    }
+    private void ActionFinished(ActionContext aCtx)
+    {
+        if (CheckEnd())
+        {
+            EndCombat();
+        }
+        else
+        {
+            NextTurn();
+        }
     }
     private bool CheckEnd()
     {
@@ -218,10 +178,8 @@ public class CombatManager : ManagerBase
         {
             result = CombatResult.Won;
         }
-        CleanupSystems();
         m_game.SetState(GameState.None);
         
-        OnCombatEnded?.Invoke(result);
         ChangeState(CombatState.Inactive);
         CombatEvents.CombatEnded(result);
 
@@ -237,27 +195,9 @@ public class CombatManager : ManagerBase
             }
             
         }
-
-        m_area = null;
-    }
-    private void CleanupSystems() 
-    {
-        // add dispose systems
-        
-        if (m_action != null)
-        {
-            m_action.OnActionFinished -= ActionFinished;
-            m_action.OnActionSubmitted -= ActionSubmitted;
-            m_action.OnActionResolved -= m_damage.ActionResolved;
-        }
-        if (m_transition != null)
-        {
-            m_transition.OnTransitionFinished -= TransitionFinished;
-        }
-
         foreach (var s in m_systems)
             s.Dispose();
-        m_systems.Clear();
+        m_area = null;
     }
     public void ChangeState(CombatState state) 
     {
