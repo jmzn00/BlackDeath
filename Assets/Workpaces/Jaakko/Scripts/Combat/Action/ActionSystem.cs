@@ -24,7 +24,14 @@ public class ActionSystem : CombatSystemBase
     public override void Init(CombatContext context)
     {
         m_context = context;
+        CombatEvents.OnTransitionEnded += Resolve;
     }
+    public override void Reset()
+    {
+        CombatEvents.OnTransitionEnded -= Resolve;
+        m_currentAction = null;
+    }
+
     public void OpenPrompt(CombatActor actor, string promptKey)
     {
         if (m_currentAction == null)
@@ -63,7 +70,8 @@ public class ActionSystem : CombatSystemBase
     public void NotifyActionFinished(CombatActor actor)
     {
         if (m_currentAction == null)
-            return;
+            return; 
+
         if (actor != m_currentAction.Source)
         {
             // if you get this warning it may be that ui is trying to submit again 
@@ -113,6 +121,7 @@ public class ActionSystem : CombatSystemBase
             Debug.LogWarning("Cannot Submit Action, Action already Set");
             return;
         }
+
         CombatAction action = attackCommand.Action;
         CombatActor source = attackCommand.Source;
         CombatActor target = attackCommand.Target;

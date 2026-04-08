@@ -41,7 +41,7 @@ public class PlayerCombatActor : CombatActor
         OnDodgePerformed();
         */
     }
-    protected override void CombatEnded(CombatResult result)
+    public override void CombatEnded(CombatResult result)
     {
         base.CombatEnded(result);
 

@@ -6,10 +6,9 @@ public class TransitionSystem : CombatSystemBase
     CombatArea m_area;
     ActionSystem m_action;
     CombatManager m_combat;
-    public TransitionSystem(CombatArea area, ActionSystem action
+    public TransitionSystem(ActionSystem action
         , CombatManager combat) 
     {
-        m_area = area;
         m_action = action;
         m_combat = combat;
     }
@@ -26,6 +25,8 @@ public class TransitionSystem : CombatSystemBase
     {
         m_action.OnActionSubmitted -= Start;
         m_action.OnActionFinished -= ActionFinished;
+
+        m_area = null;
     }
     public event Action OnTransitionFinished;
 
@@ -84,6 +85,7 @@ public class TransitionSystem : CombatSystemBase
     }
     public void Start(ActionContext actx) 
     {
+
         m_combat.ChangeState(CombatState.Transition);
 
         CombatActor source = actx.Source;
@@ -139,7 +141,6 @@ public class TransitionSystem : CombatSystemBase
         m_sourceTime = 0f;
         m_targetTime = 0f;
 
-        m_action.Resolve();
         OnTransitionFinished?.Invoke();
         CombatEvents.TransitionEnded();
     }

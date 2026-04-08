@@ -189,6 +189,7 @@ MonoBehaviour:
     m_enemyActionPoint: {fileID: 8829880876550613665}
   m_conditionFlag: 
   m_setFlag: flag_testWonBattle
+  m_areaID: bc67bdf7-d8d9-4519-a763-5c1480a7d43e
 --- !u!65 &6757304353328434931
 BoxCollider:
   m_ObjectHideFlags: 0

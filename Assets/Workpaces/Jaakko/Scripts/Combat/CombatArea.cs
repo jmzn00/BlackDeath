@@ -1,9 +1,10 @@
+using Mono.Cecil;
 using System;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-[System.Serializable]
+[Serializable]
 public class CombatPreferences 
 {
     [HideInInspector] public CombatArea m_area;
@@ -57,6 +58,8 @@ public class CombatArea : MonoBehaviour
             return false;
         foreach (CombatArea area in areas) 
         {
+            if (area == this) continue;
+
             if (area.ID == id)
                 return true;
         }
@@ -82,8 +85,6 @@ public class CombatArea : MonoBehaviour
             m_boxCollider = GetComponent<BoxCollider>();
 
         m_started = false;  
-
-        CombatEvents.OnCombatEnded += AreaFinished;
 
         SpawnEnemies();
 
@@ -119,7 +120,7 @@ public class CombatArea : MonoBehaviour
             }
         }
     }
-    private void AreaFinished(CombatResult result) 
+    public void AreaFinished(CombatResult result) 
     {
         if (!m_started) return;        
 
@@ -133,7 +134,6 @@ public class CombatArea : MonoBehaviour
                 
                 break;
         }
-        CombatEvents.OnCombatEnded -= AreaFinished;
     }
     public void StartCombat()
     {        
@@ -167,7 +167,9 @@ public class CombatArea : MonoBehaviour
         {
             combatActors.Add(a);
         }
-       
+        foreach (var actor in combatActors)
+            actor.CombatStarted();
+
         m_started = true;
         m_combatManager.StartCombat(combatActors, this);
 

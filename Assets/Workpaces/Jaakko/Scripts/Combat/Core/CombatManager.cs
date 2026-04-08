@@ -47,23 +47,36 @@ public class CombatManager : ManagerBase
     #region IManager
     public CombatSaveData Save()
     {
+        foreach (var completed in m_save.CompletedAreas) 
+        {
+            Debug.Log($"Saved {completed}");
+        }
         return m_save;
     }
     public void Load(CombatSaveData data)
     {
         m_save = data;
-
+        Debug.Log($"CombatManager Load Called");
         foreach (var area in m_areasInScene)
         {
+            Debug.Log($"Checking area {area.ID} against save data...");
             if (m_save != null)
             {
                 foreach (var completed in m_save.CompletedAreas)
                 {
-                    if (completed == area.ID)
+                    if (completed == area.ID) 
+                    {
+                        Debug.Log($"Marking area {area.ID} as completed based on save data.");
                         area.SetCompleted(true);
+                    }
+                    
                 }
             }
-            area.Initialize(m_game);
+            else 
+            {
+                Debug.Log("Save is NULL");
+            }
+                area.Initialize(m_game);
         }
         SetReady();
     }
@@ -180,7 +193,10 @@ public class CombatManager : ManagerBase
             result = CombatResult.Won;
         }
         m_game.SetState(GameState.None);
-        
+
+        foreach (var a in m_context.Actors)
+            a.CombatEnded(result);
+
         ChangeState(CombatState.Inactive);
         CombatEvents.CombatEnded(result);
 
@@ -215,6 +231,7 @@ public class CombatManager : ManagerBase
         foreach (var s in m_systems)
             s.Reset();
 
+        m_area.AreaFinished(result);
         m_area = null;
     }
     public void ChangeState(CombatState state) 

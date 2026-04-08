@@ -70,6 +70,7 @@ public class CombatActor : MonoBehaviour, IActorComponent, IDamageSource
 
     public event Action<int> OnActionPointsChanged;
 
+    private ActionSystem m_action;
 
     #region IActionProvider
     protected void SetActionProvider(IActionProvider provider)
@@ -86,10 +87,9 @@ public class CombatActor : MonoBehaviour, IActorComponent, IDamageSource
     {
         m_actor = GetComponent<Actor>();
 
-        m_combatManager = game.Resolve<CombatManager>();
+        m_combatManager = game.Resolve<CombatManager>();        
 
         CombatEvents.OnCombatStarted += CombatStarted;
-        CombatEvents.OnCombatEnded += CombatEnded;
 
 
         CombatEvents.OnTurnStarted += TurnStart;
@@ -111,10 +111,15 @@ public class CombatActor : MonoBehaviour, IActorComponent, IDamageSource
     }
     public bool Dispose()
     {
-        m_animator.OnActionAnimationFinished -= ActionFinished;
+        // defensive null checks before unsubscribing
+        if (m_animator != null)
+            m_animator.OnActionAnimationFinished -= ActionFinished;
 
         CombatEvents.OnCombatStarted -= CombatStarted;
-        CombatEvents.OnCombatEnded -= CombatEnded;
+        // Ensure we remove turn event handlers here as well to avoid duplicates
+        CombatEvents.OnTurnStarted -= TurnStart;
+        CombatEvents.OnTurnEnded -= TurnEnd;
+
         OnDispose();
         return true;
     }
@@ -168,23 +173,23 @@ public class CombatActor : MonoBehaviour, IActorComponent, IDamageSource
             return;
         }
     }
-    private void CombatStarted()
+    public virtual void CombatStarted()
     {
         MovementController c = Actor.Get<MovementController>();
         if (c != null)
             c.enabled = false;
+        if (m_action == null)
+            m_action = m_combatManager.Container.Resolve<ActionSystem>();
 
         AddActionPoints(m_maxActionPoints);
     }
-    protected virtual void CombatEnded(CombatResult result) 
+    public virtual void CombatEnded(CombatResult result) 
     {        
         ClearStatusEffects();
 
-        CombatEvents.OnCombatStarted -= CombatStarted;
-        CombatEvents.OnCombatEnded -= CombatEnded;
-
-        CombatEvents.OnTurnStarted += TurnStart;
-        CombatEvents.OnTurnEnded += TurnEnd;
+        // Fix: unsubscribe turn events that were registered in Initialize
+        CombatEvents.OnTurnStarted -= TurnStart;
+        CombatEvents.OnTurnEnded -= TurnEnd;
 
         m_combatManager = null;
 
@@ -244,21 +249,18 @@ public class CombatActor : MonoBehaviour, IActorComponent, IDamageSource
     // called by m_animator
     public void CloseWindow()
     {
-        if (m_combatManager != null)
-            m_combatManager.Container.Resolve<ActionSystem>().ClosePrompt(this);
+        m_action.ClosePrompt(this);
     }
     // called by m_animator
     public void OpenWindow(string promptKey)
     {
-        if (m_combatManager != null)
-            m_combatManager.Container.Resolve<ActionSystem>().OpenPrompt(this, promptKey);
+        m_action.OpenPrompt(this, promptKey);
 
     }
     // called by event
     public void ActionFinished()
     {
-        if(m_combatManager != null)
-            m_combatManager.Container.Resolve<ActionSystem>().NotifyActionFinished(this);
+        m_action.NotifyActionFinished(this);
     }
     #endregion
     #region StatusEffect
