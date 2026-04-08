@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 public class ReactionSystem
@@ -112,7 +111,7 @@ public class ReactionSystem
                 break;
             case PromptInputType.Confirm:
                 m_window.TryActivateConfirm();
-                break;            
+                break; 
         }
     }
     public ActionResult ResolveResults()

@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using Unity.Cinemachine;
-using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 [ExecuteAlways]
 public class Actor : MonoBehaviour, IActor
@@ -14,7 +14,6 @@ public class Actor : MonoBehaviour, IActor
 
     [SerializeField] private bool m_playable;
     public bool IsPlayable => m_playable;
-    public bool IsControlled { get; private set; }
 
     private PlayerInputSource m_playerInputSource;
     private AIInputSource m_aiInputSource;
@@ -24,8 +23,15 @@ public class Actor : MonoBehaviour, IActor
     public Transform TrackingTarget => m_trackingTarget;
     public Sprite actorSprite; // TEMP
 
+<<<<<<< Updated upstream
     private GameManager m_game;
     public GameManager Game => m_game;
+=======
+    protected GameManager m_game;
+>>>>>>> Stashed changes
+
+    private IInputSource m_inputSource;
+    public IInputSource InputSource => m_inputSource;
 
 #if UNITY_EDITOR
     private void OnValidate()
@@ -52,19 +58,15 @@ public class Actor : MonoBehaviour, IActor
         return false;
     }
 #endif
-    public void SetControl(bool controlled)
+    private void OnControlChanged(Actor actor) 
     {
-        if (IsControlled == controlled)
-            return;
-
-        IsControlled = controlled;
-
-        if (controlled)
+        if (actor == this) 
         {
             ChangeComponentInputSource(m_playerInputSource);
         }
-        else
+        else 
         {
+            m_aiInputSource.SetTarget(actor.transform);
             ChangeComponentInputSource(m_aiInputSource);
         }
     }
@@ -98,10 +100,11 @@ public class Actor : MonoBehaviour, IActor
         transform.position = data.Position;
         LoadActorComponentData(data);
     }
-
+    private ActorManager m_actorManager;
     public virtual void Init(GameManager game)
     {
         m_game = game;
+        m_game.OnStateChanged += GameStateChanged;
 
         var components = GetComponents<IActorComponent>();
         foreach (var comp in components)
@@ -111,7 +114,14 @@ public class Actor : MonoBehaviour, IActor
         }
         OnActorComponentsInitialized();
         m_playerInputSource = new PlayerInputSource(game.Resolve<InputManager>());
-        m_aiInputSource = new AIInputSource();
+        m_aiInputSource = new AIInputSource(transform);
+        m_actorManager = game.Resolve<ActorManager>();
+        m_actorManager.OnActorControlChanged += OnControlChanged;
+    }
+    protected GameState m_gameState;
+    protected virtual void GameStateChanged(GameState state) 
+    {
+        m_gameState = state;
     }
     public virtual void OnActorComponentsInitialized()
     {
@@ -120,6 +130,9 @@ public class Actor : MonoBehaviour, IActor
     }
     public virtual void Dispose()
     {
+        m_game.OnStateChanged -= GameStateChanged;
+        m_actorManager.OnActorControlChanged -= OnControlChanged;
+
         foreach (var comp in m_components.Values)
             comp.Dispose();
 

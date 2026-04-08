@@ -18,6 +18,6 @@ MonoBehaviour:
   animationClip: {fileID: 0}
   isReactive: 1
   grantsApOnUse: 0
-  baseDamage: 1
-  confirmDamageMultipler: 1.2
+  baseDamage: 0
+  confirmDamageMultipler: 0
   AppliedEffects: []

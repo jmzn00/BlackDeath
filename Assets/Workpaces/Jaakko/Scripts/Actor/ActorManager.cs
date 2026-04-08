@@ -30,11 +30,6 @@ public class ActorManager : IManager
             Debug.LogWarning("Trying to set controlled actor that is not in party");
             return;
         }
-        if (m_currentControlled != null)        
-            m_currentControlled.SetControl(false);
-
-        actor.SetControl(true);
-
         m_currentControlled = actor;
         OnActorControlChanged?.Invoke(actor);
     }
@@ -51,6 +46,10 @@ public class ActorManager : IManager
         int nextIndex = (currentIndex + 1) % m_party.Count;
 
         SetControlledActor(m_party[nextIndex]);
+    }
+    public override void OnSceneUnloaded()
+    {
+        DisposeActors();
     }
 
     public ActorManager(GameManager game) 
@@ -76,6 +75,7 @@ public class ActorManager : IManager
             }
             else 
             {
+<<<<<<< Updated upstream
                 Debug.LogWarning($"Actor with ID {data.ActorID} not found in scene!");
             }
         }
@@ -86,7 +86,27 @@ public class ActorManager : IManager
         return true;
     }
     public void OnManagersInitialzied() 
+=======
+                Debug.LogWarning($"Actor: {data.ActorName} with ID: {data.ActorID} not found in scene!");
+            }
+        }
+    }
+    private void DisposeActors() 
+>>>>>>> Stashed changes
     {
+        if (m_actors == null || m_actors.Count == 0) return;
+
+        foreach (var a in new List<IActor>(m_actors))
+        {
+            if (!Unregister(a)) 
+            {
+                Debug.LogWarning($"Failed to dispose actor: {a.ActorID}");
+            }            
+        }
+        m_actors.Clear();
+    }
+    private void GatherActorsInScene() 
+    {        
         m_actors = new List<IActor>();
         IActor[] actorsInScene = GameObject.
             FindObjectsByType<Actor>(FindObjectsSortMode.None)
@@ -112,16 +132,14 @@ public class ActorManager : IManager
                 SetControlledActor(m_party[0]);
         }            
         else
-            Debug.LogWarning("No playable actors found in scene!");
+            Debug.LogWarning("No playable actors found in scene");
     }
     public bool Dispose() 
     {
         m_active = false;
 
-        foreach (var a in new List<IActor>(m_actors)) 
-        {
-            Unregister(a);
-        }
+        DisposeActors();
+
         return true;
     }
     public void Update(float dt) 

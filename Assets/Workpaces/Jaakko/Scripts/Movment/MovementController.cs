@@ -75,22 +75,14 @@ public class MovementController : MonoBehaviour, IActorComponent
     {
 
     }
-    private InputManager m_inputManager;
     public bool Initialize(GameManager game)
     {
         m_controller = GetComponent<CharacterController>();
-        m_inputManager = game.Resolve<InputManager>();
 
         AddModule(new WalkRunModule(this));
-
-        //AddModule(new JumpModule(this));
-
         AddModule(new GroundFrictionModule(this));
-        //AddModule(new GravityModule(this));     
-       
-
         return true;
-    }
+    }    
     public bool Dispose()
     {
         return true;
@@ -115,7 +107,6 @@ public class MovementController : MonoBehaviour, IActorComponent
     }    
     private void Update()
     {
-
         if (m_inputSource == null) return;
 
         m_inputState = m_inputSource.GetInput();

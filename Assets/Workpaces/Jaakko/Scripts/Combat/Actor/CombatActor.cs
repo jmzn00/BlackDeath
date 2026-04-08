@@ -12,6 +12,10 @@ public class CombatActor : MonoBehaviour, IActorComponent
     private Actor m_actor;
     public Actor Actor => m_actor;
 
+    private AnimatorComponent m_animator;
+    public AnimatorComponent Animator => m_animator;
+
+
     private IActionProvider m_actionProvider;
     public IActionProvider ActionProvider => m_actionProvider;
 
@@ -29,8 +33,7 @@ public class CombatActor : MonoBehaviour, IActorComponent
 
     [SerializeField] private List<CombatAction> m_actions;
     public List<CombatAction> Actions => m_actions;
-
-    private AnimatorComponent m_animator;
+    
     // event that m_animator listens to
     public event Action<AnimationClip> OnPlayRequested;
 
@@ -92,7 +95,16 @@ public class CombatActor : MonoBehaviour, IActorComponent
 
     }
     #endregion
-    #region Combat            
+    #region Combat  
+    public AnimationClip TransitionClip => m_animator.TransitionClip;
+    public bool HasTransition() 
+    {
+        return m_animator.TransitionClip != null;
+    }
+    public void PlayTransition() 
+    {
+        m_animator.PlayTransition();
+    }
     void OnHealthChanged(float value)
     {
         if (IsDead) return;
@@ -123,11 +135,37 @@ public class CombatActor : MonoBehaviour, IActorComponent
     }
     private void CombatStarted()
     {
+<<<<<<< Updated upstream
+        MovementController c = Actor.Get<MovementController>();
+        if (c != null)
+            c.enabled = false;
+=======
+        if (m_action == null)
+            m_action = m_combatManager.Container.Resolve<ActionSystem>();
 
+        AddActionPoints(m_maxActionPoints);
+>>>>>>> Stashed changes
     }
     protected virtual void CombatEnded(CombatResult result) 
-    {
+    {        
         ClearStatusEffects();
+
+<<<<<<< Updated upstream
+        MovementController c = Actor.Get<MovementController>();
+        if (c != null) 
+        {
+            c.enabled = true;
+        }
+        
+=======
+        CombatEvents.OnTurnStarted -= TurnStart;
+        CombatEvents.OnTurnEnded -= TurnEnd;
+
+        m_combatManager = null;
+
+        m_health.ApplyHealth(m_health.MaxHealth);
+        SetDead(false);
+>>>>>>> Stashed changes
     }
     public void SubmitAction(CombatActor source,
         CombatActor target, CombatAction action)

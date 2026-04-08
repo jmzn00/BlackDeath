@@ -8,9 +8,9 @@ public class ActionSystem
     private CombatContext m_context;
 
     private ActionContext m_currentAction;
-    public ActionContext CurrentAction => m_currentAction; // expose current action for diagnostics if needed
 
     public event Action<ActionContext> OnActionFinished;
+    public event Action <ActionContext> OnActionSubmitted;
     public ActionSystem(CombatContext ctx,
         ReactionSystem reaction) 
     {
@@ -47,24 +47,37 @@ public class ActionSystem
             return;
         }
         m_reaction.Close();
+
+        ActionResult res = m_reaction.ResolveResults();
+        m_currentAction.Action.ResolveResult(m_currentAction, res);        
+        CombatEvents.ActionResolved(m_currentAction, res);
+        Debug.Log($"{m_currentAction.Source.name} performed {m_currentAction.Action.actionName} on {m_currentAction.Target.name} result: {res}");
     }
+
     public void NotifyActionFinished(CombatActor actor) 
     {
         if (m_currentAction == null)
             return;
         if (actor != m_currentAction.Source) 
         {
+            // if you get this warning it may be that ui is trying to submit again 
+            // when you are confirming an attack or submiting input
+
             Debug.LogWarning("AS: Can not Finish, Actor is not Source");
             return;
-        }
+        }        
         OnActionFinished?.Invoke(m_currentAction);
-        CombatEvents.ActionFinished(m_currentAction);
         m_currentAction = null;
     }
     public void TurnStarted() 
     {
         m_context.CurrentActor.ActionProvider.
             RequestAction(m_context.CurrentActor, m_context.Actors.ToList());
+    }
+    public event Action TempAction; // REMOVE
+    public void Resolve() 
+    {
+        m_currentAction.Action.Resolve(m_currentAction, TempAction);
     }
     public void SubmitAction(CombatActor source, 
         CombatActor target,
@@ -82,11 +95,7 @@ public class ActionSystem
             Target = target,
             Action = action,
         };
-        action.Resolve(m_currentAction, TempAction); // REMOVE TEMP
-        CombatEvents.ActionSubmitted(m_currentAction);
-
-        // NOTE: Do NOT fire ActionExecuting here — the CombatActor.PlayAction will raise ActionExecuting
-        // when the animation is actually started. This ensures camera / UI react at the first animation frame.
+        OnActionSubmitted?.Invoke(m_currentAction);
     }
-    public event Action TempAction; // REMOVE
+    
 }
