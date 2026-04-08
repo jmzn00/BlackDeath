@@ -34,6 +34,7 @@ public class CombatManager : ManagerBase
     private ActionSystem m_action;
     private TransitionSystem m_transition;
     private DamageSystem m_damage;
+    private CombatStatSystem m_stat;
     public ActionSystem Action => m_action;
 
     private CombatCommandDispatcher m_commandDispatcher;
@@ -49,6 +50,8 @@ public class CombatManager : ManagerBase
     private List<CombatArea> m_areasInScene;
 
     private CombatSaveData m_save;
+
+    private List<CombatSystemBase> m_systems = new();
 
     public CombatManager(GameManager game)
     {
@@ -81,8 +84,8 @@ public class CombatManager : ManagerBase
     {
         if (m_state == CombatState.Inactive) return;
 
-        m_reaction.Update(dt);
-        m_transition.Update(dt);
+        for (int i = 0; i < m_systems.Count; i++)
+            m_systems[i].Update(dt);
     }
     public override void OnSceneLoaded(SceneData data) 
     {
@@ -99,7 +102,7 @@ public class CombatManager : ManagerBase
         CleanupSystems();
         return true;
     }
-    #endregion
+    #endregion    
     public void StartCombat(List<CombatActor> actors, CombatArea area)
     {
         if (m_state != CombatState.Inactive) return;
@@ -125,11 +128,24 @@ public class CombatManager : ManagerBase
         m_transition = new TransitionSystem(area);
         m_transition.OnTransitionFinished += TransitionFinished;
 
+        m_stat = new CombatStatSystem(m_context);
+
+        m_action.OnActionResolved += m_stat.ActionResolved;
+
         m_commandDispatcher = new CombatCommandDispatcher(m_action, m_reaction);
         m_commandProcessor = new CombatCommandProcessor(actors, m_commandDispatcher);
+
+        m_systems.Add(m_damage);
+        m_systems.Add(m_turn);
+        m_systems.Add(m_reaction);
+        m_systems.Add(m_action);
+        m_systems.Add(m_transition);
+        m_systems.Add(m_stat);
+
+        foreach (var s in m_systems)
+            s.Init();
           
         NextTurn();
-        
     }
     private void ActionSubmitted(ActionContext actx)
     {
@@ -238,6 +254,10 @@ public class CombatManager : ManagerBase
         {
             m_transition.OnTransitionFinished -= TransitionFinished;
         }
+
+        foreach (var s in m_systems)
+            s.Dispose();
+        m_systems.Clear();
     }
     public void ChangeState(CombatState state) 
     {

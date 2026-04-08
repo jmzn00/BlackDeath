@@ -2,12 +2,21 @@ using UnityEngine;
 using System.Collections.Generic;
 
 
-public class DamageSystem
+public class DamageSystem : CombatSystemBase
 {
     public DamageSystem() 
     {
+        
+    }
+    public override void Init()
+    {
         CombatEvents.OnTurnStarted += ActorTurnStart;
         CombatEvents.OnTurnEnded += ActorTurnEnd;
+    }
+    public override void Dispose()
+    {
+        CombatEvents.OnTurnStarted -= ActorTurnStart;
+        CombatEvents.OnTurnEnded -= ActorTurnEnd;
     }
     public void ActionResolved(ActionContext ctx, ActionResult result) 
     {
@@ -62,7 +71,7 @@ public class DamageSystem
     public void ApplyDamage(float amount, IDamageSource source, CombatActor target) 
     {
         if (amount > 0f)
-            CombatEvents.DamageApplied(target, amount);
+            CombatEvents.DamageApplied(target, source, amount);
 
         target.Health.ApplyDamage(amount);
         
@@ -72,11 +81,11 @@ public class DamageSystem
             CombatEvents.ActorDied(target);
         }
     }
-    public void ApplyHeal(float amount, IDamageSource source, CombatActor target) 
-    {
-        Debug.Log($"{source.SourceName} applied {amount} healing to {target.name}");
+    public void ApplyHeal(float amount, IDamageSource source, CombatActor target, CombatActor sourceActor = null) 
+    {       
         if (amount > 0f)
-            CombatEvents.HealApplied(target, amount);
+            CombatEvents.HealApplied(target, source, amount);
+
         target.Health.ApplyHealth(amount);
     }
     private bool IsDead(CombatActor actor) 

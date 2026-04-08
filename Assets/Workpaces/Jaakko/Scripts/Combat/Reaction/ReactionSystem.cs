@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-public class ReactionSystem
+public class ReactionSystem : CombatSystemBase
 {
     private InputPromptLibrary m_promptLibrary;
     private InputPromptLibrary Library 
@@ -93,7 +93,7 @@ public class ReactionSystem
         m_window.Close(m_context);
         CombatEvents.ReactionWindowClosed(m_context);
     }
-    public void Update(float dt) 
+    public override void Update(float dt)
     {
         if (!m_window.IsOpen) return;
 

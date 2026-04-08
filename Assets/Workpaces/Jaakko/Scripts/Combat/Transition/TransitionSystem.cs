@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class TransitionSystem
+public class TransitionSystem : CombatSystemBase
 {
     CombatArea m_area;
     public TransitionSystem(CombatArea area) 
@@ -28,7 +28,7 @@ public class TransitionSystem
 
     private bool m_transitionOpen;
     
-    public void Update(float dt) 
+    public override void Update(float dt) 
     {
         if (!m_transitionOpen) return;
 

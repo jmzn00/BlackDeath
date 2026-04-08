@@ -19,7 +19,7 @@ public class CombatEffectManager : MonoBehaviour
         CombatEvents.OnDamageApplied -= HandleDamageApplied;
     }
 
-    private void HandleDamageApplied(CombatActor actor, float damage)
+    private void HandleDamageApplied(CombatActor actor, IDamageSource source, float damage)
     {
         // Instantiate damage popup
         if (damagePopUpPrefab != null)

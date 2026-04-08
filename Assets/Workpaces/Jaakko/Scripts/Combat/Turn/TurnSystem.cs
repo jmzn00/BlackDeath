@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-public class TurnSystem
+public class TurnSystem : CombatSystemBase
 {
     IReadOnlyList<CombatActor> m_actors;
     int m_turnIndex;

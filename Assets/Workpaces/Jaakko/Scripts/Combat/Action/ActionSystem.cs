@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using UnityEngine;
 
-public class ActionSystem
+public class ActionSystem : CombatSystemBase
 {
     private ReactionSystem m_reaction;
     private CombatContext m_context;
@@ -19,7 +19,6 @@ public class ActionSystem
         m_reaction = reaction;
         m_context = ctx;
     }
-
     public void OpenPrompt(CombatActor actor, string promptKey)
     {
         if (m_currentAction == null)
@@ -52,7 +51,6 @@ public class ActionSystem
 
         ActionResult res = m_reaction.ResolveResults();
         OnActionResolved?.Invoke(m_currentAction, res);
-        //CombatEvents.ActionResolved(m_currentAction, res);
     }
 
     public void NotifyActionFinished(CombatActor actor)

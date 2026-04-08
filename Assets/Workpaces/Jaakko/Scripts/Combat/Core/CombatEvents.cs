@@ -87,16 +87,16 @@ public static class CombatEvents
     #endregion
 
     // DAMAGE
-    public static event Action<CombatActor, float>OnDamageApplied;
-    public static event Action<CombatActor, float>OnHealthApplied;
+    public static event Action<CombatActor, IDamageSource, float>OnDamageApplied;
+    public static event Action<CombatActor, IDamageSource, float>OnHealthApplied;
     #region Damage
-    public static void DamageApplied(CombatActor actor, float damage)
+    public static void DamageApplied(CombatActor target, IDamageSource source ,float damage)
     {
-        OnDamageApplied?.Invoke(actor, damage);
+        OnDamageApplied?.Invoke(target, source, damage);
     }
-    public static void HealApplied(CombatActor actor, float damage)
+    public static void HealApplied(CombatActor actor, IDamageSource source, float damage)
     {
-        OnHealthApplied?.Invoke(actor, damage);
+        OnHealthApplied?.Invoke(actor, source, damage);
     }
     #endregion
 
