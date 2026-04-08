@@ -47,36 +47,25 @@ public class CombatManager : ManagerBase
     #region IManager
     public CombatSaveData Save()
     {
-        foreach (var completed in m_save.CompletedAreas) 
-        {
-            Debug.Log($"Saved {completed}");
-        }
         return m_save;
     }
     public void Load(CombatSaveData data)
     {
         m_save = data;
-        Debug.Log($"CombatManager Load Called");
         foreach (var area in m_areasInScene)
         {
-            Debug.Log($"Checking area {area.ID} against save data...");
             if (m_save != null)
             {
                 foreach (var completed in m_save.CompletedAreas)
                 {
                     if (completed == area.ID) 
                     {
-                        Debug.Log($"Marking area {area.ID} as completed based on save data.");
                         area.SetCompleted(true);
                     }
                     
                 }
             }
-            else 
-            {
-                Debug.Log("Save is NULL");
-            }
-                area.Initialize(m_game);
+            area.Initialize(m_game);
         }
         SetReady();
     }
