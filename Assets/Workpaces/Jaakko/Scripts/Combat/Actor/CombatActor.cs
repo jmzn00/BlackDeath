@@ -255,7 +255,6 @@ public class CombatActor : MonoBehaviour, IActorComponent, IDamageSource
     public void OpenWindow(string promptKey)
     {
         m_action.OpenPrompt(this, promptKey);
-
     }
     // called by event
     public void ActionFinished()
@@ -266,10 +265,12 @@ public class CombatActor : MonoBehaviour, IActorComponent, IDamageSource
     #region StatusEffect
     private void ClearStatusEffects() 
     {
-        foreach (var i in CurrentStatusEffects)
+        foreach (var i in CurrentStatusEffects) 
+        {
             i.Expire();
-
+        }            
         m_currentStatusEffects.Clear();
+        OnStatusEffectsChanged?.Invoke(m_currentStatusEffects);
     }
     public StatusEffectInstance GetInstance(ActorStatusEffect e) 
     {

@@ -3,6 +3,7 @@ using UnityEngine;
 public class StatusEffectInstance : IDamageSource
 {
     public CombatActor SourceActor { get; }
+    public CombatActor Applier { get; private set; }
     public string SourceName { get; }
 
     public int RemainingTurns;
@@ -11,13 +12,14 @@ public class StatusEffectInstance : IDamageSource
 
     public event Action<int> OnDurationChanged;
 
-    public StatusEffectInstance(ActorStatusEffect effect, CombatActor owner
+    public StatusEffectInstance(ActorStatusEffect effect, CombatActor owner, CombatActor applier
         , DamageSystem damage) 
     {
         Template = effect;
 
         SourceActor = owner;
         SourceName = Template.displayName;
+        Applier = applier;
         m_damage = damage;
 
         RemainingTurns = effect.duration;
@@ -52,11 +54,11 @@ public class StatusEffectInstance : IDamageSource
     }
     private void ApplyDamage(float amount) 
     {
-        m_damage.ApplyDamage(amount, this, SourceActor);
+        m_damage.ApplyDamage(amount, Applier, SourceActor);
     }
     private void ApplyHeal(float amount) 
     {
-        m_damage.ApplyHeal(amount, this, SourceActor);
+        m_damage.ApplyHeal(amount, Applier, SourceActor);
     }
     
 }

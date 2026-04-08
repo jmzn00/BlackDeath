@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 
 public class CombatActorStats 
 {
@@ -48,9 +49,11 @@ public class CombatStatSystem : CombatSystemBase
 
         m_stats.Clear();
     }
-    public IReadOnlyDictionary<CombatActor, CombatActorStats> GetStats()
+    public List<CombatActorStats> GetStatsOrdered()
     {
-        return m_stats;
+        return m_stats.Values
+        .OrderByDescending(stats => stats.DamageDealt + stats.HealDealt + stats.ActionsHit)
+        .ToList();
     }
     public void DamageDealt(CombatActor target, IDamageSource source, float amount) 
     {

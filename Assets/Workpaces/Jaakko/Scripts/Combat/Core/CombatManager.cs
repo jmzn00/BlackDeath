@@ -181,7 +181,6 @@ public class CombatManager : ManagerBase
         {
             result = CombatResult.Won;
         }
-        m_game.SetState(GameState.None);
 
         foreach (var a in m_context.Actors)
             a.CombatEnded(result);
@@ -200,28 +199,15 @@ public class CombatManager : ManagerBase
                 m_save.CompletedAreas.Add(m_area.ID);
             }            
         }
-
-        foreach (var stat in m_container.Resolve<CombatStatSystem>().GetStats()) 
-        {
-            CombatActorStats stats = stat.Value;
-
-            Debug.Log($"{stats.Actor.name}: ");
-            Debug.Log($"Damage Dealt: {stats.DamageDealt}");
-            Debug.Log($"Damage Taken: {stats.DamageTaken}");
-            Debug.Log($"Heal Dealt: {stats.HealDealt}");
-            Debug.Log($"Heal Taken: {stats.HealTaken}");
-            Debug.Log($"Actions Hit: {stats.ActionsHit}");
-            Debug.Log($"Parries Performed: {stats.ParriesPerformed}");
-            Debug.Log($"Dodges Performed: {stats.DodgesPerformed}");
-            Debug.Log($"Confirms Performed: {stats.ConfirmsPerformed}");
-            Debug.Log("------------------------------");
-            Debug.Log(" ");
-        }
         foreach (var s in m_systems)
             s.Reset();
 
         m_area.AreaFinished(result);
         m_area = null;
+    }
+    public void EndScreenFinished() 
+    {
+        m_game.SetState(GameState.None);
     }
     public void ChangeState(CombatState state) 
     {

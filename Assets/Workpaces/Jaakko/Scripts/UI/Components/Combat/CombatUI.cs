@@ -13,12 +13,14 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
 {
     private InputManager m_input;
     private UIManager m_ui;
+    private CombatManager m_combat;
 
     private ActionView m_actionView;
     private TargetView m_targetView;
     private DamageView m_damageView;
     private ReactionView m_reactionView;
     private StatusView m_statusView;
+    private ResultView m_resultView;
 
     private List<Button> m_buttons = new();
 
@@ -35,20 +37,23 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
     public CombatUI(GameManager game, CombatUIViewGroup group)
         : base(game, group)
     {
+        m_input = game.Resolve<InputManager>();
+        m_ui = game.Resolve<UIManager>();
+        m_combat = game.Resolve<CombatManager>();
+
         m_actionView = group.ActionView;
         m_targetView = group.TargetView;
         m_damageView = group.DamageView;
         m_reactionView = group.ReactionView;
         m_statusView = group.StatusView;
+        m_resultView = group.ResultView;
 
         m_targetView.Hide();
         m_actionView.Hide();
         m_damageView.Hide();
         m_reactionView.Hide();
         m_statusView.Hide();
-
-        m_input = game.Resolve<InputManager>();
-        m_ui = game.Resolve<UIManager>();
+        m_resultView.Hide();        
     }
     public override void Initialize()
     {
@@ -72,6 +77,7 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
         m_damageView.Init();
         m_reactionView.Init();
         m_statusView.Init();
+        m_resultView.Init();
 
         m_input.OnSelectTarget += SelectTarget;
     }
@@ -97,6 +103,12 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
     private void CombatEnded(CombatResult res) 
     {
         m_statusView.Hide();
+
+        m_resultView.DisplayResults(m_combat.Container
+            .Resolve<CombatStatSystem>().GetStatsOrdered(),
+            res);
+
+        m_resultView.View();
     }
     private void AttackerPromptOpened(InputPrompt prompt) 
     {
@@ -109,6 +121,14 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
     }
     public override bool OnSubmit()
     {
+        if (m_resultView.gameObject.activeInHierarchy) 
+        {
+            m_resultView.Hide();
+            m_combat.EndScreenFinished();
+            m_resultView.ClearPortraits();
+            return true;
+        }
+
         switch (m_state)
         {
             case CombatUIState.ActionTypeSelecting:
@@ -117,7 +137,7 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
             case CombatUIState.TargetSelecting:
                 SubmitAction();
                 return true;
-        }
+        }        
         return false;
     }
     public override bool OnCancel()
@@ -333,6 +353,7 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
         else
         {
             m_actionView.Hide();
+            m_resultView.Hide();
             m_ui.PopUI(this);
         }
     }

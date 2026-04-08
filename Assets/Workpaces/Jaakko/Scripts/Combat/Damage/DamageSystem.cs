@@ -36,7 +36,7 @@ public class DamageSystem : CombatSystemBase
             case ActionResult.Confirmed:
                 finalDamage = ctx.Action.baseDamage
                     * ctx.Action.confirmDamageMultipler;
-                UpdateStatusEffects(ctx.Action.AppliedEffects, ctx.Target);
+                UpdateStatusEffects(ctx.Action.AppliedEffects, ctx.Target, ctx.Source);
                 break;
             case ActionResult.Hit:
                 finalDamage = ctx.Action.baseDamage;
@@ -51,7 +51,7 @@ public class DamageSystem : CombatSystemBase
         }
         ApplyDamage(finalDamage, ctx.Source, reciever);
     }
-    private void UpdateStatusEffects(List<ActorStatusEffect> effects, CombatActor target) 
+    private void UpdateStatusEffects(List<ActorStatusEffect> effects, CombatActor target, CombatActor source) 
     {
         foreach (var e in effects)
         {
@@ -59,7 +59,7 @@ public class DamageSystem : CombatSystemBase
             {
                 if (!e.isStackable) return;
 
-                StatusEffectInstance i =target.GetInstance(e);
+                StatusEffectInstance i = target.GetInstance(e);
                 if (i != null)
                 {
                     i.UpdateDuration(e.duration);
@@ -72,14 +72,17 @@ public class DamageSystem : CombatSystemBase
             }
             else
             {
-                target.ApplyEffect(new StatusEffectInstance(e, target, this));
+                target.ApplyEffect(new StatusEffectInstance(e, target, source, this));
             }
         }
     }
     public void ApplyDamage(float amount, IDamageSource source, CombatActor target) 
     {
-        if (amount > 0f)
-            CombatEvents.DamageApplied(target, source, amount);
+        if (source.SourceActor.IsDead) 
+        {
+            Debug.Log($"Cannot apply damage from {source.SourceName}, they are dead");
+            return;
+        }
 
         target.Health.ApplyDamage(amount);
         
@@ -88,6 +91,9 @@ public class DamageSystem : CombatSystemBase
             target.SetDead(true);
             CombatEvents.ActorDied(target);
         }
+
+        if (amount > 0f)
+            CombatEvents.DamageApplied(target, source, amount);
     }
     public void ApplyHeal(float amount, IDamageSource source, CombatActor target, CombatActor sourceActor = null) 
     {       

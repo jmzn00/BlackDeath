@@ -34,6 +34,8 @@ public class UIManager : ManagerBase
         m_input = m_game.Resolve<InputManager>();
 
         m_input.OnUIInputAction += HandleUIInput;
+
+        CombatEvents.OnCombatStateChanged += OnCombatStateChanged;
         return true;
     }
     public override void OnSceneLoaded(SceneData data) 
@@ -47,6 +49,7 @@ public class UIManager : ManagerBase
         if (m_uiController)
             m_uiController.Dispose();
 
+        CombatEvents.OnCombatStateChanged -= OnCombatStateChanged;
         m_game.OnStateChanged -= OnGameStateChanged;
         m_navigation.Dispose();
         return true;
@@ -83,14 +86,26 @@ public class UIManager : ManagerBase
         switch (state)
         {
             case GameState.None:
-                m_uiController.ShowComponent<CombatUI>(false);
                 m_uiController.ShowComponent<DialogueUI>(false);
+                m_uiController.ShowComponent<CombatUI>(false);
                 break;
             case GameState.Combat:
                 m_uiController.ShowComponent<CombatUI>(true);
                 break;
             case GameState.Dialogue:
                 m_uiController.ShowComponent<DialogueUI>(true);
+                break;
+        }
+    }
+    private void OnCombatStateChanged(CombatState state) 
+    {
+        switch (state) 
+        {
+            case CombatState.Inactive:
+                m_uiController.ShowComponent<CombatUI>(false);
+                break;
+            case CombatState.Active:
+                m_uiController.ShowComponent<CombatUI>(true);
                 break;
         }
     }
