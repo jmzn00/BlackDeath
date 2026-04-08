@@ -135,20 +135,37 @@ public class CombatActor : MonoBehaviour, IActorComponent
     }
     private void CombatStarted()
     {
+<<<<<<< Updated upstream
         MovementController c = Actor.Get<MovementController>();
         if (c != null)
             c.enabled = false;
+=======
+        if (m_action == null)
+            m_action = m_combatManager.Container.Resolve<ActionSystem>();
+
+        AddActionPoints(m_maxActionPoints);
+>>>>>>> Stashed changes
     }
     protected virtual void CombatEnded(CombatResult result) 
     {        
         ClearStatusEffects();
 
+<<<<<<< Updated upstream
         MovementController c = Actor.Get<MovementController>();
         if (c != null) 
         {
             c.enabled = true;
         }
         
+=======
+        CombatEvents.OnTurnStarted -= TurnStart;
+        CombatEvents.OnTurnEnded -= TurnEnd;
+
+        m_combatManager = null;
+
+        m_health.ApplyHealth(m_health.MaxHealth);
+        SetDead(false);
+>>>>>>> Stashed changes
     }
     public void SubmitAction(CombatActor source,
         CombatActor target, CombatAction action)

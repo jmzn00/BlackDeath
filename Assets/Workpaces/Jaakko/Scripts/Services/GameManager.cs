@@ -58,6 +58,51 @@ public class GameManager : IManager
         for (int i = 0; i < m_managers.Count; i++)
             m_managers[i].Update(dt);
     }
+<<<<<<< Updated upstream:Assets/Workpaces/Jaakko/Scripts/Services/GameManager.cs
+=======
+    public void SaveGame(int slot) 
+    {
+        Debug.Log($"Saved to slot {slot}");
+        var save = Resolve<SaveManager>();
+
+        SceneData data = new SceneData(SceneManager.GetActiveScene().name,
+            true);
+
+        save.Save(slot, data);
+    }
+    public void LoadGame(SaveSlotMeta meta) 
+    {
+        Debug.Log($"Loaded from slot {meta.Slot}");
+        GameEvents.LoadStarted();
+
+        var save = Resolve<SaveManager>();
+        save.SetCurrentSlot(meta.Slot);
+
+        foreach (var m in m_managers)
+            m.OnSceneUnloaded();
+
+        SceneManager.LoadScene(meta.SceneName);
+    }
+    private void SceneLoaded(Scene scene, LoadSceneMode mode) 
+    {
+        m_managersReady = 0;
+
+
+        bool isGame = true;
+        // not type safe but works for now
+        if (scene.name == "Scene_MainMenu") 
+        {
+            GameEvents.LoadFinished();
+            isGame = false;
+        }
+        SceneData data = new SceneData(scene.name, isGame);
+
+        foreach (var m in m_managers)
+            m.OnSceneLoaded(data);
+
+        Resolve<SaveManager>().RestoreAfterSceneLoad();
+    }    
+>>>>>>> Stashed changes:Assets/Workpaces/Jaakko/Scripts/Game/GameManager.cs
     private void InitManagers() 
     {
         foreach (var m in m_managers) 

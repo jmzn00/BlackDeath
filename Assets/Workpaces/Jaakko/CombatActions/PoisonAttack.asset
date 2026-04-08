@@ -14,7 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AttackAction
   actionName: PoisonAttack
   description: 
+<<<<<<< Updated upstream:Assets/Workpaces/Jaakko/CombatActions/PoisonAttack.asset
   apCost: 0
+=======
+  apCost: 1
+>>>>>>> Stashed changes:Assets/Workpaces/Jaakko/CombatActions/User/PoisonSkill.asset
   animationClip: {fileID: 7400000, guid: c105fac2c4171c54390d8e9111a5c889, type: 2}
   isReactive: 1
   grantsApOnUse: 0

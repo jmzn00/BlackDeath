@@ -23,8 +23,12 @@ public class Actor : MonoBehaviour, IActor
     public Transform TrackingTarget => m_trackingTarget;
     public Sprite actorSprite; // TEMP
 
+<<<<<<< Updated upstream
     private GameManager m_game;
     public GameManager Game => m_game;
+=======
+    protected GameManager m_game;
+>>>>>>> Stashed changes
 
     private IInputSource m_inputSource;
     public IInputSource InputSource => m_inputSource;
@@ -100,6 +104,7 @@ public class Actor : MonoBehaviour, IActor
     public virtual void Init(GameManager game)
     {
         m_game = game;
+        m_game.OnStateChanged += GameStateChanged;
 
         var components = GetComponents<IActorComponent>();
         foreach (var comp in components)
@@ -113,6 +118,11 @@ public class Actor : MonoBehaviour, IActor
         m_actorManager = game.Resolve<ActorManager>();
         m_actorManager.OnActorControlChanged += OnControlChanged;
     }
+    protected GameState m_gameState;
+    protected virtual void GameStateChanged(GameState state) 
+    {
+        m_gameState = state;
+    }
     public virtual void OnActorComponentsInitialized()
     {
         foreach (var comp in m_components.Values)
@@ -120,6 +130,9 @@ public class Actor : MonoBehaviour, IActor
     }
     public virtual void Dispose()
     {
+        m_game.OnStateChanged -= GameStateChanged;
+        m_actorManager.OnActorControlChanged -= OnControlChanged;
+
         foreach (var comp in m_components.Values)
             comp.Dispose();
 
