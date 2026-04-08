@@ -16,6 +16,12 @@ public class TurnSystem : CombatSystemBase
         m_turnIndex = 0;
         m_actors = m_context.Actors;
     }
+    public override void Reset()
+    {
+        m_context = null;
+        m_turnIndex = 0;
+        m_actors = null;
+    }
 
     public CombatActor Next() 
     {

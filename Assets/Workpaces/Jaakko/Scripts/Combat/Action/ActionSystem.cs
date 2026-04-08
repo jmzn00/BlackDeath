@@ -56,6 +56,7 @@ public class ActionSystem : CombatSystemBase
         m_reaction.Close();
 
         ActionResult res = m_reaction.ResolveResults();
+        CombatEvents.ActionResolved(m_currentAction, res);
         OnActionResolved?.Invoke(m_currentAction, res);
     }
 
@@ -80,7 +81,7 @@ public class ActionSystem : CombatSystemBase
         {
             OnActionResolved?.Invoke(m_currentAction, ActionResult.Confirmed);
 
-            //CombatEvents.ActionResolved(m_currentAction, ActionResult.Confirmed);
+            CombatEvents.ActionResolved(m_currentAction, ActionResult.Confirmed);
         }
 
         CombatEvents.TurnEnded(m_currentAction.Source);

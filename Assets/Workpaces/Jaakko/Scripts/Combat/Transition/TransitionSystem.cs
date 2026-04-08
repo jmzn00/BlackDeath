@@ -22,7 +22,7 @@ public class TransitionSystem : CombatSystemBase
         m_action.OnActionSubmitted += Start;
         m_action.OnActionFinished += ActionFinished;
     }
-    public override void Dispose()
+    public override void Reset() 
     {
         m_action.OnActionSubmitted -= Start;
         m_action.OnActionFinished -= ActionFinished;
@@ -48,7 +48,7 @@ public class TransitionSystem : CombatSystemBase
     private bool m_transitionOpen;
     private void ActionFinished(ActionContext actx) 
     {
-        Reset();
+        ResetTransition();
     }
     public override void Update(float dt) 
     {
@@ -70,7 +70,7 @@ public class TransitionSystem : CombatSystemBase
             Finish();
         }        
     }    
-    public void Reset() 
+    public void ResetTransition() 
     {
         if (m_sourceActor != null)
             m_sourceActor.position = m_sourceStart;

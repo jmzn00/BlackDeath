@@ -19,9 +19,8 @@ public class DamageSystem : CombatSystemBase
         CombatEvents.OnTurnStarted += ActorTurnStart;
         CombatEvents.OnTurnEnded += ActorTurnEnd;
     }
-    public override void Dispose()
+    public override void Reset()
     {
-
         m_action.OnActionResolved -= ActionResolved;
 
         CombatEvents.OnTurnStarted -= ActorTurnStart;

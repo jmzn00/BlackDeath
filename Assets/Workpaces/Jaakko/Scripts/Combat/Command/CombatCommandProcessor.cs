@@ -19,14 +19,14 @@ public class CombatCommandProcessor : CombatSystemBase
             a.ReactionProvider.OnCommandReady += SubmitCommand;
         }
     }
-    public override void Dispose() 
+    public override void Reset()
     {
         if (m_context == null || m_context.Actors == null) return;
 
-        foreach (var a in m_context.Actors) 
+        foreach (var a in m_context.Actors)
         {
             a.ActionProvider.OnCommandReady -= SubmitCommand;
-            a.ReactionProvider.OnCommandReady-= SubmitCommand;
+            a.ReactionProvider.OnCommandReady -= SubmitCommand;
         }
         m_context = null;
     }

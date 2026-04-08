@@ -27,6 +27,8 @@ public class CombatStatSystem : CombatSystemBase
         CombatEvents.OnDamageApplied += DamageDealt;
         CombatEvents.OnHealthApplied += HealApplied;
 
+        CombatEvents.OnActionResolved += ActionResolved;
+
         m_stats = new();
 
         foreach (var actor in context.Actors)
@@ -37,10 +39,12 @@ public class CombatStatSystem : CombatSystemBase
             };
         }
     }
-    public override void Dispose()
+    public override void Reset()
     {
         CombatEvents.OnDamageApplied -= DamageDealt;
         CombatEvents.OnHealthApplied -= HealApplied;
+
+        CombatEvents.OnActionResolved -= ActionResolved;
 
         m_stats.Clear();
     }
