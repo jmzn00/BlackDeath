@@ -6,7 +6,8 @@ public class StatusEffectInstance : IDamageSource
     public CombatActor Applier { get; private set; }
     public string SourceName { get; }
 
-    public int RemainingTurns;
+    public int RemainingTurns { get; private set; }
+
     private DamageSystem m_damage;
     public readonly ActorStatusEffect Template;
 
@@ -26,7 +27,7 @@ public class StatusEffectInstance : IDamageSource
     }
     public void TurnStart() => Template.OnTurnStart(this);
     public void TurnEnd() => Template.OnTurnEnd(this);
-    public void Expire() => Template.Expire();
+    public void Expire() => Template.OnExpire(this);
 
     public bool TickDuration() 
     {
@@ -64,17 +65,12 @@ public class StatusEffectInstance : IDamageSource
 }
 public abstract class ActorStatusEffect : ScriptableObject
 {
-    public int duration = 1;
-    public float damage = 0;
-    public float heal = 0;
-    public string displayName;
-    public bool isStackable = false;
-
-    public CombatActor Owner {  get; private set; }
-    public int RemainingTurns { get; protected set; }
-    public bool IsStackable => isStackable;
-
-    public Sprite statusEffectSprite;
+    [field: SerializeField] public int duration { get; private set; } = 1;
+    [field: SerializeField] public float damage { get; private set; } = 0;
+    [field: SerializeField] public float heal { get; private set; } = 0;
+    [field: SerializeField] public string displayName { get; private set; } = "StatusEffect";
+    [field: SerializeField] public bool isStackable { get; private set; } = false;
+    [field: SerializeField] public Sprite statusEffectSprite { get; private set; }
 
     public virtual bool CanPerformAction(CombatAction action, out string reason) 
     {
@@ -84,37 +80,5 @@ public abstract class ActorStatusEffect : ScriptableObject
     public virtual void OnApply(StatusEffectInstance instance) { }
     public virtual void OnTurnStart(StatusEffectInstance instance) { }
     public virtual void OnTurnEnd(StatusEffectInstance instance) { }
-    public virtual void OnExpire(StatusEffectInstance instance) { }
-
-
-
-
-    public void AddDuration(int amount) 
-    {
-        RemainingTurns += amount;
-    }
-    public void Initialize(CombatActor owner) 
-    {
-        Owner = owner;
-        RemainingTurns = duration;
-        //OnApply();
-    }
-    public void TurnStart() 
-    {
-        //OnTurnStart();
-    }
-    public void TurnEnd() 
-    {
-        //OnTurnEnd();
-    }
-    public bool TickDuration()
-    {
-        RemainingTurns--;
-        return RemainingTurns <= 0;
-    }
-    public void Expire() 
-    {
-        //OnExpire();
-    }
-    
+    public virtual void OnExpire(StatusEffectInstance instance) { } 
 }

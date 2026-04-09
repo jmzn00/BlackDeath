@@ -11,9 +11,10 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ab7a988b895ede04e8f4a0ffc4dc52cd, type: 3}
   m_Name: BurnEffect
-  m_EditorClassIdentifier: Assembly-CSharp::BurnEffect
-  duration: 2
-  damage: 1
-  displayName: Burn
+  m_EditorClassIdentifier: Assembly-CSharp::TickStatusEffect
+  duration: 1
+  damage: 2
+  heal: 0
+  displayName: BurnEffect
   isStackable: 1
-  statusEffectSprite: {fileID: 21300000, guid: 52ee376697e331c41a2cced3046c5a72, type: 3}
+  <statusEffectSprite>k__BackingField: {fileID: 21300000, guid: 52ee376697e331c41a2cced3046c5a72, type: 3}

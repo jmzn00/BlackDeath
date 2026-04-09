@@ -23,7 +23,7 @@ public class CombatActionButton : MonoBehaviour
             {
                 description += $"{e.displayName} for {e.duration} turns.";
 
-                if (e.IsStackable) 
+                if (e.isStackable) 
                 {
                     description += $"{e.displayName} can be stacked";
                 }

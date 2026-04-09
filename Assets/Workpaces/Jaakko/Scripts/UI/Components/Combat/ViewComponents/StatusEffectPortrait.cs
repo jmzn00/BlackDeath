@@ -14,16 +14,14 @@ public class StatusEffectPortrait : MonoBehaviour
 
         m_instance.OnDurationChanged += DurationChanged;
 
-        if (m_instance.Template.statusEffectSprite = null) 
-        {
-            m_statusImage.sprite = m_instance.Template.statusEffectSprite;            
-        }
+        Sprite sprite = instance.Template.statusEffectSprite;
+        if (sprite != null)
+            m_statusImage.sprite = sprite;
         else
-            Debug.LogWarning($"Status effect {m_instance.Template.name} does not have a sprite assigned!");
+            Debug.LogWarning($"{m_instance.Template.displayName} does not have a sprite");
 
 
-
-        m_durationText.text = $"{instance.RemainingTurns}";
+            m_durationText.text = $"{instance.RemainingTurns}";
     }
     private void DurationChanged(int duration) 
     {

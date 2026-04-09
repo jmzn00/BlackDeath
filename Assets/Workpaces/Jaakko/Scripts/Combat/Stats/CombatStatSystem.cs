@@ -16,6 +16,8 @@ public class CombatActorStats
     public int ParriesPerformed = 0;
     public int DodgesPerformed = 0;
     public int ConfirmsPerformed = 0;
+
+    public float score = 0;
 }
 public class CombatStatSystem : CombatSystemBase
 {
@@ -52,16 +54,19 @@ public class CombatStatSystem : CombatSystemBase
     public List<CombatActorStats> GetStatsOrdered()
     {
         return m_stats.Values
-        .OrderByDescending(stats => stats.DamageDealt + stats.HealDealt + stats.ActionsHit)
+        .OrderByDescending(stats => stats.score)
         .ToList();
     }
     public void DamageDealt(CombatActor target, IDamageSource source, float amount) 
     {
         var targetStats = Get(target);
         targetStats.DamageTaken += amount;
+        targetStats.score += amount / 2;
 
         var sourceStats = Get(source.SourceActor);
         sourceStats.DamageDealt += amount;
+        sourceStats.score += amount;
+
     }
     public void HealApplied(CombatActor target, IDamageSource source, float amount) 
     {
@@ -70,6 +75,7 @@ public class CombatStatSystem : CombatSystemBase
 
         var sourceStats = Get(source.SourceActor);
         sourceStats.HealDealt += amount;
+        sourceStats.score += amount;
     }
     public void ActionResolved(ActionContext ctx, ActionResult result) 
     {
@@ -80,12 +86,15 @@ public class CombatStatSystem : CombatSystemBase
         {
             case ActionResult.Confirmed:
                 sourceStats.ConfirmsPerformed++;
+                sourceStats.score += 1;
                 break;
             case ActionResult.Parried:
                 targetStats.ParriesPerformed++;
+                targetStats.score += 3;
                 break;
             case ActionResult.Dodged:
                 targetStats.DodgesPerformed++;
+                targetStats.score += 2;
                 break;
             case ActionResult.Hit:
                 sourceStats.ActionsHit++;

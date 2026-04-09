@@ -17,4 +17,4 @@ MonoBehaviour:
   heal: 2
   displayName: Heal
   isStackable: 0
-  statusEffectSprite: {fileID: 21300000, guid: 78f753bd2d305ec40b041c0ba98f25dd, type: 3}
+  <statusEffectSprite>k__BackingField: {fileID: 21300000, guid: 78f753bd2d305ec40b041c0ba98f25dd, type: 3}

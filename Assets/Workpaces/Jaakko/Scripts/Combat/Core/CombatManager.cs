@@ -174,7 +174,6 @@ public class CombatManager : ManagerBase
     private void EndCombat()
     {
         if (m_state == CombatState.Inactive) return;
-        Debug.Log("Ending Combat");
         CombatResult result = CombatResult.Lost;
         if (m_context.Actors.ToList().Exists(a => a.Team == Team.Player
         && !a.IsDead)) 
@@ -182,9 +181,6 @@ public class CombatManager : ManagerBase
             result = CombatResult.Won;
         }
         CombatEvents.CombatEnded(result);
-
-        foreach (var a in m_context.Actors)
-            Debug.Log($"actor {a.name}");
 
         if (result == CombatResult.Won) 
         {

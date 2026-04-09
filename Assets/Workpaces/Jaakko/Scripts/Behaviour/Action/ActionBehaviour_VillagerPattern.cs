@@ -22,8 +22,6 @@ public class ActionBehaviour_VillagerPattern : AIActionBehaviour
         int startIndex = ai.GetPatternIndex();
         int count = ai.Actions.Count;
 
-        CombatAction skipAction = null;
-
         for (int i = 0; i < count; i++)
         {
             int index = (startIndex + i) % count;
@@ -31,7 +29,6 @@ public class ActionBehaviour_VillagerPattern : AIActionBehaviour
 
             if (action is SkipTurnAction)
             {
-                skipAction = action;
                 continue;
             }
 
@@ -49,14 +46,9 @@ public class ActionBehaviour_VillagerPattern : AIActionBehaviour
             }
         }
 
-        if (skipAction != null)
-        {
-            selectedAction = skipAction;
+        selectedAction = ai.SkipAction;
+        ai.UpdatePatternIndex((startIndex + 1) % count);
 
-            ai.UpdatePatternIndex((startIndex + 1) % count);
-
-            return 0f;
-        }
-        return -1f;
+        return 0f;
     }
 }

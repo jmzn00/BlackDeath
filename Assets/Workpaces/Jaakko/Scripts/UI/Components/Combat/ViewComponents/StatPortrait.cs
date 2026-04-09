@@ -17,7 +17,6 @@ public class StatPortrait : MonoBehaviour
 
     public void Bind(CombatActorStats stats) 
     {
-        Debug.Log($"StatPortrait.Bind: {stats.Actor.name}");
         if (stats == null)
         {
             Debug.LogWarning("StatPortrait.Bind: stats is null");
@@ -42,7 +41,6 @@ public class StatPortrait : MonoBehaviour
             m_portraitImage.sprite = sprite;
         }
 
-        // Text fields - guard each field to avoid NRE if inspector binding is missing
         if (m_parryText != null)
             m_parryText.SetText($"Parries Performed: {stats.ParriesPerformed}");
         if (m_dogeText != null)
@@ -57,10 +55,6 @@ public class StatPortrait : MonoBehaviour
             m_recievedHealText.SetText($"Heal Taken: {stats.HealTaken}");
 
         if (m_scoreText != null)
-            m_scoreText.SetText($"Score: {CalculateScore(stats)}");
-    }
-    private float CalculateScore(CombatActorStats stats) 
-    {
-        return stats.DamageDealt + stats.HealDealt + stats.ActionsHit;
+            m_scoreText.SetText($"Score: {stats.score}");
     }
 }
