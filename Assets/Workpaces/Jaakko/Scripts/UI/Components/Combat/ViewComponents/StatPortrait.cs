@@ -1,6 +1,6 @@
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class StatPortrait : MonoBehaviour
 {
@@ -17,16 +17,47 @@ public class StatPortrait : MonoBehaviour
 
     public void Bind(CombatActorStats stats) 
     {
-        m_portraitImage.sprite = stats.Actor.Actor.actorSprite;
+        Debug.Log($"StatPortrait.Bind: {stats.Actor.name}");
+        if (stats == null)
+        {
+            Debug.LogWarning("StatPortrait.Bind: stats is null");
+            return;
+        }
 
-        m_parryText.SetText($"Parries Performed: {stats.ParriesPerformed}");
-        m_dogeText.SetText($"Dodges Performed: {stats.DodgesPerformed}");
-        m_dealtDamageText.SetText($"Damage Dealt: {stats.DamageDealt}");
-        m_recievedDamageText.SetText($"Damage Taken: {stats.DamageTaken}");
-        m_dealtHealText.SetText($"Heal Dealt: {stats.HealDealt}");                                      
-        m_recievedHealText.SetText($"Heal Taken: {stats.HealTaken}");           
+        // Portrait sprite (safe navigation)
+        if (m_portraitImage != null)
+        {
+            Sprite sprite = null;
+            if (stats.Actor == null) 
+            {
+                Debug.LogWarning("StatPortrait.Bind: stats.CombatActor is null");
+                return;
+            }
+            if (stats.Actor.Actor == null) 
+            {
+                Debug.LogWarning("StatPortrait.Bind: stats.Actor is NULL");
+                return;                    
+            }
+            sprite = stats.Actor.Actor.actorSprite;
+            m_portraitImage.sprite = sprite;
+        }
 
-        m_scoreText.SetText($"Score: {CalculateScore(stats)}");
+        // Text fields - guard each field to avoid NRE if inspector binding is missing
+        if (m_parryText != null)
+            m_parryText.SetText($"Parries Performed: {stats.ParriesPerformed}");
+        if (m_dogeText != null)
+            m_dogeText.SetText($"Dodges Performed: {stats.DodgesPerformed}");
+        if (m_dealtDamageText != null)
+            m_dealtDamageText.SetText($"Damage Dealt: {stats.DamageDealt}");
+        if (m_recievedDamageText != null)
+            m_recievedDamageText.SetText($"Damage Taken: {stats.DamageTaken}");
+        if (m_dealtHealText != null)
+            m_dealtHealText.SetText($"Heal Dealt: {stats.HealDealt}");
+        if (m_recievedHealText != null)
+            m_recievedHealText.SetText($"Heal Taken: {stats.HealTaken}");
+
+        if (m_scoreText != null)
+            m_scoreText.SetText($"Score: {CalculateScore(stats)}");
     }
     private float CalculateScore(CombatActorStats stats) 
     {

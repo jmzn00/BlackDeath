@@ -1,7 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System;
 using UnityEngine;
+using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
 public enum CombatState
 {
     Active,
@@ -173,20 +174,17 @@ public class CombatManager : ManagerBase
     private void EndCombat()
     {
         if (m_state == CombatState.Inactive) return;
-        m_state = CombatState.Inactive;
-
+        Debug.Log("Ending Combat");
         CombatResult result = CombatResult.Lost;
         if (m_context.Actors.ToList().Exists(a => a.Team == Team.Player
         && !a.IsDead)) 
         {
             result = CombatResult.Won;
         }
+        CombatEvents.CombatEnded(result);
 
         foreach (var a in m_context.Actors)
-            a.CombatEnded(result);
-
-        ChangeState(CombatState.Inactive);
-        CombatEvents.CombatEnded(result);
+            Debug.Log($"actor {a.name}");
 
         if (result == CombatResult.Won) 
         {
@@ -199,6 +197,10 @@ public class CombatManager : ManagerBase
                 m_save.CompletedAreas.Add(m_area.ID);
             }            
         }
+
+        foreach (var a in m_context.Actors)
+            a.CombatEnded(result);
+
         foreach (var s in m_systems)
             s.Reset();
 
@@ -208,6 +210,7 @@ public class CombatManager : ManagerBase
     public void EndScreenFinished() 
     {
         m_game.SetState(GameState.None);
+        ChangeState(CombatState.Inactive);
     }
     public void ChangeState(CombatState state) 
     {

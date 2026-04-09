@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9baf0566a508be04dbdd1ce79790f88b, type: 3}
-  m_Name: SkipTurn
+  m_Name: SkipTurnAction
   m_EditorClassIdentifier: Assembly-CSharp::SkipTurnAction
   actionName: Skip Turn
   description: 

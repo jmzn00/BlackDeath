@@ -134,8 +134,7 @@ public class CombatArea : MonoBehaviour
             e.Actor.Dispose();
             Destroy(e.gameObject);
         }
-            
-
+        
         switch (result) 
         {
             case CombatResult.Won:

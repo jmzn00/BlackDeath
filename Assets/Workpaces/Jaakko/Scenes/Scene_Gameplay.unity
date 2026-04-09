@@ -418,12 +418,11 @@ MonoBehaviour:
   m_controlType: 0
   m_visual: {fileID: 1236480845}
   m_actions:
-  - {fileID: 11400000, guid: 4f242df511265bf4eb90ed3d4a7fb590, type: 2}
   - {fileID: 11400000, guid: abc8cba7bd8e10348b71eff2a62284e8, type: 2}
   - {fileID: 11400000, guid: 87f5263f686512649bd4cd039a07cb55, type: 2}
   - {fileID: 11400000, guid: 9dbdb896d21dba94ea60fc2c474b974b, type: 2}
   - {fileID: 11400000, guid: fb836165602db8a4690a877aa4e4acac, type: 2}
-  m_maxActionPoints: 5
+  m_maxActionPoints: 6
 --- !u!114 &113909493
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -453,7 +452,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthComponent
   ch: 0
-  m_maxHealth: 6
+  m_maxHealth: 5
 --- !u!114 &113909495
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5196,11 +5195,10 @@ MonoBehaviour:
   m_controlType: 0
   m_visual: {fileID: 1992347720}
   m_actions:
-  - {fileID: 11400000, guid: 4f242df511265bf4eb90ed3d4a7fb590, type: 2}
   - {fileID: 11400000, guid: 87f5263f686512649bd4cd039a07cb55, type: 2}
   - {fileID: 11400000, guid: 89cf3f8d23ca7da44818ed3c9ff0c3d9, type: 2}
   - {fileID: 11400000, guid: ed7940ab6f78cc344bb9913e006be96e, type: 2}
-  m_maxActionPoints: 5
+  m_maxActionPoints: 3
 --- !u!114 &6923989823571581368
 MonoBehaviour:
   m_ObjectHideFlags: 0

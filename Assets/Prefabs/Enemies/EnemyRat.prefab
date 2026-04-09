@@ -517,7 +517,6 @@ MonoBehaviour:
   m_controlType: 1
   m_visual: {fileID: 9059011711645081977}
   m_actions:
-  - {fileID: 11400000, guid: 4f242df511265bf4eb90ed3d4a7fb590, type: 2}
   - {fileID: 11400000, guid: a766e0fe4293df04e837678800378648, type: 2}
   m_maxActionPoints: 0
   m_reactionSettings:

@@ -72,6 +72,8 @@ public class CombatActor : MonoBehaviour, IActorComponent, IDamageSource
 
     private ActionSystem m_action;
 
+    public SkipTurnAction SkipAction { get; private set; }
+
     #region IActionProvider
     protected void SetActionProvider(IActionProvider provider)
     {
@@ -97,6 +99,23 @@ public class CombatActor : MonoBehaviour, IActorComponent, IDamageSource
         SourceName = name;
 
         OnInitliazed(game);
+
+        if (!m_actions.Exists(a => a is SkipTurnAction)) 
+        {
+            SkipTurnAction skip = Resources
+                .Load<SkipTurnAction>
+                ("Actions/SkipTurnAction");
+
+            if (skip == null) 
+            {
+                Debug.LogWarning("SkipTurnAction is null in Resources/Actions");
+            }
+            else 
+            {
+                m_actions.Add(skip);
+                SkipAction = skip;
+            }
+        }
         return true;
     }
     protected virtual void OnInitliazed(GameManager game) 
