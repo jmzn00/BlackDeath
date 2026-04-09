@@ -398,7 +398,7 @@ MonoBehaviour:
     parryPercentage: 0
     confirmPercentage: 100
   m_actionBehaviours:
-  - {fileID: 11400000, guid: 1e5d3c0960926dc4b82c32c6a62c2363, type: 2}
+  - {fileID: 11400000, guid: f6e23ee59cf2ae44498d3e6986272651, type: 2}
   m_targetingBehaviours:
   - {fileID: 11400000, guid: cb1ef68f319351143a3f56762ecde7db, type: 2}
 --- !u!1 &6079320455359159318
