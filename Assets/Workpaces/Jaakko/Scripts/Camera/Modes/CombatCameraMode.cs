@@ -63,6 +63,9 @@ public class CombatCameraMode : ICameraMode
         //Debug.Log("=== Combat Camera Mode: ENTER ===");
         //Debug.Log("========================================");
         m_camera = m_cameraManager.Camera; // FIX FOR SCENE LOAD
+        m_follow = m_camera.GetComponent<CinemachineFollow>();
+        m_followZoom = m_camera.GetComponent<CinemachineFollowZoom>();
+
         m_isFirstTurn = true;
 
         // Subscribe to combat events
@@ -163,7 +166,8 @@ public class CombatCameraMode : ICameraMode
             UpdatePresetControlled(dt);
         }
     }
-
+    private CinemachineFollow m_follow;
+    private CinemachineFollowZoom m_followZoom;
     private void UpdateTransition(float dt)
     {
         if (m_previousPreset == null || m_currentPreset == null)
@@ -187,8 +191,7 @@ public class CombatCameraMode : ICameraMode
         float targetDamping = Mathf.Lerp(m_previousDamping, m_currentPreset.followDamping, t);
         float targetWidth = Mathf.Lerp(m_previousWidth, m_currentPreset.width, t);
 
-        var follow = m_camera.GetComponent<CinemachineFollow>();
-        if (follow != null)
+        if (m_follow != null)
         {
             if (m_currentTarget == null) return;
 
@@ -199,17 +202,16 @@ public class CombatCameraMode : ICameraMode
             if (followTransform != null)
                 m_camera.Follow = followTransform;
 
-            follow.FollowOffset = targetOffset;
-            follow.TrackerSettings.PositionDamping = new Vector3(targetDamping, targetDamping, targetDamping);
+            m_follow.FollowOffset = targetOffset;
+            m_follow.TrackerSettings.PositionDamping = new Vector3(targetDamping, targetDamping, targetDamping);
         }
 
-        var followZoom = m_camera.GetComponent<CinemachineFollowZoom>();
-        if (followZoom != null)
+        if (m_followZoom != null)
         {
             float zoomMultiplier = m_currentTarget != null ? m_currentTarget.zoomMultiplier : 1f;
-            followZoom.Width = targetWidth * zoomMultiplier;
-            followZoom.Damping = m_currentPreset.zoomDamping;
-            followZoom.FovRange = m_currentPreset.fovRange;
+            m_followZoom.Width = targetWidth * zoomMultiplier;
+            m_followZoom.Damping = m_currentPreset.zoomDamping;
+            m_followZoom.FovRange = m_currentPreset.fovRange;
         }
     }
 
@@ -231,8 +233,7 @@ public class CombatCameraMode : ICameraMode
         
         if (m_currentTarget == null) return;
 
-        var follow = m_camera.GetComponent<CinemachineFollow>();
-        if (follow != null)
+        if (m_follow != null)
         {
             // Use CameraTarget if available, otherwise follow the actor directly
             Transform followTransform = m_currentTarget != null ? m_currentTarget.transform : m_currentActor?.transform;
@@ -240,8 +241,8 @@ public class CombatCameraMode : ICameraMode
                 m_camera.Follow = followTransform;
 
             // Apply preset follow settings
-            follow.FollowOffset = m_currentPreset.positionOffset;
-            follow.TrackerSettings.PositionDamping = new Vector3(
+            m_follow.FollowOffset = m_currentPreset.positionOffset;
+            m_follow.TrackerSettings.PositionDamping = new Vector3(
                 m_currentPreset.followDamping,
                 m_currentPreset.followDamping,
                 m_currentPreset.followDamping
@@ -253,13 +254,12 @@ public class CombatCameraMode : ICameraMode
     {
         if (m_currentPreset == null) return;
 
-        var followZoom = m_camera.GetComponent<CinemachineFollowZoom>();
-        if (followZoom != null)
+        if (m_followZoom != null)
         {
             float zoomMultiplier = m_currentTarget != null ? m_currentTarget.zoomMultiplier : 1f;
-            followZoom.Width = m_currentPreset.width * zoomMultiplier;
-            followZoom.Damping = m_currentPreset.zoomDamping;
-            followZoom.FovRange = m_currentPreset.fovRange;
+            m_followZoom.Width = m_currentPreset.width * zoomMultiplier;
+            m_followZoom.Damping = m_currentPreset.zoomDamping;
+            m_followZoom.FovRange = m_currentPreset.fovRange;
         }
     }
 
@@ -276,17 +276,15 @@ public class CombatCameraMode : ICameraMode
         {
             m_previousPreset = m_currentPreset;
             
-            var follow = m_camera.GetComponent<CinemachineFollow>();
-            if (follow != null)
+            if (m_follow != null)
             {
-                m_previousOffset = follow.FollowOffset;
-                m_previousDamping = follow.TrackerSettings.PositionDamping.x;
+                m_previousOffset = m_follow.FollowOffset;
+                m_previousDamping = m_follow.TrackerSettings.PositionDamping.x;
             }
             
-            var followZoom = m_camera.GetComponent<CinemachineFollowZoom>();
-            if (followZoom != null)
+            if (m_followZoom != null)
             {
-                m_previousWidth = followZoom.Width;
+                m_previousWidth = m_followZoom.Width;
             }
         }
 

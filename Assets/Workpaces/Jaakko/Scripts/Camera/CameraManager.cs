@@ -30,31 +30,33 @@ public class CameraManager : ManagerBase
     public override void OnSceneLoaded(SceneData data) 
     {
         IsReady = false;
-
-        if (data.IsGameplay)
+        if (!data.IsGameplay) 
         {
-            m_cinemachineCamera = GameObject.FindFirstObjectByType<CinemachineCamera>();
-            if (m_cinemachineCamera == null)
-            {
-                Debug.LogError("CameraManager: No CinemachineCamera found in scene!");
-            }
-
-            // Sorting mode so no transparency with sprites
-
-            Camera unityCam = UnityEngine.Camera.main;
-            unityCam.transparencySortMode = TransparencySortMode.CustomAxis;
-            unityCam.transparencySortAxis = new Vector3(0f, 0f, 1f);
-
-            var defaultMode = m_cameraModes.FirstOrDefault();
-            if (defaultMode != null)
-            {
-                SetMode(defaultMode);
-            }
-            else
-            {
-                Debug.LogError("CameraManager: No camera modes available!");
-            }
+            SetReady();
+            return;
         }
+
+        m_cinemachineCamera = GameObject.FindFirstObjectByType<CinemachineCamera>();
+        if (m_cinemachineCamera == null)
+        {
+            Debug.LogError("CameraManager: No CinemachineCamera found in scene!");
+        }
+
+        // Sorting mode so no transparency with sprites
+
+        Camera unityCam = UnityEngine.Camera.main;
+        unityCam.transparencySortMode = TransparencySortMode.CustomAxis;
+        unityCam.transparencySortAxis = new Vector3(0f, 0f, 1f);
+
+        var defaultMode = m_cameraModes.FirstOrDefault();
+        if (defaultMode != null)
+        {
+            SetMode(defaultMode);
+        }
+        else
+        {
+            Debug.LogError("CameraManager: No camera modes available!");
+        }        
         SetReady();
     }
     public override bool Init() 
