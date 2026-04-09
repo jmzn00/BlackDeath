@@ -60,6 +60,21 @@ public class ActorManager : ManagerBase
         }
         SetReady();
     }
+    public override void OnSceneUnloaded()
+    {
+        DisposeActors();
+    }
+    private void DisposeActors() 
+    {
+        if (m_actors == null || m_actors.Count == 0)
+            return;
+
+        foreach (var actor in new List<IActor>(m_actors)) 
+        {
+            Unregister(actor);
+        }
+        m_actors.Clear();
+    }
     public List<ActorSaveData> SaveAllActors() 
     {
         List<ActorSaveData> save = new List<ActorSaveData>();

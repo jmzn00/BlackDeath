@@ -122,7 +122,13 @@ public class CombatArea : MonoBehaviour
     }
     public void AreaFinished(CombatResult result) 
     {
-        if (!m_started) return;        
+        if (!m_started) return;
+        foreach (var e in m_enemies) 
+        {
+            e.Actor.Dispose();
+            Destroy(e.gameObject);
+        }
+            
 
         switch (result) 
         {

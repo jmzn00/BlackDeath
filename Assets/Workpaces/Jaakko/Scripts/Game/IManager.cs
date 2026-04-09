@@ -9,4 +9,5 @@ public interface IManager
     bool Dispose();
     void Update(float dt);
     void OnSceneLoaded(SceneData data);
+    void OnSceneUnloaded();
 }

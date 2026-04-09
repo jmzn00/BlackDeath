@@ -1,10 +1,12 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class ResultView : MonoBehaviour, IUIComponentView
 {
     [SerializeField] private Transform m_firstPlaceAnchor;
     [SerializeField] private Transform m_portraitAnchor;
+    [SerializeField] private TMP_Text m_resultText;
 
     [Header("Prefabs")]
     [SerializeField] private StatPortrait m_firstPlacePortraitPrefab;
@@ -20,6 +22,8 @@ public class ResultView : MonoBehaviour, IUIComponentView
     public void DisplayResults(List<CombatActorStats> stats,
         CombatResult result) 
     {
+        m_resultText.text = result.ToString();
+
         for (int i = 0; i < stats.Count; i++) 
         {
             if (i == 0) 

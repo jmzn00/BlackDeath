@@ -90,8 +90,6 @@ public class CombatActor : MonoBehaviour, IActorComponent, IDamageSource
         m_combatManager = game.Resolve<CombatManager>();        
 
         CombatEvents.OnCombatStarted += CombatStarted;
-
-
         CombatEvents.OnTurnStarted += TurnStart;
         CombatEvents.OnTurnEnded += TurnEnd;
 
@@ -111,12 +109,9 @@ public class CombatActor : MonoBehaviour, IActorComponent, IDamageSource
     }
     public bool Dispose()
     {
-        // defensive null checks before unsubscribing
-        if (m_animator != null)
-            m_animator.OnActionAnimationFinished -= ActionFinished;
+        m_animator.OnActionAnimationFinished -= ActionFinished;
 
         CombatEvents.OnCombatStarted -= CombatStarted;
-        // Ensure we remove turn event handlers here as well to avoid duplicates
         CombatEvents.OnTurnStarted -= TurnStart;
         CombatEvents.OnTurnEnded -= TurnEnd;
 
@@ -175,9 +170,6 @@ public class CombatActor : MonoBehaviour, IActorComponent, IDamageSource
     }
     public virtual void CombatStarted()
     {
-        MovementController c = Actor.Get<MovementController>();
-        if (c != null)
-            c.enabled = false;
         if (m_action == null)
             m_action = m_combatManager.Container.Resolve<ActionSystem>();
 
@@ -187,17 +179,8 @@ public class CombatActor : MonoBehaviour, IActorComponent, IDamageSource
     {        
         ClearStatusEffects();
 
-        // Fix: unsubscribe turn events that were registered in Initialize
-        CombatEvents.OnTurnStarted -= TurnStart;
-        CombatEvents.OnTurnEnded -= TurnEnd;
-
         m_combatManager = null;
 
-        MovementController c = Actor.Get<MovementController>();
-        if (c != null) 
-        {
-            c.enabled = true;
-        }
         m_health.ApplyHealth(m_health.MaxHealth);
         SetDead(false);
     }

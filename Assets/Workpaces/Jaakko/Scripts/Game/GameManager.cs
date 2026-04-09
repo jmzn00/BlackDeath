@@ -70,7 +70,7 @@ public class GameManager : ManagerBase
     }
     public void SaveGame(int slot) 
     {
-        Debug.Log($"Saved to slot {slot}");
+        
         var save = Resolve<SaveManager>();
 
         SceneData data = new SceneData(SceneManager.GetActiveScene().name,
@@ -80,7 +80,9 @@ public class GameManager : ManagerBase
     }
     public void LoadGame(SaveSlotMeta meta) 
     {
-        Debug.Log($"Loaded from slot {meta.Slot}");
+        foreach (var m in m_managers)
+            m.OnSceneUnloaded();
+
         GameEvents.LoadStarted();
 
         var save = Resolve<SaveManager>();

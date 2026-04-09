@@ -26,10 +26,4 @@ public class AICombatActor : CombatActor
         SetActionProvider(new AIActionProvider(this));
         SetReactionProvider(new AIReactionProvider(m_reactionSettings, this));
     }
-    public override void CombatEnded(CombatResult result)
-    {
-        base.CombatEnded(result);
-
-        Destroy(gameObject);
-    }    
 }

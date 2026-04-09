@@ -21,4 +21,5 @@ public class ManagerBase : IManager
         IsReady = false;
         SetReady();
     }
+    public virtual void OnSceneUnloaded() { }
 }

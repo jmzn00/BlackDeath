@@ -77,6 +77,10 @@ public class Actor : MonoBehaviour, IActor
             m_actorID = Guid.NewGuid().ToString();
 #endif
     }
+    protected virtual void GameStateChanged(GameState state)
+    {
+
+    }
 
     public ActorSaveData Save()
     {
@@ -100,6 +104,7 @@ public class Actor : MonoBehaviour, IActor
     public virtual void Init(GameManager game)
     {
         m_game = game;
+        m_game.OnStateChanged += GameStateChanged;
 
         var components = GetComponents<IActorComponent>();
         foreach (var comp in components)
@@ -121,6 +126,9 @@ public class Actor : MonoBehaviour, IActor
     }
     public virtual void Dispose()
     {
+        m_game.OnStateChanged -= GameStateChanged;
+        m_actorManager.OnActorControlChanged -= OnControlChanged;
+
         foreach (var comp in m_components.Values)
             comp.Dispose();
 
