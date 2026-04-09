@@ -18,8 +18,8 @@ MonoBehaviour:
   animationClip: {fileID: 7400000, guid: 2c366afef9b2f804bb9b2b0ef5702c7c, type: 2}
   isReactive: 1
   grantsApOnUse: 0
-  baseDamage: 1
-  confirmDamageMultipler: 1.2
+  baseDamage: 0.1
+  confirmDamageMultipler: 1
   AppliedEffects:
   - {fileID: 11400000, guid: 49f52cc500f44b14dbd658d71c5d7625, type: 2}
   targetType: 2
