@@ -1,7 +1,5 @@
-using Mono.Cecil;
 using System;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 [Serializable]
@@ -53,7 +51,8 @@ public class CombatArea : MonoBehaviour
     }
     private bool IsDuplicateID(string id) 
     {
-        CombatArea[] areas = FindObjectsByType<CombatArea>(FindObjectsSortMode.None);
+        CombatArea[] areas = FindObjectsByType<CombatArea>
+            (FindObjectsSortMode.None);
         if (areas == null || areas.Length <= 1)
             return false;
         foreach (CombatArea area in areas) 
@@ -75,8 +74,15 @@ public class CombatArea : MonoBehaviour
     }
     public void Initialize(GameManager game) 
     {
-        if (m_areaCompleted) return;
+        if (m_areaCompleted) 
+        {
+            if (m_boxCollider == null)
+                m_boxCollider = GetComponent<BoxCollider>();
 
+            m_boxCollider.enabled = false;
+            return;
+        }
+           
         m_combatManager = game.Resolve<CombatManager>();
         m_actorManager = game.Resolve<ActorManager>();
         m_dialogueManger = game.Resolve<DialogueManager>();
@@ -177,9 +183,9 @@ public class CombatArea : MonoBehaviour
             actor.CombatStarted();
 
         m_started = true;
-        m_combatManager.StartCombat(combatActors, this);
-
         m_boxCollider.enabled = false;
+
+        m_combatManager.StartCombat(combatActors, this);
     }
     private void OnTriggerEnter(Collider other)
     {
