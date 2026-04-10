@@ -1,5 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System;
+using Unity.VisualScripting.Antlr3.Runtime.Misc;
 
 
 public class DamageSystem : CombatSystemBase
@@ -112,17 +114,22 @@ public class DamageSystem : CombatSystemBase
     }
     public void ActorTurnStart(CombatActor actor)
     {
-        for (int i = actor.CurrentStatusEffects.Count - 1; i >= 0; i--)
+        List<StatusEffectInstance> effects = new List<StatusEffectInstance>(actor.CurrentStatusEffects);
+
+        for (int i = effects.Count - 1; i >= 0; i--)
         {
-            StatusEffectInstance instance = actor.CurrentStatusEffects[i];
+            StatusEffectInstance instance = effects[i];
             instance.TurnStart();
         }
     }
+
     public void ActorTurnEnd(CombatActor actor) 
     {
-        for (int i = actor.CurrentStatusEffects.Count - 1; i >= 0; i--) 
+        List<StatusEffectInstance> effects = new List<StatusEffectInstance>(actor.CurrentStatusEffects);
+
+        for (int i = effects.Count - 1; i >= 0; i--) 
         {
-            StatusEffectInstance instance = actor.CurrentStatusEffects[i];
+            StatusEffectInstance instance = effects[i];
             instance.TurnEnd();
         }        
     }
