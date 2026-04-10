@@ -1,4 +1,9 @@
+using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using UnityEditor.Compilation;
 using UnityEngine;
+using UnityEngine.UI;
 
 public abstract class UIComponentBase<TGroup> : IUIComponent, IUIInputReceiver
     where TGroup : UIViewGroup
@@ -18,4 +23,18 @@ public abstract class UIComponentBase<TGroup> : IUIComponent, IUIInputReceiver
     public abstract void Dispose();
     public abstract void Toggle(bool show);
     public abstract bool IsVisible();
+    public virtual List<Selectable> GetSelectables() { return null; }
+
+    public virtual event Action<Selectable> OnSelectableAdded;
+    public virtual event Action<Selectable> OnSelectableRemoved;
+
+    protected void RaiseSelectableAdded(Selectable s)
+    {
+        OnSelectableAdded?.Invoke(s);
+    }
+
+    protected void RaiseSelectableRemoved(Selectable s)
+    {
+        OnSelectableRemoved?.Invoke(s);
+    }
 }

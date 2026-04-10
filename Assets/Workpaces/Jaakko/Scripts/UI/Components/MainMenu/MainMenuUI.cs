@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public enum MainMenuState
 {
@@ -19,10 +20,13 @@ public class MainMenuUI : UIComponentBase<MainMenuGroup>
 
     private List<SaveSlotButton> m_slots = new();
 
+    private UIManager m_ui;
+
     private MainMenuState m_state;
     public MainMenuUI (GameManager game, MainMenuGroup group) : base (game, group) 
     {
         m_save = m_game.Resolve<SaveManager>();
+        m_ui = game.Resolve<UIManager>();
         
         m_loadView = group.LoadView;
         m_mainView = group.MainView;
@@ -130,8 +134,7 @@ public class MainMenuUI : UIComponentBase<MainMenuGroup>
         {
             m_game.LoadGame(meta);
         }        
-    }
-
+    }    
     private void ChangeState(MainMenuState state) 
     {
         HideViews();
@@ -161,5 +164,20 @@ public class MainMenuUI : UIComponentBase<MainMenuGroup>
         m_mainView.Hide();
         m_loadView.Hide();
         m_settingsView.Hide();
+    }
+    private List<Button> m_buttons = new();
+    public void ButtonCreated(Button button) 
+    {
+        if (m_buttons.Contains(button)) 
+        {
+            return;
+        }
+    }
+    public void ButtonRemoved(Button button) 
+    {
+        if (!m_buttons.Contains(button)) 
+        {
+            return;
+        }
     }
 }

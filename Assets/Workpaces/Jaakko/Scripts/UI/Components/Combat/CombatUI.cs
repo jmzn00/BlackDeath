@@ -316,14 +316,9 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
         }
         m_buttons.Add(button);
 
-        if (m_buttons.Count > 0)
-        {
-            m_ui.Navigation.UpdateButtons(m_buttons, m_buttons[0].gameObject);
-        }
-        else
-        {
-            m_ui.Navigation.Clear();
-        }
+        Selectable s = button;
+
+        RaiseSelectableAdded(s);
     }
     private void ButtonRemoved(Button button)
     {
@@ -333,6 +328,8 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
             return;
         }
         m_buttons.Remove(button);
+        RaiseSelectableRemoved(button);
+        /*
         if (m_buttons.Count > 0)
         {
             m_ui.Navigation.UpdateButtons(m_buttons, m_buttons[0].gameObject);
@@ -341,20 +338,35 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
         {
             m_ui.Navigation.Clear();
         }
-
+        */
+    }
+    public override List<Selectable> GetSelectables()
+    {
+        List<Selectable> selectables = new();
+        for (int i = 0; i < m_buttons.Count; i++) 
+        {
+            Selectable s = m_buttons[i];
+            if (s == null) 
+            {
+                Debug.LogWarning($"Selectable is NULL on {m_buttons[i].name}");
+                continue;
+            }
+            selectables.Add(s);
+        }
+        return selectables;
     }
     public override void Toggle(bool show)
     {
         if (show)
         {
-            m_actionView.View();
             m_ui.PushUI(this);
+            m_actionView.View();
         }
         else
         {
+            m_ui.PopUI(this);
             m_actionView.Hide();
             m_resultView.Hide();
-            m_ui.PopUI(this);
         }
     }
     public override bool IsVisible()

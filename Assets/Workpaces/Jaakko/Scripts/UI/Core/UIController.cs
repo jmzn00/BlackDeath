@@ -9,12 +9,14 @@ public class UIController : MonoBehaviour
     private HashSet<IUIComponent> m_visibleComponents = new HashSet<IUIComponent>();
 
     private GameManager m_game;
+    private UIManager m_ui;
 
     public void Initialize(GameManager game) 
     {
         DontDestroyOnLoad(this);
 
         m_game = game;
+        m_ui = game.Resolve<UIManager>();
 
         BuildModules();
         InitializeModules();
@@ -40,7 +42,10 @@ public class UIController : MonoBehaviour
         if (comp != null) 
         {
             comp.Toggle(show);
-            if (show) m_visibleComponents.Add(comp);
+            if (show) 
+            {
+                m_visibleComponents.Add(comp);
+            }
             else m_visibleComponents.Remove(comp);
         }
     }  

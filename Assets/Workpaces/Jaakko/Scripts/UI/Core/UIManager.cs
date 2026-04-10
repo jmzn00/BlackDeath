@@ -109,13 +109,32 @@ public class UIManager : ManagerBase
                 break;
         }
     }
-
+    private IUIInputReceiver m_currentReceiver;
     public void PushUI(IUIInputReceiver reciever)
-    {   
+    {
+        if (m_currentReceiver == reciever)
+            return;
+
+        m_currentReceiver = reciever;
+        Debug.Log($"Push UI {reciever}");
+
+        reciever.OnSelectableAdded += m_navigation.AddButton;
+        reciever.OnSelectableRemoved += m_navigation.RemoveButton;
+
         m_uiStack.Push(reciever);
+        m_navigation.UpdateButtons(reciever.GetSelectables());        
     }
     public void PopUI(IUIInputReceiver reciever)
     {
+        if (m_currentReceiver != reciever)
+            return;
+
+        m_currentReceiver = null;
+        Debug.Log($"Pop UI {reciever}");
+
+        reciever.OnSelectableAdded -= m_navigation.AddButton;
+        reciever.OnSelectableRemoved -= m_navigation.RemoveButton;
+
         if (m_uiStack.Count > 0 && m_uiStack.Peek() == reciever)
         {
             m_uiStack.Pop();
@@ -167,10 +186,20 @@ public class UIControllerNavigation
         m_selectables.Clear();
 
     }
-    public void UpdateButtons(IEnumerable<Selectable> buttons, GameObject currentSelected)
+    public void UpdateButtons(List<Selectable> selectables, GameObject currentSelected = null)
     {
-        m_selectables = new List<Selectable>(buttons);
+        if (selectables == null) 
+        {
+            m_selectables.Clear();
+            return;
+        }
 
+        foreach (var item in selectables)
+        {
+            Debug.Log($"Added {item.name}");
+        }
+
+        m_selectables = selectables;
         if (currentSelected != null && m_selectables.Any(s => s.gameObject == currentSelected))
         {
             EventSystem.current.SetSelectedGameObject(currentSelected);
@@ -180,7 +209,23 @@ public class UIControllerNavigation
         {
             m_currentIndex = 0;
             EventSystem.current.SetSelectedGameObject(m_selectables[0].gameObject);
-        }
+        }        
+    }
+    public void AddButton(Selectable selectable) 
+    {
+        if (m_selectables.Contains(selectable))
+            return;
+
+        Debug.Log($"Add Button {selectable.name}");
+        m_selectables.Add(selectable);
+    }
+    public void RemoveButton(Selectable selectable) 
+    {
+        if (!m_selectables.Contains(selectable))
+            return;
+
+        Debug.Log($"Remove Button {selectable.name}");
+        m_selectables.Remove(selectable);
     }
     public void Clear() 
     {
@@ -188,7 +233,7 @@ public class UIControllerNavigation
     }
     public void UpdateNavigation() 
     {
-        if (m_selectables.Count == 0) 
+        if (m_selectables == null || m_selectables.Count == 0) 
         {
             return;
         }
