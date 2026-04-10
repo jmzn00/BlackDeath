@@ -22,21 +22,6 @@ public class AICombatActor : CombatActor
     [SerializeField] private List<AITargetingBehaviour> m_targetingBehaviours;
     public List<AIActionBehaviour> ActionBehaviours => m_actionBehaviours;
     public List<AITargetingBehaviour> TargetingBehaviours => m_targetingBehaviours;
-
-
-    private int m_patternIndex = 0;
-    public void UpdatePatternIndex(int index) 
-    {
-        m_patternIndex = index;
-    }
-    public void IncrementPatternIndex() 
-    {
-        m_patternIndex++;
-    }
-    public int GetPatternIndex() 
-    {
-        return m_patternIndex;
-    }
     protected override void OnInitliazed(GameManager game)
     {
         SetActionProvider(new AIActionProvider(this));

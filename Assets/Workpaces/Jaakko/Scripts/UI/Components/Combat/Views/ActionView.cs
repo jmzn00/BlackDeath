@@ -29,7 +29,10 @@ public class ActionView : MonoBehaviour, IUIComponentView
     public event Action<Type> OnActionTypeSelected;
     public event Action<CombatAction> OnActionSelected;
 
-    
+    private Dictionary<Type, Button> m_typeButtons;
+    private Dictionary<CombatActionButton, Button> m_actionButtons;
+
+
     #region IUIComponentView
     public void View()
     {
@@ -58,8 +61,6 @@ public class ActionView : MonoBehaviour, IUIComponentView
     {
         transform.position = position + m_positionOffset;
     }
-    private Dictionary<Type, Button> m_typeButtons;
-    private Dictionary<CombatActionButton, Button> m_actionButtons;
     private void CreateActionButton() 
     {
         CombatActionButton cab = Instantiate(m_actionButtonPrefab, m_actionAnchor);

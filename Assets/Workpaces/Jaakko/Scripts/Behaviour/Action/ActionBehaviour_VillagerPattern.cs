@@ -9,34 +9,27 @@ public class ActionBehaviour_VillagerPattern : AIActionBehaviour
     {
         selectedAction = null;
 
-        AICombatActor ai = actor as AICombatActor;
-        if (ai == null)
-        {
-            Debug.LogWarning("Actor is not AICombatActor on VillagerPattern");
-            return -1f;
-        }
-
-        if (ai.Actions == null || ai.Actions.Count == 0)
+        if (actor.Actions == null || actor.Actions.Count == 0)
             return -1f;
 
-        int startIndex = ai.GetPatternIndex();
-        int count = ai.Actions.Count;
-
+        int startIndex = actor.GetPatternIndex();
+        int count = actor.Actions.Count;
+        Debug.Log($"Pattern Start Index {startIndex} / {count}");
         for (int i = 0; i < count; i++)
         {
             int index = (startIndex + i) % count;
-            var action = ai.Actions[index];
+            var action = actor.Actions[index];
 
-            if (action is SkipTurnAction)
+            if (action == actor.SkipAction)
             {
                 continue;
             }
 
-            if (action.CanExecute(ai, out string reason))
+            if (action.CanExecute(actor, out string reason))
             {
                 selectedAction = action;
 
-                ai.UpdatePatternIndex((index + 1) % count);
+                actor.UpdatePatternIndex((index + 1) % count);
 
                 return selectedAction.baseDamage;
             }
@@ -46,8 +39,8 @@ public class ActionBehaviour_VillagerPattern : AIActionBehaviour
             }
         }
 
-        selectedAction = ai.SkipAction;
-        ai.UpdatePatternIndex((startIndex + 1) % count);
+        selectedAction = actor.SkipAction;
+        actor.UpdatePatternIndex((startIndex + 1) % count);
 
         return 0f;
     }

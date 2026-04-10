@@ -73,7 +73,22 @@ public class CombatActor : MonoBehaviour, IActorComponent, IDamageSource
     private ActionSystem m_action;
 
     public SkipTurnAction SkipAction { get; private set; }
-
+    #region AiPattern
+    // this regions content is just for Ai CombatAction PatternBehaviours
+    private int m_patternIndex = 0;
+    public void UpdatePatternIndex(int index)
+    {
+        m_patternIndex = index;
+    }
+    public void IncrementPatternIndex()
+    {
+        m_patternIndex++;
+    }
+    public int GetPatternIndex()
+    {
+        return m_patternIndex;
+    }
+    #endregion
     #region IActionProvider
     protected void SetActionProvider(IActionProvider provider)
     {
@@ -295,6 +310,26 @@ public class CombatActor : MonoBehaviour, IActorComponent, IDamageSource
             }
         }
         return false;
+    }
+    public bool HasEffect<T>() where T : ActorStatusEffect
+    {
+        foreach (var i in CurrentStatusEffects)
+        {
+            if (i.Template is T)
+                return true;
+        }
+        return false;
+    }
+    public void RemoveEffect<T>() where T : ActorStatusEffect 
+    {
+        foreach (var i in new List<StatusEffectInstance>(CurrentStatusEffects))
+        {
+            if (i.Template is T) 
+            {
+                i.Expire();
+                RemoveEffect(i);
+            }                
+        }
     }
     public void ApplyEffect(StatusEffectInstance instance) 
     {
