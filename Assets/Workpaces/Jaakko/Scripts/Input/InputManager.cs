@@ -46,7 +46,6 @@ public struct UIInputState
 }
 public class InputManager : ManagerBase
 {
-    private bool m_active;
     private InputState m_inputState;
     private UIInputState m_uiInputState;
 
@@ -77,13 +76,11 @@ public class InputManager : ManagerBase
 
         m_inputActions = new InputSystem_Actions();
         m_inputActions.Enable();
-        m_active = true;
 
         return true;
     }
     public override bool Dispose()
     {
-        m_active = false;
         CombatEvents.OnCombatStarted -= CombatStarted;
         CombatEvents.OnCombatEnded -= CombatEnded;
 

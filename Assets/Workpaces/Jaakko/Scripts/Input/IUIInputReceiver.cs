@@ -11,7 +11,4 @@ public interface IUIInputReceiver
     bool OnNavigate(Vector2 direction);
 
     List<Selectable> GetSelectables();
-
-    event Action<Selectable> OnSelectableAdded;
-    event Action<Selectable> OnSelectableRemoved;
 }

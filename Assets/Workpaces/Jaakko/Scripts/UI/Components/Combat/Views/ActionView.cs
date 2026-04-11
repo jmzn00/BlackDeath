@@ -10,7 +10,7 @@ public enum ActionViewState
     Selected
 }
 
-public class ActionView : MonoBehaviour, IUIComponentView
+public class ActionView : UIViewBase
 {
     [Header("Prefabs")]
     [SerializeField] private CombatActionButton m_actionButtonPrefab;
@@ -23,27 +23,12 @@ public class ActionView : MonoBehaviour, IUIComponentView
     [Header("Position")]
     [SerializeField] private Vector3 m_positionOffset;    
 
-    public event Action<Button> OnButtonCreated;
-    public event Action<Button> OnButtonRemoved;
-
     public event Action<Type> OnActionTypeSelected;
     public event Action<CombatAction> OnActionSelected;
 
     private Dictionary<Type, Button> m_typeButtons;
     private Dictionary<CombatActionButton, Button> m_actionButtons;
-
-
-    #region IUIComponentView
-    public void View()
-    {
-        gameObject.SetActive(true);
-    }
-    public void Hide()
-    {
-        gameObject.SetActive(false);        
-    }
-    #endregion
-    public void Init() 
+    public override void Init() 
     {
         m_typeButtons = new();
         m_actionButtons = new();
@@ -100,29 +85,15 @@ public class ActionView : MonoBehaviour, IUIComponentView
         foreach (var action in actions) 
         {
             availableTypes.Add(action.GetType());
-        }
-        
+        }        
         foreach (var type in availableTypes) 
         {
             if (m_typeButtons.TryGetValue(type, out Button button)) 
             {
                 ToggleButton(button, true);
             }
-        }
-        
-        
+        }                
     }
-    private void HideTypeButtons() 
-    {
-        foreach (var btn in m_typeButtons.Values)
-            ToggleButton(btn, false);
-    }
-    private void HideActionButtons() 
-    {
-        foreach (var btn in m_actionButtons.Values)
-            ToggleButton(btn, false);
-    }
-
     public void ShowActionsOfType(Type type, List<CombatAction> actions) 
     {
         HideTypeButtons();
@@ -161,17 +132,14 @@ public class ActionView : MonoBehaviour, IUIComponentView
             index++;
         }
     }
-    private void ToggleButton(Button button, bool value) 
-    {                
-        if (value) 
-        {
-            OnButtonCreated?.Invoke(button);
-            button.gameObject.SetActive(true);
-        }
-        else 
-        {
-            OnButtonRemoved?.Invoke(button);
-            button.gameObject.SetActive(false);
-        }        
+    private void HideTypeButtons()
+    {
+        foreach (var btn in m_typeButtons.Values)
+            ToggleButton(btn, false);
     }
+    private void HideActionButtons()
+    {
+        foreach (var btn in m_actionButtons.Values)
+            ToggleButton(btn, false);
+    }    
 }

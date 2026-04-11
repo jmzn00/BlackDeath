@@ -12,7 +12,6 @@ public enum CombatUIState
 public class CombatUI : UIComponentBase<CombatUIViewGroup>
 {
     private InputManager m_input;
-    private UIManager m_ui;
     private CombatManager m_combat;
 
     private ActionView m_actionView;
@@ -21,8 +20,6 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
     private ReactionView m_reactionView;
     private StatusView m_statusView;
     private ResultView m_resultView;
-
-    private List<Button> m_buttons = new();
 
     private CombatActor m_currentActor;
 
@@ -38,27 +35,18 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
         : base(game, group)
     {
         m_input = game.Resolve<InputManager>();
-        m_ui = game.Resolve<UIManager>();
         m_combat = game.Resolve<CombatManager>();
 
-        m_actionView = group.ActionView;
-        m_targetView = group.TargetView;
-        m_damageView = group.DamageView;
-        m_reactionView = group.ReactionView;
-        m_statusView = group.StatusView;
-        m_resultView = group.ResultView;
-
-        m_targetView.Hide();
-        m_actionView.Hide();
-        m_damageView.Hide();
-        m_reactionView.Hide();
-        m_statusView.Hide();
-        m_resultView.Hide();        
+        m_actionView = group.Get<ActionView>();
+        m_targetView = group.Get<TargetView>();
+        m_damageView = group.Get<DamageView>();
+        m_reactionView = group.Get<ReactionView>();
+        m_statusView = group.Get<StatusView>();
+        m_resultView = group.Get<ResultView>();  
     }
     public override void Initialize()
     {
-        m_actionView.OnButtonCreated += ButtonCreated;
-        m_actionView.OnButtonRemoved += ButtonRemoved;
+        base.Initialize();
 
         CombatEvents.OnTurnStarted += TurnStart;
         CombatEvents.OnTurnEnded += TurnEnd;
@@ -72,19 +60,11 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
         CombatEvents.OnCombatStarted += CombatStarted;
         CombatEvents.OnCombatEnded += CombatEnded;
 
-        m_actionView.Init();
-        m_targetView.Init();
-        m_damageView.Init();
-        m_reactionView.Init();
-        m_statusView.Init();
-        m_resultView.Init();
-
-        m_input.OnSelectTarget += SelectTarget;
+        m_input.OnSelectTarget += SelectTarget;        
     }
     public override void Dispose()
     {
-        m_actionView.OnButtonCreated -= ButtonCreated;
-        m_actionView.OnButtonRemoved -= ButtonRemoved;
+        base.Dispose();
 
         m_input.OnSelectTarget -= SelectTarget;
 
@@ -95,6 +75,8 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
 
         CombatEvents.OnCombatStarted -= CombatStarted;
         CombatEvents.OnCombatEnded -= CombatEnded;
+
+        List<UIViewBase> views = m_group.GetAllViews();
     }
     private void CombatStarted() 
     {
@@ -307,66 +289,17 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
                 break;
         }
     }
-    private void ButtonCreated(Button button)
-    {
-        if (m_buttons.Contains(button))
-        {
-            Debug.LogWarning($"CombatUI: Trying to add a button that already exists");
-            return;
-        }
-        m_buttons.Add(button);
-
-        Selectable s = button;
-
-        RaiseSelectableAdded(s);
-    }
-    private void ButtonRemoved(Button button)
-    {
-        if (!m_buttons.Contains(button))
-        {
-            //Debug.LogWarning($"Trying to remove button that does not exist");
-            return;
-        }
-        m_buttons.Remove(button);
-        RaiseSelectableRemoved(button);
-        /*
-        if (m_buttons.Count > 0)
-        {
-            m_ui.Navigation.UpdateButtons(m_buttons, m_buttons[0].gameObject);
-        }
-        else
-        {
-            m_ui.Navigation.Clear();
-        }
-        */
-    }
-    public override List<Selectable> GetSelectables()
-    {
-        List<Selectable> selectables = new();
-        for (int i = 0; i < m_buttons.Count; i++) 
-        {
-            Selectable s = m_buttons[i];
-            if (s == null) 
-            {
-                Debug.LogWarning($"Selectable is NULL on {m_buttons[i].name}");
-                continue;
-            }
-            selectables.Add(s);
-        }
-        return selectables;
-    }
     public override void Toggle(bool show)
     {
+        base.Toggle(show);
+
         if (show)
         {
-            m_ui.PushUI(this);
             m_actionView.View();
         }
         else
         {
-            m_ui.PopUI(this);
-            m_actionView.Hide();
-            m_resultView.Hide();
+            m_group.HideAll();
         }
     }
     public override bool IsVisible()

@@ -6,7 +6,7 @@ using UnityEngine;
 public class Actor : MonoBehaviour, IActor
 {
     public string ActorID => m_actorID;
-    [SerializeField] private string m_actorID;
+    [HideInInspector][SerializeField] private string m_actorID;
 
     private Dictionary<Type, IActorComponent> m_components = new();
 

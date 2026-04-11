@@ -14,7 +14,6 @@ public class ActionBehaviour_VillagerPattern : AIActionBehaviour
 
         int startIndex = actor.GetPatternIndex();
         int count = actor.Actions.Count;
-        Debug.Log($"Pattern Start Index {startIndex} / {count}");
         for (int i = 0; i < count; i++)
         {
             int index = (startIndex + i) % count;
@@ -35,7 +34,7 @@ public class ActionBehaviour_VillagerPattern : AIActionBehaviour
             }
             else
             {
-                Debug.Log($"AI cannot perform {action.actionName}: {reason}");
+                Debug.Log($"AI cannot perform action: {action.actionName}. reason: {reason}");
             }
         }
 

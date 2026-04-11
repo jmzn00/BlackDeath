@@ -20,34 +20,27 @@ public class MainMenuUI : UIComponentBase<MainMenuGroup>
 
     private List<SaveSlotButton> m_slots = new();
 
-    private UIManager m_ui;
-
     private MainMenuState m_state;
     public MainMenuUI (GameManager game, MainMenuGroup group) : base (game, group) 
     {
         m_save = m_game.Resolve<SaveManager>();
-        m_ui = game.Resolve<UIManager>();
         
-        m_loadView = group.LoadView;
-        m_mainView = group.MainView;
-        m_settingsView = group.SettingsView;
+        m_loadView = group.Get<LoadView>();
+        m_mainView = group.Get<MainView>();
+        m_settingsView = group.Get<SettingsView>();
+    }        
+    public override void Initialize() 
+    {
+        GameEvents.OnLoadStarted += LoadStarted;
+        GameEvents.OnLoadFinished += LoadFinished;
+
+        m_group.InitAll();
 
         m_mainView.OnButtonClicked += ChangeState;
         m_settingsView.OnButtonClicked += ChangeState;
         m_loadView.OnButtonClicked += ChangeState;
-    }        
-    public override void Initialize() 
-    {
-
-        GameEvents.OnLoadStarted += LoadStarted;
-        GameEvents.OnLoadFinished += LoadFinished;
-        
-        m_loadView.Init();
-        m_mainView.Init();
-        m_settingsView.Init();
 
         BuildSaveSlots();
-
         ChangeState(MainMenuState.Main);
     }
     public override void Dispose() 
@@ -58,6 +51,8 @@ public class MainMenuUI : UIComponentBase<MainMenuGroup>
         m_mainView.OnButtonClicked -= ChangeState;
         m_settingsView.OnButtonClicked -= ChangeState;
         m_loadView.OnButtonClicked -= ChangeState;
+
+        m_group.DisposeAll();
 
         foreach (var s in m_slots) 
         {
@@ -71,15 +66,15 @@ public class MainMenuUI : UIComponentBase<MainMenuGroup>
     }
     public override void Toggle(bool show)
     {
+        base.Toggle(show);
+
         if (show) 
         {
             m_mainView.View();
         }
         else 
         {
-            m_mainView.Hide();
-            m_loadView.Hide();
-            m_settingsView.Hide();
+            m_group.HideAll();
         }
     }
     private void LoadStarted() 
@@ -137,7 +132,7 @@ public class MainMenuUI : UIComponentBase<MainMenuGroup>
     }    
     private void ChangeState(MainMenuState state) 
     {
-        HideViews();
+        m_group.HideAll();
 
         m_state = state;
         switch (state)
@@ -158,26 +153,6 @@ public class MainMenuUI : UIComponentBase<MainMenuGroup>
                 
                 break;
         }
-    }
-    private void HideViews() 
-    {
-        m_mainView.Hide();
-        m_loadView.Hide();
-        m_settingsView.Hide();
-    }
-    private List<Button> m_buttons = new();
-    public void ButtonCreated(Button button) 
-    {
-        if (m_buttons.Contains(button)) 
-        {
-            return;
-        }
-    }
-    public void ButtonRemoved(Button button) 
-    {
-        if (!m_buttons.Contains(button)) 
-        {
-            return;
-        }
+        UpdateNavigation();
     }
 }

@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class MainView : MonoBehaviour, IUIComponentView
+public class MainView : UIViewBase
 {
     [Header("Buttons")]
     [SerializeField] private Button m_startButton;
@@ -13,10 +13,17 @@ public class MainView : MonoBehaviour, IUIComponentView
     [Header("Panels")]
     [SerializeField] private GameObject m_loadPanel;
     
-
     public event Action<MainMenuState> OnButtonClicked;
-    public void Init() 
+
+    public override void Init() 
     {
+        base.Init();
+
+        RegisterSelectable(m_startButton);
+        RegisterSelectable(m_saveButton);
+        RegisterSelectable(m_settingsButton);
+        RegisterSelectable(m_quitButton);
+
         m_startButton.onClick.AddListener(() =>
         {
             OnButtonClicked?.Invoke(MainMenuState.Load);
@@ -38,11 +45,11 @@ public class MainView : MonoBehaviour, IUIComponentView
     {
         if (sceneData.IsGameplay) 
         {
-            m_saveButton.gameObject.SetActive(true);
+            ToggleButton(m_saveButton, true);
         }
         else 
         {
-            m_saveButton.gameObject.SetActive(false);
+            ToggleButton(m_saveButton, false);
         }
     }
     public void LoadStarted() 
@@ -52,13 +59,5 @@ public class MainView : MonoBehaviour, IUIComponentView
     public void LoadFinished() 
     {
         m_loadPanel.SetActive(false);
-    }
-    public void View() 
-    {
-        gameObject.SetActive(true); 
-    }
-    public void Hide() 
-    {
-        gameObject.SetActive(false);
     }
 }

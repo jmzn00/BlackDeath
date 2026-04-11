@@ -3,7 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class DialogueView : MonoBehaviour, IUIComponentView
+public class DialogueView : UIViewBase
 {
     [Header("Prefabs")]
     [SerializeField] private DialoguePortrait m_portraitPrefab;
@@ -22,10 +22,6 @@ public class DialogueView : MonoBehaviour, IUIComponentView
     private List<Button> m_choiceButtons = new();
 
     public void OnActorChanged(Actor actor) 
-    {
-        
-    }
-    public void Init() 
     {
         
     }
@@ -92,13 +88,5 @@ public class DialogueView : MonoBehaviour, IUIComponentView
             Destroy(b.gameObject);
         }
         m_choiceButtons.Clear();
-    }
-    public void View() 
-    {
-        gameObject.SetActive(true);
-    }
-    public void Hide() 
-    {
-        gameObject.SetActive(false);
     }
 }

@@ -64,8 +64,6 @@ public class UIManager : ManagerBase
 
         m_game.OnStateChanged += OnGameStateChanged;
         OnGameStateChanged(m_game.State);
-
-
     }
     #endregion    
     bool HandleUIInput(UIInputAction action) 
@@ -118,9 +116,6 @@ public class UIManager : ManagerBase
         m_currentReceiver = reciever;
         Debug.Log($"Push UI {reciever}");
 
-        reciever.OnSelectableAdded += m_navigation.AddButton;
-        reciever.OnSelectableRemoved += m_navigation.RemoveButton;
-
         m_uiStack.Push(reciever);
         m_navigation.UpdateButtons(reciever.GetSelectables());        
     }
@@ -131,9 +126,6 @@ public class UIManager : ManagerBase
 
         m_currentReceiver = null;
         Debug.Log($"Pop UI {reciever}");
-
-        reciever.OnSelectableAdded -= m_navigation.AddButton;
-        reciever.OnSelectableRemoved -= m_navigation.RemoveButton;
 
         if (m_uiStack.Count > 0 && m_uiStack.Peek() == reciever)
         {
@@ -151,14 +143,15 @@ public class UIManager : ManagerBase
 
         if (m_uiStack.Count > 0)
         {
+            
             var top = m_uiStack.Peek();
             ref UIInputState input = ref m_input.GetUIInputState();
-
+            /*
             if (input.NavigateUpPressed) top.OnNavigate(Vector2.up);
             else if (input.NavigateDownPressed) top.OnNavigate(Vector2.down);
             else if (input.NavigateLeftPressed) top.OnNavigate(Vector2.left);
             else if (input.NavigateRightPressed) top.OnNavigate(Vector2.right);
-
+            */
             if (!m_submitConsumed && input.SubmitPressed)
             {
                 top.OnSubmit();
@@ -188,15 +181,10 @@ public class UIControllerNavigation
     }
     public void UpdateButtons(List<Selectable> selectables, GameObject currentSelected = null)
     {
-        if (selectables == null) 
+        if (selectables == null || selectables.Count == 0) 
         {
             m_selectables.Clear();
             return;
-        }
-
-        foreach (var item in selectables)
-        {
-            Debug.Log($"Added {item.name}");
         }
 
         m_selectables = selectables;
@@ -210,26 +198,6 @@ public class UIControllerNavigation
             m_currentIndex = 0;
             EventSystem.current.SetSelectedGameObject(m_selectables[0].gameObject);
         }        
-    }
-    public void AddButton(Selectable selectable) 
-    {
-        if (m_selectables.Contains(selectable))
-            return;
-
-        Debug.Log($"Add Button {selectable.name}");
-        m_selectables.Add(selectable);
-    }
-    public void RemoveButton(Selectable selectable) 
-    {
-        if (!m_selectables.Contains(selectable))
-            return;
-
-        Debug.Log($"Remove Button {selectable.name}");
-        m_selectables.Remove(selectable);
-    }
-    public void Clear() 
-    {
-        m_selectables.Clear();
     }
     public void UpdateNavigation() 
     {
@@ -256,16 +224,20 @@ public class UIControllerNavigation
         {
             MoveLeft();
         }
+    } 
+    private void SetCurrentSelected(GameObject go) 
+    {
+        EventSystem.current.SetSelectedGameObject(go);
     }
     private void MoveUp() 
     {
         m_currentIndex = (m_currentIndex - 1 + m_selectables.Count) % m_selectables.Count;
-        EventSystem.current.SetSelectedGameObject(m_selectables[m_currentIndex].gameObject);
+        SetCurrentSelected(m_selectables[m_currentIndex].gameObject);
     }
     private void MoveDown()
     {        
         m_currentIndex = (m_currentIndex + 1) % m_selectables.Count;
-        EventSystem.current.SetSelectedGameObject(m_selectables[m_currentIndex].gameObject);
+        SetCurrentSelected(m_selectables[m_currentIndex].gameObject);
     }
     private void MoveRight()
     {
@@ -279,7 +251,7 @@ public class UIControllerNavigation
 
         if (next != null) 
         {
-            EventSystem.current.SetSelectedGameObject(next.gameObject);
+            SetCurrentSelected(next.gameObject);
         }            
     }
 
@@ -295,7 +267,7 @@ public class UIControllerNavigation
 
         if (next != null) 
         {
-            EventSystem.current.SetSelectedGameObject(next.gameObject);
+            SetCurrentSelected(next.gameObject);
         }        
     }
 

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class ResultView : MonoBehaviour, IUIComponentView
+public class ResultView : UIViewBase
 {
     [SerializeField] private Transform m_firstPlaceAnchor;
     [SerializeField] private Transform m_portraitAnchor;
@@ -11,14 +11,8 @@ public class ResultView : MonoBehaviour, IUIComponentView
     [Header("Prefabs")]
     [SerializeField] private StatPortrait m_firstPlacePortraitPrefab;
     [SerializeField] private StatPortrait m_statPortraitPrefab;    
-    public void Hide() { gameObject.SetActive(false); }
-    public void View() { gameObject.SetActive(true); }
 
     private List<StatPortrait> m_portraits = new();
-    public void Init() 
-    {
-        
-    }
     public void DisplayResults(List<CombatActorStats> stats,
         CombatResult result) 
     {

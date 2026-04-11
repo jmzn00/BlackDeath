@@ -2,14 +2,14 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class StatusView : MonoBehaviour, IUIComponentView 
+public class StatusView : UIViewBase
 {
     [Header("Prefabs")]
     [SerializeField] private CombatPortrait m_portraitPrefab;
 
     private List<CombatPortrait> m_portraits;
     private Dictionary<CombatActor, CombatPortrait> m_portraitLookup;
-    public void Init() 
+    public override void Init() 
     { 
         if (m_portraits != null) 
         {
@@ -27,8 +27,6 @@ public class StatusView : MonoBehaviour, IUIComponentView
             CreatePortrait();
         }
     }
-    public void View() { gameObject.SetActive(true); }
-    public void Hide() { gameObject.SetActive(false); }
     private void CreatePortrait() 
     {
         CombatPortrait p = Instantiate(m_portraitPrefab, transform);

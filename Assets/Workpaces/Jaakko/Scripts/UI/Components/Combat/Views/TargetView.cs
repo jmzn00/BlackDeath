@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class TargetView : MonoBehaviour, IUIComponentView
+public class TargetView : UIViewBase
 {
     [Header("Elements")]
     [SerializeField] private TMP_Text m_targetNameText;
@@ -60,17 +60,5 @@ public class TargetView : MonoBehaviour, IUIComponentView
             Destroy(i.gameObject);
         }
         m_statusEffectImages.Clear();
-    }
-    public void Init()
-    {
-
-    }
-    public void View() 
-    {
-        gameObject.SetActive(true);
-    }
-    public void Hide() 
-    {
-        gameObject.SetActive(false);
-    }    
+    }   
 }

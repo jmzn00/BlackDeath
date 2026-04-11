@@ -35,6 +35,10 @@ public class UIController : MonoBehaviour
         {
             ShowComponent<MainMenuUI>(false);
         }
+        else 
+        {
+            ShowComponent<MainMenuUI>(true);
+        }
     }
     public void ShowComponent<T>(bool show) where T : IUIComponent
     {
