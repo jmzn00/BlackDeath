@@ -39,7 +39,7 @@ public class MainView : UIViewBase
         m_quitButton.onClick.AddListener(() =>
         {
             OnButtonClicked?.Invoke(MainMenuState.Quit);
-        });
+        });        
     }
     public void SceneChanged(SceneData sceneData) 
     {

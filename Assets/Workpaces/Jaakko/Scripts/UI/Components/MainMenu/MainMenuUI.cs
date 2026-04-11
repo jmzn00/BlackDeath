@@ -54,10 +54,7 @@ public class MainMenuUI : UIComponentBase<MainMenuGroup>
 
         m_group.DisposeAll();
 
-        foreach (var s in m_slots) 
-        {
-            GameObject.Destroy(s.gameObject);
-        }
+        DestroySaveSlots();
     }
     public override bool IsVisible()
     {
@@ -66,8 +63,6 @@ public class MainMenuUI : UIComponentBase<MainMenuGroup>
     }
     public override void Toggle(bool show)
     {
-        base.Toggle(show);
-
         if (show) 
         {
             m_mainView.View();
@@ -76,6 +71,7 @@ public class MainMenuUI : UIComponentBase<MainMenuGroup>
         {
             m_group.HideAll();
         }
+        base.Toggle(show);
     }
     private void LoadStarted() 
     {
@@ -88,7 +84,7 @@ public class MainMenuUI : UIComponentBase<MainMenuGroup>
     public override void SceneChanged(SceneData data)
     {
         m_mainView.SceneChanged(data);
-    }
+    }    
     private void BuildSaveSlots() 
     {
         List<SaveSlotMeta> slots = m_save.GetAllSlots();
@@ -103,19 +99,35 @@ public class MainMenuUI : UIComponentBase<MainMenuGroup>
             m_slots.Add(s);
         }
     }
+    private void UpdateSaveSlots() 
+    {
+        for (int i = 0; i < m_slots.Count; i++) 
+        {
+            SaveSlotButton s = m_slots[i];
+            s.OnPressed -= Load;
+        }
+
+        List<SaveSlotMeta> metas = m_save.GetAllSlots();
+        for (int i = 0; i < metas.Count; i++) 
+        {
+            m_slots[i].Bind(metas[i], i);
+            m_slots[i].OnPressed += Load;
+        }
+    }
     private void DestroySaveSlots() 
     {
-        foreach (var s in m_slots)
+        foreach (var s in m_slots) 
+        {
+            s.OnPressed -= Load;
             GameObject.Destroy(s.gameObject);
-
+        }            
         m_slots.Clear();
     }
     private void Save(int index) 
     {
         m_game.SaveGame(index);
 
-        DestroySaveSlots();
-        BuildSaveSlots();
+        UpdateSaveSlots();
     }
     private void Load(SaveSlotMeta meta, int index) 
     {

@@ -50,6 +50,7 @@ public abstract class UIComponentBase<TGroup> : IUIComponent, IUIInputReceiver
         if (show) 
         {
             m_ui.PushUI(this);
+            UpdateNavigation();
         }
         else 
         {
