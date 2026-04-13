@@ -177,6 +177,7 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
         m_targetView.ChangeTarget(m_currentTarget);
         m_targetView.SetPosition(m_currentTarget.transform.position);
 
+        CameraAnimationEvents.NotifyTargetChanged(m_currentTarget.Target);
         CombatEvents.ActorTargetChanged(m_currentActor, m_currentTarget);
     }
     private void SubmitAction()
