@@ -106,12 +106,19 @@ public class Actor : MonoBehaviour, IActor
         m_game = game;
         m_game.OnStateChanged += GameStateChanged;
 
-        var components = GetComponents<IActorComponent>();
+        var components = GetComponents<IActorComponent>();         
         foreach (var comp in components)
         {
             comp.Initialize(game);
             m_components[comp.GetType()] = comp;
         }
+        var childComponents = GetComponentsInChildren<IActorComponent>();
+        foreach (var comp in childComponents) 
+        {
+            comp.Initialize(game);
+            m_components[comp.GetType()] = comp;
+        }
+
         OnActorComponentsInitialized();
 
         m_playerInputSource = new PlayerInputSource(game.Resolve<InputManager>());

@@ -73,6 +73,10 @@ public class CombatActor : MonoBehaviour, IActorComponent, IDamageSource
     private ActionSystem m_action;
 
     public SkipTurnAction SkipAction { get; private set; }
+
+    private CameraTarget m_cameraTarget;
+    public CameraTarget Target => m_cameraTarget;
+
     #region AiPattern
     // this regions content is just for Ai CombatAction PatternBehaviours
     private int m_patternIndex = 0;
@@ -158,6 +162,8 @@ public class CombatActor : MonoBehaviour, IActorComponent, IDamageSource
 
         m_animator = actor.Get<AnimatorComponent>();
         m_animator.OnActionAnimationFinished += ActionFinished;
+
+        m_cameraTarget = actor.Get<CameraTarget>();
     }
     public void SetInputSource(IInputSource source)
     {
