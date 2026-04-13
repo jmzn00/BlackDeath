@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d9e323f1ccc1f24a9c5e56763a0f905, type: 3}
+  m_Name: CureEffect
+  m_EditorClassIdentifier: Assembly-CSharp::CureStatusEffect
+  <duration>k__BackingField: 1
+  <damage>k__BackingField: 0
+  <heal>k__BackingField: 0
+  <displayName>k__BackingField: CureEffect
+  <isStackable>k__BackingField: 0
+  <statusEffectSprite>k__BackingField: {fileID: -569601670, guid: aa97425742e4c774d82ae6e50fe04072, type: 3}

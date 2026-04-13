@@ -286,7 +286,7 @@ public class CombatActor : MonoBehaviour, IActorComponent, IDamageSource
     }
     #endregion
     #region StatusEffect
-    private void ClearStatusEffects() 
+    public void ClearStatusEffects() 
     {
         foreach (var i in CurrentStatusEffects) 
         {
@@ -336,7 +336,7 @@ public class CombatActor : MonoBehaviour, IActorComponent, IDamageSource
                 RemoveEffect(i);
             }                
         }
-    }
+    }    
     public void ApplyEffect(StatusEffectInstance instance) 
     {
         m_currentStatusEffects.Add(instance);

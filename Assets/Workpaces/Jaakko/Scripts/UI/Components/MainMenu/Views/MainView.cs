@@ -24,6 +24,7 @@ public class MainView : UIViewBase
         RegisterSelectable(m_settingsButton);
         RegisterSelectable(m_quitButton);
 
+
         m_startButton.onClick.AddListener(() =>
         {
             OnButtonClicked?.Invoke(MainMenuState.Load);
