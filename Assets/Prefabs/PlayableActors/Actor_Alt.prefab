@@ -362,6 +362,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: abc8cba7bd8e10348b71eff2a62284e8, type: 2}
   - {fileID: 11400000, guid: 9dbdb896d21dba94ea60fc2c474b974b, type: 2}
   - {fileID: 11400000, guid: c8f7a85bde04bc24e94375dc6a2844f4, type: 2}
+  - {fileID: 11400000, guid: c3ef09ad614d352478148538f748a31f, type: 2}
   m_maxActionPoints: 6
 --- !u!114 &3240304435187152410
 MonoBehaviour:

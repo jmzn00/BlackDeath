@@ -50,11 +50,11 @@ public class UIControllerNavigation
 
         if (input.NavigateUpPressed)
         {
-            MoveDown();
+            MoveUp();
         }
         else if (input.NavigateDownPressed)
         {
-            MoveUp();
+            MoveDown();
         }
         else if (input.NavigateRightPressed)
         {

@@ -17,7 +17,6 @@ public static class CameraAnimationEvents
 
     public static void NotifyTargetChanged(CameraTarget target)
     {
-        Debug.Log($"Target Changed {target.transform.root.gameObject.name}");
         OnTargetChanged?.Invoke(target);
     }
 
