@@ -58,8 +58,8 @@ MonoBehaviour:
     fovRange: {x: 18.825277, y: 38.82528}
   actionExecution:
     presetName: Action Execution
-    positionOffset: {x: -2, y: 3, z: -7}
-    rotation: {x: 16.821198, y: 15.812382, z: 0.00000022298434}
+    positionOffset: {x: -2, y: 2, z: -7}
+    rotation: {x: 9.4039135, y: 16.024403, z: -0.00000010817548}
     fieldOfView: 60
     orthographicSize: 5
     followDamping: 1.5
