@@ -184,21 +184,32 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
     {
         if (m_currentActor == null
             || m_currentAction == null) return;
-        if (m_currentAction.targetType == TargetType.Self) 
-        {
-            m_currentTarget = m_currentActor;
-        }
 
-        if (m_currentTarget == null) return;
         ActionContext ctx = new ActionContext
         {
             Source = m_currentActor,
-            Target = m_currentTarget,
             Action = m_currentAction
         };
+
+        switch (m_currentAction.targetType) 
+        {
+            case TargetType.Self:
+                ctx.Target = m_currentActor;
+                break;
+            case TargetType.Enemy:
+            case TargetType.Ally:
+            case TargetType.AOEEnemy:
+            case TargetType.AOEAlly:
+                if (m_currentTarget == null) return;
+                ctx.Target = m_currentTarget;
+
+                ctx.Targets = m_currentAction.GetValidTargets(
+                    m_currentActor,
+                    m_currentParticipants).ToArray();
+                break;
+        }
         m_currentActor.
             ActionProvider.SetAction(ctx);
-
         m_targetView.Hide();
     }
     private void GoBack()
@@ -277,9 +288,12 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
 
         switch (action.targetType)
         {
+            case TargetType.AOEAlly:
             case TargetType.Self:
+                // skip target selection
                 SubmitAction();
                 break;
+            case TargetType.AOEEnemy:
             case TargetType.Enemy:
             case TargetType.Ally:
                 m_targetView.View();

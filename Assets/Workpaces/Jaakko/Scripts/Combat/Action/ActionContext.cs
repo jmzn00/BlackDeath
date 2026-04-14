@@ -6,6 +6,7 @@ public class ActionContext
     }
     public CombatActor Source;
     public CombatActor Target;
+    public CombatActor[] Targets;
 
     public CombatAction Action;
 

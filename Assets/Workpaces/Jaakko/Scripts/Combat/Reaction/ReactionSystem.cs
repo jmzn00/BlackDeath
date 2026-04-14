@@ -69,8 +69,10 @@ public class ReactionSystem : CombatSystemBase
 
         m_window.Open();
 
-        ctx.Source.ReactionProvider.OpenReaction();
-        ctx.Target.ReactionProvider.OpenReaction();
+        if (ctx.Source != null)
+            ctx.Source.ReactionProvider.OpenReaction();
+        if (ctx.Target != null)
+            ctx.Target.ReactionProvider.OpenReaction();
 
         CombatEvents.ReactionWindowOpened(ctx);
     }
@@ -102,7 +104,8 @@ public class ReactionSystem : CombatSystemBase
         for (int i = 0; i < m_defensivePrompts.Count; i++)
         {
             InputPrompt p = m_defensivePrompts[i];
-            m_context.Target.ReactionProvider.TryReact(this, p);
+            if (m_context.Target != null)
+                m_context.Target.ReactionProvider.TryReact(this, p);
         }
     }
     public void ReceiveReaction(ReactionCommand command) 

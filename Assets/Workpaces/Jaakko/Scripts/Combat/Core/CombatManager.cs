@@ -138,6 +138,7 @@ public class CombatManager : ManagerBase
     private void NextTurn()
     {
         CombatActor actor = m_container.Resolve<TurnSystem>().Next();
+
         if (actor == null)
         {
             Debug.LogWarning($"Turn System Next() == NULL");

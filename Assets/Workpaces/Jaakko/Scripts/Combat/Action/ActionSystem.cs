@@ -73,24 +73,26 @@ public class ActionSystem : CombatSystemBase
 
         if (actor != m_currentAction.Source)
         {
-            // if you get this warning it may be that ui is trying to submit again 
-            // when you are confirming an attack or submiting input
-
             Debug.LogWarning("AS: Can not Finish, Actor is not Source");
             return;
         }
 
-        // this is a temp fix for ally / self target skills
-        // as they dont currently open / close the window
 
-        if (m_currentAction.Action.targetType == TargetType.Self ||
-            m_currentAction.Action.targetType == TargetType.Ally)
+        switch (m_currentAction.Action.targetType) 
         {
-            OnActionResolved?.Invoke(m_currentAction, ActionResult.Confirmed);
+            case TargetType.Self:
+            case TargetType.Ally:
+            case TargetType.AOEAlly:
+                OnActionResolved?.Invoke(m_currentAction, ActionResult.Confirmed);
+                CombatEvents.ActionResolved(m_currentAction, ActionResult.Confirmed);
 
-            CombatEvents.ActionResolved(m_currentAction, ActionResult.Confirmed);
+                break;
+            case TargetType.Enemy:
+            case TargetType.AOEEnemy:
+            case TargetType.Any:
+
+                break;
         }
-
         CombatEvents.TurnEnded(m_currentAction.Source);
         CombatEvents.ActionFinished(m_currentAction);
 

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -14,7 +13,9 @@ public enum TargetType
 {
     Self,
     Ally,
+    AOEAlly,
     Enemy,
+    AOEEnemy,
     Any
 }
 
@@ -45,7 +46,7 @@ public abstract class CombatAction : ScriptableObject
 
     public List<ActorStatusEffect> AppliedEffects = new List<ActorStatusEffect>();
 
-    public TargetType targetType;
+    public TargetType targetType = TargetType.Enemy;
 
     [Header("Audio")]
     public AudioClip clip;
@@ -61,8 +62,10 @@ public abstract class CombatAction : ScriptableObject
         switch (targetType) 
         {
             case TargetType.Enemy:
+            case TargetType.AOEEnemy:
                 return validTargets.Where(p => p.Team != source.Team && !p.IsDead).ToList();                
             case TargetType.Ally:
+            case TargetType.AOEAlly:
                 return validTargets.Where(p => p.Team == source.Team && !p.IsDead).ToList();
             case TargetType.Self:
                 return validTargets.Where(p => p == source).ToList();
@@ -75,7 +78,6 @@ public abstract class CombatAction : ScriptableObject
     {
         bool blocked = false;
         reason = "";
-        // Add AP Check Here
 
         foreach (var i in source.CurrentStatusEffects) 
         {            
@@ -94,24 +96,4 @@ public abstract class CombatAction : ScriptableObject
         return !blocked;
     }
     public abstract bool Resolve(ActionContext context);
-    public virtual float OnHit() 
-    {        
-        return baseDamage;
-    }
-    public virtual void OnDodged() 
-    {
-        
-    }
-    public virtual float OnParried() 
-    {
-        return baseDamage;
-    }
-    public virtual float OnConfirmed() 
-    {
-        return baseDamage * confirmDamageMultipler;        
-    }
-    protected virtual void OnNone(ActionContext ctx) 
-    {
-    
-    }
 }

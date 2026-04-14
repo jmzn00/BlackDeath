@@ -85,56 +85,91 @@ public class TransitionSystem : CombatSystemBase
     }
     public void Start(ActionContext actx) 
     {
-
         m_combat.ChangeState(CombatState.Transition);
 
-        CombatActor source = actx.Source;
-        CombatActor target = actx.Target;
-        if (source == null || target == null)
+        if (actx.Source == null) 
         {
-            Debug.LogWarning($"Transition Source || Target == NULL");
+            Debug.LogWarning($"Transition Source == NULL");
             Finish();
             return;
         }
-
-        if (source.Team == target.Team)
+        if (ShouldSkip(actx.Action.targetType))
         {
             Finish();
             return;
         }
-        m_sourceActor = source.transform;
-        m_targetActor = target.transform;
 
+        SetupActors(actx, out m_sourceActor, out m_targetActor);
+
+        if (m_sourceActor == null) 
+        {
+            Finish();
+            return;
+        }
         m_sourceStart = m_sourceActor.position;
-        m_targetStart = m_targetActor.position;
+        if (m_targetActor != null)
+            m_targetStart = m_targetActor.transform.position;
 
-        if (source.Team == Team.Player) 
-        {
-            m_sourceEnd = m_area.Preferences.m_partyActionPoint.position;
-            m_targetEnd = m_area.Preferences.m_enemyActionPoint.position;
-        }
-        else 
-        {
-            m_sourceEnd = m_area.Preferences.m_enemyActionPoint.position;
-            m_targetEnd = m_area.Preferences.m_partyActionPoint.position;           
-        }                
-        m_sourceDuration = source.HasTransition() && source.TransitionClip
-            ? source.TransitionClip.length : DEFAULT_DURATION;
-        m_targetDuration = target.HasTransition() && target.TransitionClip
-            ? target.TransitionClip.length : DEFAULT_DURATION;
+        bool isPlayer = actx.Source.Team == Team.Player;
 
-        if (source.HasTransition())
+        m_sourceEnd = isPlayer
+            ? m_area.Preferences.m_partyActionPoint.position
+            : m_area.Preferences.m_enemyActionPoint.position;
+        if (m_targetActor != null) 
         {
-            source.PlayTransition();
+            m_targetEnd = isPlayer 
+                ? m_area.Preferences.m_enemyActionPoint.position
+                : m_area.Preferences.m_partyActionPoint.position;
         }
-        if (target.HasTransition())
-        {
-            target.PlayTransition();
-        }
+        m_sourceDuration = GetDuration(actx.Source);
+        m_targetDuration = GetDuration(actx.Target);
+        
+        PlayTransition(actx.Source);
+        PlayTransition(actx.Target);
 
         m_transitionOpen = true;
         CombatEvents.TransitionStarted();
     }    
+    private bool ShouldSkip(TargetType type) 
+    {
+        return type == TargetType.Self 
+            || type == TargetType.Ally 
+            || type == TargetType.AOEAlly;
+    }
+    private void SetupActors(ActionContext actx, out Transform sourceT, out Transform targetT) 
+    {
+        sourceT = actx.Source.transform;
+        targetT = null;
+
+        switch (actx.Action.targetType) 
+        {
+            case TargetType.Enemy:
+            case TargetType.AOEEnemy:
+                targetT = actx.Target.transform;
+                break;
+            case TargetType.Self:
+            case TargetType.Ally:
+            case TargetType.AOEAlly:
+                sourceT = null;
+                targetT = null;
+                break;
+        }
+    }
+    private float GetDuration(CombatActor actor) 
+    {
+        if (actor == null) return DEFAULT_DURATION;
+
+        return actor.HasTransition() && actor.TransitionClip
+            ? actor.TransitionClip.length : DEFAULT_DURATION;
+    }
+    private void PlayTransition(CombatActor actor) 
+    {
+        if (actor == null) return;
+        if (actor.HasTransition())
+        {
+            actor.PlayTransition();
+        }
+    }
     private void Finish() 
     {
         m_transitionOpen = false;

@@ -22,7 +22,7 @@ MonoBehaviour:
   confirmDamageMultipler: 1.5
   AppliedEffects:
   - {fileID: 11400000, guid: 1e00e8df307b0d9469d906410a575a8e, type: 2}
-  targetType: 2
+  targetType: 3
   clip: {fileID: 0}
   damage: 0
   bonusDamageOnSuccess: 0

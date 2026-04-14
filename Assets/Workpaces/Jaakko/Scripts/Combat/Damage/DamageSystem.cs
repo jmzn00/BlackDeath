@@ -1,7 +1,8 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System;
-using Unity.VisualScripting.Antlr3.Runtime.Misc;
+using Unity.VisualScripting;
+using System.Linq;
 
 
 public class DamageSystem : CombatSystemBase
@@ -37,8 +38,7 @@ public class DamageSystem : CombatSystemBase
         {
             case ActionResult.Confirmed:
                 finalDamage = ctx.Action.baseDamage
-                    * ctx.Action.confirmDamageMultipler;
-                UpdateStatusEffects(ctx.Action.AppliedEffects, ctx.Target, ctx.Source);
+                    * ctx.Action.confirmDamageMultipler;                
                 break;
             case ActionResult.Hit:
                 finalDamage = ctx.Action.baseDamage;
@@ -51,10 +51,47 @@ public class DamageSystem : CombatSystemBase
                 finalDamage = 0f;
                 break;
         }
-        ApplyDamage(finalDamage, ctx.Source, reciever);
+        List<CombatActor> targets = GetTargets(ctx);
+        foreach (CombatActor target in targets) 
+        {
+            ApplyDamage(finalDamage, ctx.Source, target);
+            if (result == ActionResult.Confirmed) 
+            {
+                UpdateStatusEffects(ctx.Action.AppliedEffects, target, ctx.Source);
+            }
+        }        
+    }
+    private List<CombatActor> GetTargets(ActionContext actx) 
+    {
+        List<CombatActor> targets = new();
+        switch (actx.Action.targetType) 
+        {
+            case TargetType.Enemy:
+                targets.Add(actx.Target);
+                break;
+            case TargetType.AOEAlly:
+            case TargetType.AOEEnemy:
+                targets = actx.Action.GetValidTargets(actx.Source, m_context.Actors.ToList());
+                break;
+            case TargetType.Self:
+                targets.Add(actx.Source);
+                break;
+            case TargetType.Ally:
+                targets.Add(actx.Target);
+                break;
+            case TargetType.Any:
+                targets.Add(actx.Target);
+                break;
+            default:
+                Debug.LogWarning($"Unhandled target type {actx.Action.targetType}");
+                break;
+        }
+        return targets;
     }
     private void UpdateStatusEffects(List<ActorStatusEffect> effects, CombatActor target, CombatActor source) 
     {
+        if (target == null) return;
+
         foreach (var e in effects)
         {
             if (target.HasEffect(e))
@@ -65,7 +102,6 @@ public class DamageSystem : CombatSystemBase
                 if (i != null)
                 {
                     i.UpdateDuration(e.duration);
-                    Debug.Log($"{e.displayName} on {target.name} duration updated to {i.RemainingTurns}");
                 }
                 else
                 {

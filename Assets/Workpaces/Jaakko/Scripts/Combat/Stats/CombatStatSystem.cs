@@ -104,6 +104,9 @@ public class CombatStatSystem : CombatSystemBase
     }
     public CombatActorStats Get(CombatActor actor) 
     {
+        if (actor == null)
+            return null;
+
         return m_stats.TryGetValue(actor, out var stats) ? stats : null;
     }
 }
