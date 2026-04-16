@@ -5408,7 +5408,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e31eb1c85fb5c64428dc7c6810ae77dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Actor_Player
-  m_actorID: 0806788d-198b-4d3b-bfa1-38f009689b49
+  m_actorID: 46c10cc2-98de-4e40-bc08-52265e71de1e
   m_playable: 0
   m_trackingTarget: {fileID: 4445241910935666754}
   actorSprite: {fileID: 687447985770701780, guid: 3635139300d2996419e449b224c4df4a, type: 3}
