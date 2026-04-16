@@ -24,7 +24,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 583170421083610566}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0.081622146, w: 0.99666333}
+  m_LocalRotation: {x: -0, y: -0, z: -0.069585346, w: 0.997576}
   m_LocalPosition: {x: 2.1, y: -0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -343,7 +343,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3770038257552898820}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: 0.7815472, w: 0.62384623}
+  m_LocalRotation: {x: -0, y: -0, z: 0.7764485, w: 0.63018066}
   m_LocalPosition: {x: 1.31, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -374,7 +374,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4607793612947805465}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0.07412931, w: 0.99724865}
+  m_LocalRotation: {x: -0, y: -0, z: -0.06446323, w: 0.99792016}
   m_LocalPosition: {x: 2.2, y: -0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -584,8 +584,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AiActor
   m_actorID: 54961730-f0f7-4345-bdba-2e0ccbee4913
   m_playable: 0
-  m_trackingTarget: {fileID: 0}
-  actorSprite: {fileID: 0}
+  m_trackingTarget: {fileID: 7342933736329140022}
+  actorSprite: {fileID: -6112862246468563634, guid: ded315b627f472b408a7efb124abf04f, type: 3}
 --- !u!114 &-2854691987104007566
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -633,7 +633,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7496464386689159434}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: 0.18490958, w: 0.9827556}
+  m_LocalRotation: {x: -0, y: -0, z: 0.8462666, w: 0.5327597}
   m_LocalPosition: {x: 1.74, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
