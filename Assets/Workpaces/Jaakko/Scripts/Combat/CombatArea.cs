@@ -168,10 +168,13 @@ public class CombatArea : MonoBehaviour
             {
                 combatActors.Add(ca);                
             }
-            a.Get<MovementController>().
-                MoveTo(prefs.m_partySpawnPoints[setIndex]);
+            MovementController m = a.Get<MovementController>();
+            if (m)
+                m.MoveTo(prefs.m_partySpawnPoints[setIndex]);
+            else
+                a.transform.position = prefs.m_enemySpawnPoints[setIndex].position;
 
-            setIndex++;
+                setIndex++;
         }
         
         foreach (var a in m_enemies) 

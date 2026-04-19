@@ -6,12 +6,15 @@ using UnityEngine;
 public class Actor : MonoBehaviour, IActor
 {
     public string ActorID => m_actorID;
-    [HideInInspector][SerializeField] private string m_actorID;
+    [SerializeField] private string m_actorID;
 
     private Dictionary<Type, IActorComponent> m_components = new();
 
-    [SerializeField] private bool m_playable;
-    public bool IsPlayable => m_playable;
+    [SerializeField] private Team m_team = Team.Neutral;
+    [SerializeField] private ControlType m_controlType = ControlType.Ai;
+
+    public Team Team => m_team;
+    public ControlType ControlType => m_controlType;
 
     private PlayerInputSource m_playerInputSource;
     private AIInputSource m_aiInputSource;
@@ -119,14 +122,14 @@ public class Actor : MonoBehaviour, IActor
             m_components[comp.GetType()] = comp;
         }
 
-        OnActorComponentsInitialized();
+        ActorComponentsInitialized();
 
         m_playerInputSource = new PlayerInputSource(game.Resolve<InputManager>());
         m_aiInputSource = new AIInputSource(transform);
         m_actorManager = game.Resolve<ActorManager>();
         m_actorManager.OnActorControlChanged += OnControlChanged;
     }
-    public virtual void OnActorComponentsInitialized()
+    public virtual void ActorComponentsInitialized()
     {
         foreach (var comp in m_components.Values)
             comp.OnActorComponentsInitialized(this);

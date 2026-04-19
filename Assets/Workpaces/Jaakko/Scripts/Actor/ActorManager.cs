@@ -10,8 +10,6 @@ public class ActorSpawnPreferences
 }
 public class ActorManager : ManagerBase
 {
-    private bool m_active;
-    
     private GameManager m_game;
 
     private List<IActor> m_actors;
@@ -45,6 +43,7 @@ public class ActorManager : ManagerBase
             Debug.Log($"Cannot switch actors. Party count: {m_party.Count}");
             return;
         }
+
         int currentIndex = m_party.IndexOf(m_currentControlled);
         int nextIndex = (currentIndex + 1) % m_party.Count;
 
@@ -109,8 +108,9 @@ public class ActorManager : ManagerBase
             a.Init(m_game);
 
         m_party = m_actors.OfType<Actor>()
-            .Where(a => a.IsPlayable)
-            .ToList();
+            .Where(a => a.Team == Team.Player
+            && a.ControlType == ControlType.User).ToList();
+
         if (m_party.Count > 0)
         {
             foreach (var a in m_party)

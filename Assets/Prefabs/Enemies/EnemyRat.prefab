@@ -498,7 +498,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AiActor
   m_actorID: 1cd22b7f-e7cd-4d36-b90f-63ee085742b3
-  m_playable: 0
+  m_team: 1
+  m_controlType: 1
   m_trackingTarget: {fileID: 4266567595946747290}
   actorSprite: {fileID: 6923017139169223114, guid: 611288fb088e84b468643c90cda78c7d, type: 3}
 --- !u!114 &2743277439528510324
@@ -513,8 +514,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8931c9d27803dc488d26d7f2c67d9a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AICombatActor
-  m_team: 1
-  m_controlType: 1
   m_visual: {fileID: 9059011711645081977}
   m_actions:
   - {fileID: 11400000, guid: a766e0fe4293df04e837678800378648, type: 2}

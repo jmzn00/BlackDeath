@@ -69,8 +69,7 @@ public class GameManager : ManagerBase
             m_managers[i].Update(dt);
     }
     public void SaveGame(int slot) 
-    {
-        
+    {        
         var save = Resolve<SaveManager>();
 
         SceneData data = new SceneData(SceneManager.GetActiveScene().name,

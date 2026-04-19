@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
 using System;
+using Unity.VisualScripting;
 public enum CombatUIState 
 {
     ActionTypeSelecting,
@@ -139,6 +140,7 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
     private void SelectTarget(float value)
     {
         if (m_game.State != GameState.Combat) return;
+        if (m_state != CombatUIState.TargetSelecting) return;
 
         if (m_currentParticipants == null)
         {
@@ -194,18 +196,18 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
         switch (m_currentAction.targetType) 
         {
             case TargetType.Self:
-                ctx.Target = m_currentActor;
+                ctx.Targets.Add(m_currentActor);
                 break;
             case TargetType.Enemy:
             case TargetType.Ally:
+                if (m_currentTarget == null) return;
+                    ctx.Targets.Add(m_currentTarget);
+                break;
             case TargetType.AOEEnemy:
             case TargetType.AOEAlly:
-                if (m_currentTarget == null) return;
-                ctx.Target = m_currentTarget;
-
                 ctx.Targets = m_currentAction.GetValidTargets(
                     m_currentActor,
-                    m_currentParticipants).ToArray();
+                    m_currentParticipants);
                 break;
         }
         m_currentActor.
@@ -275,7 +277,7 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
         if (!action.CanExecute(m_currentActor,
             out string reason))
         {
-            // display this in ui later. ScreenSpace?
+            // display this in ui later
             Debug.Log($"{action.actionName} cannot be performed: {reason}");
             return;
         }
@@ -288,12 +290,12 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
 
         switch (action.targetType)
         {
-            case TargetType.AOEAlly:
             case TargetType.Self:
+            case TargetType.AOEAlly:
+            case TargetType.AOEEnemy:
                 // skip target selection
                 SubmitAction();
                 break;
-            case TargetType.AOEEnemy:
             case TargetType.Enemy:
             case TargetType.Ally:
                 m_targetView.View();

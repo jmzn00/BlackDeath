@@ -1,16 +1,20 @@
+using UnityEngine;
+
 public class Actor_Player : Actor
 {
     private MovementController m_movement;
 
     public override void Init(GameManager game)
     {
-        AddComponent<InventoryComponent>();
-
         base.Init(game);
+
         m_movement = Get<MovementController>();
     }
+
     protected override void GameStateChanged(GameState state)
     {
+        if (m_movement == null) return;
+
         switch (state) 
         {
             case GameState.Combat:

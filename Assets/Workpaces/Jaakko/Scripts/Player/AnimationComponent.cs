@@ -6,7 +6,6 @@ public enum AnimationType
     Dodge
 }
 [RequireComponent(typeof(Animator))]
-[RequireComponent(typeof(MovementController))]
 public class AnimationController : MonoBehaviour
 {
     private Animator m_animator;
@@ -22,9 +21,11 @@ public class AnimationController : MonoBehaviour
 
     private void Awake()
     {
-        m_animator = GetComponent<Animator>();
+        m_animator = GetComponent<Animator>();        
         m_movementController = GetComponent<MovementController>();
 
+        if (m_movementController == null)
+            return;
         m_movementController.OnMove += OnMove;
     }
     private void Start()
@@ -37,6 +38,9 @@ public class AnimationController : MonoBehaviour
     }
     private void OnDestroy()
     {
+        if (m_movementController == null)
+
+            return;
         m_movementController.OnMove -= OnMove;
         /*
         if (m_combatActor != null)

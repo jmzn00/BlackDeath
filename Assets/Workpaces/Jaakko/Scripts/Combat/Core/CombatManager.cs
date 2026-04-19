@@ -141,7 +141,7 @@ public class CombatManager : ManagerBase
 
         if (actor == null)
         {
-            Debug.LogWarning($"Turn System Next() == NULL");
+            Debug.LogWarning($"TurnSystem.Next() == NULL");
             EndCombat();
             return;
         }

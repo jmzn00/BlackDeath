@@ -98,11 +98,11 @@ public class AIActionProvider : IActionProvider
         {
             ctx = new ActionContext()
             {
-                Action = bestAction,
-                Target = bestTarget
+                Action = bestAction                
             };
+            ctx.Targets.Add(bestTarget);
         }        
-        OnCommandReady?.Invoke(new AttackCommand(m_actor, bestTarget, bestAction));
+        OnCommandReady?.Invoke(new AttackCommand(m_actor, bestTarget, bestAction, ctx.Targets));
         
         //m_actor.SubmitAction(m_actor, bestTarget, bestAction);                
         m_coroutine = null;

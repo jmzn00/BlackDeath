@@ -122,10 +122,10 @@ public class TransitionSystem : CombatSystemBase
                 : m_area.Preferences.m_partyActionPoint.position;
         }
         m_sourceDuration = GetDuration(actx.Source);
-        m_targetDuration = GetDuration(actx.Target);
+        m_targetDuration = GetDuration(actx.PrimaryTarget);
         
         PlayTransition(actx.Source);
-        PlayTransition(actx.Target);
+        PlayTransition(actx.PrimaryTarget);
 
         m_transitionOpen = true;
         CombatEvents.TransitionStarted();
@@ -137,15 +137,21 @@ public class TransitionSystem : CombatSystemBase
             || type == TargetType.AOEAlly;
     }
     private void SetupActors(ActionContext actx, out Transform sourceT, out Transform targetT) 
-    {
+    {        
         sourceT = actx.Source.transform;
         targetT = null;
+
+        if (actx.PrimaryTarget == null)
+        {
+            Debug.LogWarning($"SetupActors: PrimaryTarget == NULL");
+            return;
+        }
 
         switch (actx.Action.targetType) 
         {
             case TargetType.Enemy:
             case TargetType.AOEEnemy:
-                targetT = actx.Target.transform;
+                targetT = actx.PrimaryTarget.transform;
                 break;
             case TargetType.Self:
             case TargetType.Ally:

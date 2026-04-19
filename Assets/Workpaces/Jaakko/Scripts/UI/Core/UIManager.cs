@@ -1,9 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.UI;
 
 public enum UIInputMode 
 {
@@ -71,6 +68,8 @@ public class UIManager : ManagerBase
         switch (action) 
         {
             case UIInputAction.Menu:
+                if (m_game.State == GameState.Combat) return true;
+
                 m_uiController.ShowComponent<MainMenuUI>(true);
                 return true;
             default:
@@ -82,16 +81,24 @@ public class UIManager : ManagerBase
         switch (state)
         {
             case GameState.None:
-                m_uiController.ShowComponent<DialogueUI>(false);
-                m_uiController.ShowComponent<CombatUI>(false);
+                ShowComponent<DialogueUI>(false);
+                ShowComponent<CombatUI>(false);
                 break;
             case GameState.Combat:
-                m_uiController.ShowComponent<CombatUI>(true);
+                ShowComponent<CombatUI>(true);
                 break;
             case GameState.Dialogue:
-                m_uiController.ShowComponent<DialogueUI>(true);
+                ShowComponent<DialogueUI>(true);
                 break;
         }
+    }
+    private IUIComponent previousUIComponent;
+    private void ShowComponent<T>(bool show) where T : IUIComponent
+    {
+        if (previousUIComponent != null)
+            m_uiController.ShowComponent<T>(show);
+
+        m_uiController.ShowComponent<T>(show);
     }
     public void PushUI(IUIInputReceiver reciever)
     {

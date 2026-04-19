@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
+using UnityEditor.Rendering;
 using UnityEngine;
 public class ReactionSystem : CombatSystemBase
 {
@@ -57,22 +59,35 @@ public class ReactionSystem : CombatSystemBase
 
             if (ctx.Source.Team == Team.Player)
                 CombatEvents.AttackerPromptOpened(m_context.Prompt);            
-        }            
+        }
 
-        foreach (var p in m_defensivePrompts) 
-        {            
-            p.action.Enable();
+        TargetType t = ctx.Action.targetType;
 
-            if (ctx.Source.Team == Team.Player)
-                CombatEvents.DefenderPromptOpened(p);
-        }            
-
+        if (t == TargetType.Ally 
+            || t == TargetType.AOEAlly) 
+        {
+            // skip defender prompts
+        }
+        else if (t == TargetType.Enemy 
+            || t == TargetType.AOEEnemy)
+        {
+            if (ctx.Source.Team == Team.Enemy) 
+            {
+                foreach (var p in m_defensivePrompts)
+                {
+                    p.action.Enable();
+                    
+                    CombatEvents.DefenderPromptOpened(p);
+                }
+            }            
+        }
+            
         m_window.Open();
 
         if (ctx.Source != null)
             ctx.Source.ReactionProvider.OpenReaction();
-        if (ctx.Target != null)
-            ctx.Target.ReactionProvider.OpenReaction();
+        if (ctx.PrimaryTarget != null)
+            ctx.PrimaryTarget.ReactionProvider.OpenReaction();
 
         CombatEvents.ReactionWindowOpened(ctx);
     }
@@ -104,8 +119,8 @@ public class ReactionSystem : CombatSystemBase
         for (int i = 0; i < m_defensivePrompts.Count; i++)
         {
             InputPrompt p = m_defensivePrompts[i];
-            if (m_context.Target != null)
-                m_context.Target.ReactionProvider.TryReact(this, p);
+            if (m_context.PrimaryTarget != null)
+                m_context.PrimaryTarget.ReactionProvider.TryReact(this, p);
         }
     }
     public void ReceiveReaction(ReactionCommand command) 
@@ -118,7 +133,7 @@ public class ReactionSystem : CombatSystemBase
             Debug.LogWarning("Cannot recive reaction while window is closed");
             return;
         }
-        if (actor == m_context.Target
+        if (actor == m_context.PrimaryTarget
             && m_window.ConsumeDefenderReaction() != ReactionType.None)
             return;
 

@@ -25,7 +25,7 @@ public class PlayerActionProvider : IActionProvider
     // ui sets
     public void SetAction(ActionContext ctx) 
     {
-        OnCommandReady?.Invoke(new AttackCommand(ctx.Source, ctx.Target, ctx.Action));
+        OnCommandReady?.Invoke(new AttackCommand(ctx.Source, ctx.PrimaryTarget, ctx.Action, ctx.Targets));
         //ctx.Source.SubmitAction(ctx.Source, ctx.Target, ctx.Action);
     }    
 }

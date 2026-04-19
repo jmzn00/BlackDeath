@@ -1,9 +1,5 @@
 using UnityEngine;
 using System.Collections.Generic;
-using System;
-using Unity.VisualScripting;
-using System.Linq;
-
 
 public class DamageSystem : CombatSystemBase
 {
@@ -31,62 +27,37 @@ public class DamageSystem : CombatSystemBase
     }
     public void ActionResolved(ActionContext ctx, ActionResult result) 
     {
-        float finalDamage = 0f;
-        CombatActor reciever = ctx.Target;
-
+        if (ctx.Targets == null || ctx.Targets.Count == 0) 
+        {
+            Debug.LogWarning($"No Targets on {ctx.Action.actionName}");
+            return;
+        }
+        CombatAction a = ctx.Action;
         switch (result) 
         {
             case ActionResult.Confirmed:
-                finalDamage = ctx.Action.baseDamage
-                    * ctx.Action.confirmDamageMultipler;                
+                foreach (var t in ctx.Targets) 
+                {
+                    ApplyDamage(a.baseDamage * a.confirmDamageMultipler
+                        , ctx.Source, t);
+
+                    UpdateStatusEffects(a.AppliedEffects, t, ctx.Source);
+                }                    
                 break;
             case ActionResult.Hit:
-                finalDamage = ctx.Action.baseDamage;
+                foreach (var t in ctx.Targets)
+                {
+                    ApplyDamage(a.baseDamage * a.confirmDamageMultipler
+                        , ctx.Source, t);
+                }
                 break;
             case ActionResult.Parried:
-                finalDamage = ctx.Action.baseDamage;
-                reciever = ctx.Source;
+                ApplyDamage(a.baseDamage, ctx.PrimaryTarget, ctx.Source);
                 break;
             case ActionResult.Dodged:
-                finalDamage = 0f;
+                
                 break;
-        }
-        List<CombatActor> targets = GetTargets(ctx);
-        foreach (CombatActor target in targets) 
-        {
-            ApplyDamage(finalDamage, ctx.Source, target);
-            if (result == ActionResult.Confirmed) 
-            {
-                UpdateStatusEffects(ctx.Action.AppliedEffects, target, ctx.Source);
-            }
         }        
-    }
-    private List<CombatActor> GetTargets(ActionContext actx) 
-    {
-        List<CombatActor> targets = new();
-        switch (actx.Action.targetType) 
-        {
-            case TargetType.Enemy:
-                targets.Add(actx.Target);
-                break;
-            case TargetType.AOEAlly:
-            case TargetType.AOEEnemy:
-                targets = actx.Action.GetValidTargets(actx.Source, m_context.Actors.ToList());
-                break;
-            case TargetType.Self:
-                targets.Add(actx.Source);
-                break;
-            case TargetType.Ally:
-                targets.Add(actx.Target);
-                break;
-            case TargetType.Any:
-                targets.Add(actx.Target);
-                break;
-            default:
-                Debug.LogWarning($"Unhandled target type {actx.Action.targetType}");
-                break;
-        }
-        return targets;
     }
     private void UpdateStatusEffects(List<ActorStatusEffect> effects, CombatActor target, CombatActor source) 
     {
@@ -94,22 +65,16 @@ public class DamageSystem : CombatSystemBase
 
         foreach (var e in effects)
         {
-            if (target.HasEffect(e))
+            if (target.HasEffect(e, out StatusEffectInstance i))
             {
                 if (!e.isStackable) return;
-
-                StatusEffectInstance i = target.GetInstance(e);
-                if (i != null)
-                {
-                    i.UpdateDuration(e.duration);
-                }
-                else
-                {
-                    Debug.LogWarning($"Couldnt find instance for {e.displayName}");
-                }
+                
+                i.UpdateDuration(e.duration);
+                Debug.Log($"{target.name} {e.displayName} duration increased to {i.RemainingTurns}");
             }
             else
             {
+                Debug.Log($"{target.name} recieved {e.displayName}");
                 target.ApplyEffect(new StatusEffectInstance(e, target, source, this));
             }
         }
@@ -122,16 +87,17 @@ public class DamageSystem : CombatSystemBase
             return;
         }
 
-        target.Health.ApplyDamage(amount);
-        
+        if (amount > 0f) 
+        {
+            target.Health.ApplyDamage(amount);
+            CombatEvents.DamageApplied(target, source, amount);
+        }
+                
         if (IsDead(target)) 
         {
             target.SetDead(true);
             CombatEvents.ActorDied(target);
-        }
-
-        if (amount > 0f)
-            CombatEvents.DamageApplied(target, source, amount);
+        }        
     }
     public void ApplyHeal(float amount, IDamageSource source, CombatActor target, CombatActor sourceActor = null) 
     {       

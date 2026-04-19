@@ -35,9 +35,6 @@ public abstract class CombatAction : ScriptableObject
     [Header("Animation")]
     public AnimationClip animationClip;
 
-    [Header("Reactive")]
-    [Tooltip("If true, the animation should fire StartReactiveWindow events.")]
-    public bool isReactive = true;
     [Tooltip("Grant 1 AP to the user on use.")]
     public bool grantsApOnUse = false;
 
@@ -47,6 +44,9 @@ public abstract class CombatAction : ScriptableObject
     public List<ActorStatusEffect> AppliedEffects = new List<ActorStatusEffect>();
 
     public TargetType targetType = TargetType.Enemy;
+
+    [Tooltip("If false, it will not open or close the window and will be treated as confirm")]
+    public bool isReactive = true;
 
     [Header("Audio")]
     public AudioClip clip;

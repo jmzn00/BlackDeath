@@ -25,11 +25,8 @@ public class CombatActor : MonoBehaviour, IActorComponent, IDamageSource
     public bool IsDead { get; protected set; }
     public bool IsPlayer { get; private set; }
 
-    [SerializeField] private Team m_team;
-    [SerializeField] private ControlType m_controlType;
-
-    public Team Team => m_team;
-    public ControlType ControlType => m_controlType;
+    public Team Team => m_actor.Team;
+    public ControlType ControlType => m_actor.ControlType;
 
     private Actor m_actor;
     public Actor Actor => m_actor;
@@ -306,12 +303,15 @@ public class CombatActor : MonoBehaviour, IActorComponent, IDamageSource
         }
         return null;
     }
-    public bool HasEffect(ActorStatusEffect effect) 
+    public bool HasEffect(ActorStatusEffect effect, out StatusEffectInstance instance) 
     {
+        instance = null;
+
         foreach (var i in CurrentStatusEffects) 
         {
             if (i.Template == effect) 
             {
+                instance = i;
                 return true;
             }
         }

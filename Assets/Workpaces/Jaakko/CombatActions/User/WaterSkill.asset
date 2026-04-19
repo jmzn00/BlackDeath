@@ -16,13 +16,13 @@ MonoBehaviour:
   description: 
   apCost: 3
   animationClip: {fileID: 7400000, guid: 6237323bf1378af43a63e6523222f8f8, type: 2}
-  isReactive: 1
   grantsApOnUse: 0
   baseDamage: 0
   confirmDamageMultipler: 0
   AppliedEffects:
   - {fileID: 11400000, guid: 19a3c30c735a0154bbade492c587e797, type: 2}
   targetType: 1
+  isReactive: 0
   clip: {fileID: 0}
   damage: 0
   bonusDamageOnSuccess: 0

@@ -52,6 +52,7 @@ public class StatusEffectInstance : IDamageSource
     public void UpdateDuration(int amount) 
     {
         RemainingTurns += amount;
+        OnDurationChanged?.Invoke(RemainingTurns);
     }
     private void ApplyDamage(float amount) 
     {

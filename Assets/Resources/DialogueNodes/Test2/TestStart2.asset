@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: TestStart2
   m_EditorClassIdentifier: Assembly-CSharp::DialogueNode
   id: 3cdf387b-1182-45a6-a2e9-e759192f5bf5
-  text: What do you want?
+  text: Kill those rats
   choices:
   - choiceText: I Completed Task X
     nextNode: {fileID: 11400000, guid: 619d9f4a9a9a54640bb9663043a1d2c7, type: 2}

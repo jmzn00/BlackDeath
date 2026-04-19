@@ -80,7 +80,7 @@ public class CombatStatSystem : CombatSystemBase
     public void ActionResolved(ActionContext ctx, ActionResult result) 
     {
         var sourceStats = Get(ctx.Source);
-        var targetStats = Get(ctx.Target);
+        var targetStats = Get(ctx.PrimaryTarget);
 
         switch (result) 
         {

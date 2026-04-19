@@ -1,5 +1,8 @@
+using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using UnityEngine;
 
 public class ActionSystem : CombatSystemBase
@@ -43,6 +46,8 @@ public class ActionSystem : CombatSystemBase
             Debug.LogWarning("AS: actor != currentAction.Source");
             return;
         }
+        if (!m_currentAction.Action.isReactive)
+            return;
 
         m_currentAction.PromptKey = promptKey;
         m_reaction.Open(m_currentAction);
@@ -59,40 +64,40 @@ public class ActionSystem : CombatSystemBase
             Debug.LogWarning("AS: Can not Close, Actor is not Source");
             return;
         }
-        m_reaction.Close();
+        if (!m_currentAction.Action.isReactive)
+            return;
 
+        m_reaction.Close();
         ActionResult res = m_reaction.ResolveResults();
+
         CombatEvents.ActionResolved(m_currentAction, res);
         OnActionResolved?.Invoke(m_currentAction, res);
     }
 
     public void NotifyActionFinished(CombatActor actor)
     {
-        if (m_currentAction == null)
-            return; 
+        if (m_currentAction == null 
+            || m_currentAction.Source != actor)
+            return;
 
+        ActionFinished(actor);
+    }
+    private void ActionFinished(CombatActor actor) 
+    {
         if (actor != m_currentAction.Source)
         {
             Debug.LogWarning("AS: Can not Finish, Actor is not Source");
             return;
         }
 
-
-        switch (m_currentAction.Action.targetType) 
+        // for actions that have no prompt thus they
+        // do not open / close the window
+        if (!m_currentAction.Action.isReactive) 
         {
-            case TargetType.Self:
-            case TargetType.Ally:
-            case TargetType.AOEAlly:
-                OnActionResolved?.Invoke(m_currentAction, ActionResult.Confirmed);
-                CombatEvents.ActionResolved(m_currentAction, ActionResult.Confirmed);
-
-                break;
-            case TargetType.Enemy:
-            case TargetType.AOEEnemy:
-            case TargetType.Any:
-
-                break;
+            OnActionResolved?.Invoke(m_currentAction, ActionResult.Confirmed);
+            CombatEvents.ActionResolved(m_currentAction, ActionResult.Confirmed);
         }
+        
         CombatEvents.TurnEnded(m_currentAction.Source);
         CombatEvents.ActionFinished(m_currentAction);
 
@@ -125,15 +130,14 @@ public class ActionSystem : CombatSystemBase
 
         CombatAction action = attackCommand.Action;
         CombatActor source = attackCommand.Source;
-        CombatActor target = attackCommand.Target;
+        List<CombatActor> targets = attackCommand.Targets;
 
         m_currentAction = new ActionContext
         {
-            Source = source,
-            Target = target,
-            Action = action,
+            Source = attackCommand.Source,
+            Action = attackCommand.Action,
+            Targets = attackCommand.Targets
         };
-
         if (action == null)
         {
             OnActionFinished?.Invoke(m_currentAction);

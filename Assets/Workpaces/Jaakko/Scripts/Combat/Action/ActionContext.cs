@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 public class ActionContext
 {
     public ActionContext()
@@ -5,8 +7,8 @@ public class ActionContext
 
     }
     public CombatActor Source;
-    public CombatActor Target;
-    public CombatActor[] Targets;
+    public List<CombatActor> Targets = new();
+    public CombatActor PrimaryTarget => Targets.Count > 0 ? Targets[0] : null;
 
     public CombatAction Action;
 
