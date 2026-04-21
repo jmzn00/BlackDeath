@@ -23,9 +23,13 @@ public class AIInputSource : IInputSource
         {
             return state;
         }
+
+        Vector3 targetPos = m_target.position - m_target.right * 2f 
+            - m_target.forward * 2f;
+
         NavMesh.CalculatePath(
             m_actor.position,
-            m_target.position,
+            targetPos,
             NavMesh.AllAreas,
             m_path);
 
@@ -37,7 +41,9 @@ public class AIInputSource : IInputSource
         Vector3 dir = (nextCorner - m_actor.position);
         dir.y = 0;
 
-        state.InputDirection = dir.normalized;
+        Vector3 localDir = m_actor.InverseTransformDirection(dir);
+
+        state.InputDirection = new Vector2(localDir.x, localDir.z);
 
         return state;
     }
