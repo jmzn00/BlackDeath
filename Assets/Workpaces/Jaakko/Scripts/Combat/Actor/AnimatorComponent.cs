@@ -8,6 +8,13 @@ public class AnimatorComponent : MonoBehaviour, IActorComponent
     public bool Dispose() 
     {
         m_combatActor.OnPlayRequested -= PlayCombatAction;
+
+        if (m_movement != null)
+            m_movement.OnMove += Move;
+
+        CombatEvents.OnCombatStarted -= CombatStarted;
+        CombatEvents.OnCombatEnded -= CombatEnded;
+
         return true;
     }
 
@@ -38,11 +45,39 @@ public class AnimatorComponent : MonoBehaviour, IActorComponent
 
     private CombatActor m_combatActor;
     private Animator m_animator;
+
+    private MovementController m_movement;
     public void OnActorComponentsInitialized(Actor actor) 
     {
         m_combatActor = actor.Get<CombatActor>();
         m_animator = GetComponent<Animator>();
         m_combatActor.OnPlayRequested += PlayCombatAction;
+
+        CombatEvents.OnCombatStarted += CombatStarted;
+        CombatEvents.OnCombatEnded += CombatEnded;
+
+        m_movement = actor.Get<MovementController>();
+        if (m_movement != null)
+            m_movement.OnMove += Move;
+    }
+    private void Move(Vector3 vel) 
+    {
+        if (vel.magnitude > 0.5f) 
+        {
+            m_animator.Play(m_walk.name);
+        }
+        else 
+        {
+            m_animator.Play(m_idle.name);
+        }
+    }
+    private void CombatStarted() 
+    {
+        m_animator.Play(m_idle.name, 0, 0f);
+    }
+    private void CombatEnded(CombatResult result) 
+    {
+        m_animator.Play(m_idle.name, 0, 0f);
     }
     // from m_combatActor.OnPlayRequested
     public void PlayCombatAction(AnimationClip clip) 

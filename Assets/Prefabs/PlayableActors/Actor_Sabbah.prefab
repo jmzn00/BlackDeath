@@ -2911,7 +2911,7 @@ MonoBehaviour:
   m_defaultLayer:
     serializedVersion: 2
     m_Bits: 1
-  m_visualCapsule: {fileID: 0}
+  m_visualCapsule: {fileID: 899935035846688040}
   m_playerStats:
     WalkSpeed: 5
     RunSpeed: 8
@@ -2984,7 +2984,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e31eb1c85fb5c64428dc7c6810ae77dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Actor_Player
-  m_actorID: 7e8fcc7b-c41b-4122-8e68-75c850bd9fed
+  m_actorID: e26135c6-4912-48f4-9018-5464a010f316
   m_team: 0
   m_controlType: 0
   m_trackingTarget: {fileID: 5596600506821568861}
@@ -3004,7 +3004,7 @@ MonoBehaviour:
   m_visual: {fileID: 899935035846688040}
   m_actions:
   - {fileID: 11400000, guid: 43128709d72f1bf4f992d8864ff14641, type: 2}
-  - {fileID: 11400000, guid: e9dbcef396158754284cc6b80a619bef, type: 2}
+  - {fileID: 11400000, guid: 14e7f3102a690ff428da828eca9f9b4d, type: 2}
   m_maxActionPoints: 2
 --- !u!1 &8639479524924660798
 GameObject:
