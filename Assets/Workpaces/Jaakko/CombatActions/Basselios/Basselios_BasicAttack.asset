@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ce69bea004d10248b490ecd7d16709b, type: 3}
+  m_Name: Basselios_BasicAttack
+  m_EditorClassIdentifier: Assembly-CSharp::AttackAction
+  actionName: BasicAttack
+  description: 
+  apCost: 0
+  animationClip: {fileID: 7400000, guid: 37ac6af3d261aca4cb7698bb7824edbc, type: 2}
+  grantsApOnUse: 0
+  baseDamage: 10
+  confirmDamageMultipler: 2
+  AppliedEffects: []
+  targetType: 3
+  isReactive: 1
+  clip: {fileID: 8300000, guid: 0e1af24dd7d2e3d429bb789867c89057, type: 3}
+  damage: 1
+  bonusDamageOnSuccess: 1
+  ApAmount: 1

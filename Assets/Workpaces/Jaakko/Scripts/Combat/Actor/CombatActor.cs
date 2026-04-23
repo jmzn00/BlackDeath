@@ -23,16 +23,12 @@ public class CombatActor : MonoBehaviour, IActorComponent, IDamageSource
 {
     private CombatManager m_combatManager;
     public bool IsDead { get; protected set; }
-    public bool IsPlayer { get; private set; }
-
     public Team Team => m_actor.Team;
-    public ControlType ControlType => m_actor.ControlType;
+
 
     private Actor m_actor;
     public Actor Actor => m_actor;
-
     private AnimatorComponent m_animator;
-
 
     private IActionProvider m_actionProvider;
     public IActionProvider ActionProvider => m_actionProvider;
