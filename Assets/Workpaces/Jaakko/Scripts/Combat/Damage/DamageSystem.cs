@@ -3,7 +3,6 @@ using System.Collections.Generic;
 
 public class DamageSystem : CombatSystemBase
 {
-    private CombatContext m_context;
     private ActionSystem m_action;
     public DamageSystem(ActionSystem action) 
     {
@@ -11,8 +10,6 @@ public class DamageSystem : CombatSystemBase
     }
     public override void Init(CombatContext context)
     {
-        m_context = context;
-
         m_action.OnActionResolved += ActionResolved;
 
         CombatEvents.OnTurnStarted += ActorTurnStart;
@@ -32,6 +29,7 @@ public class DamageSystem : CombatSystemBase
             Debug.LogWarning($"No Targets on {ctx.Action.actionName}");
             return;
         }
+        Debug.Log($"{ctx.Action.actionName} result {result}  ");
         CombatAction a = ctx.Action;
         switch (result) 
         {
@@ -47,8 +45,7 @@ public class DamageSystem : CombatSystemBase
             case ActionResult.Hit:
                 foreach (var t in ctx.Targets)
                 {
-                    ApplyDamage(a.baseDamage * a.confirmDamageMultipler
-                        , ctx.Source, t);
+                    ApplyDamage(a.baseDamage, ctx.Source, t);
                 }
                 break;
             case ActionResult.Parried:
@@ -106,32 +103,28 @@ public class DamageSystem : CombatSystemBase
 
         target.Health.ApplyHealth(amount);
     }
-    private bool IsDead(CombatActor actor) 
+    private static bool IsDead(CombatActor actor)
     {
-        if (actor.Health.CurrentHealth <= 0f) 
-        {
-            return true;
-        }
-        return false;
+        return !(actor.Health.CurrentHealth > 0f);
     }
-    public void ActorTurnStart(CombatActor actor)
+    private static void ActorTurnStart(CombatActor actor)
     {
-        List<StatusEffectInstance> effects = new List<StatusEffectInstance>(actor.CurrentStatusEffects);
+        var effects = new List<StatusEffectInstance>(actor.CurrentStatusEffects);
 
         for (int i = effects.Count - 1; i >= 0; i--)
         {
-            StatusEffectInstance instance = effects[i];
+            var instance = effects[i];
             instance.TurnStart();
         }
     }
 
-    public void ActorTurnEnd(CombatActor actor) 
+    private void ActorTurnEnd(CombatActor actor) 
     {
-        List<StatusEffectInstance> effects = new List<StatusEffectInstance>(actor.CurrentStatusEffects);
+        var effects = new List<StatusEffectInstance>(actor.CurrentStatusEffects);
 
         for (int i = effects.Count - 1; i >= 0; i--) 
         {
-            StatusEffectInstance instance = effects[i];
+            var instance = effects[i];
             instance.TurnEnd();
         }        
     }
