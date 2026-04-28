@@ -376,12 +376,6 @@ public class CombatCameraMode : ICameraMode
 
     private CameraPresetType DeterminePresetFromState()
     {
-        //Debug.Log($"CombatCameraMode.DeterminePresetFromState:");
-        //Debug.Log($"  Combat State: {m_currentCombatState}");
-        //Debug.Log($"  Current Actor: {m_currentActor?.name ?? "null"} (IsPlayer: {m_currentActor?.IsPlayer})");
-        //Debug.Log($"  Actor State: {m_currentActorState}");
-        
-        // Priority: Check combat state first (Transition, Action)
         if (m_currentCombatState == CombatState.Transition)
         {
             //Debug.Log("  -> Result: Transition");

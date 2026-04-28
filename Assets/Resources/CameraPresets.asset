@@ -59,14 +59,14 @@ MonoBehaviour:
   actionExecution:
     presetName: Action Execution
     positionOffset: {x: -2, y: 2, z: -7}
-    rotation: {x: 9.4039135, y: 16.024403, z: -0.00000010817548}
+    rotation: {x: 9.360052, y: 15.945396, z: 0}
     fieldOfView: 60
     orthographicSize: 5
     followDamping: 1.5
     transitionSpeed: 1
     width: 10
     zoomDamping: 0.5
-    fovRange: {x: 16.964691, y: 34.505867}
+    fovRange: {x: 17.1, y: 60.9}
   combatStart:
     presetName: Combat Start
     positionOffset: {x: 0, y: 0, z: 0}
