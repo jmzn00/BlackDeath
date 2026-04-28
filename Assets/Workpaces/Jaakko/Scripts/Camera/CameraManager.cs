@@ -42,6 +42,8 @@ public class CameraManager : ManagerBase
             Debug.LogError("CameraManager: No CinemachineCamera found in scene!");
         }
 
+        CombatEvents.OnCombatStarted += OnCombatStarted;
+
         // Sorting mode so no transparency with sprites
 
         Camera unityCam = UnityEngine.Camera.main;
@@ -59,6 +61,12 @@ public class CameraManager : ManagerBase
         }        
         SetReady();
     }
+
+    private void OnCombatStarted()
+    {
+        SetMode(m_cameraModes.FirstOrDefault(m => m is CombatCameraMode));
+    }
+
     public override bool Init() 
     {
         m_container = new Container();
