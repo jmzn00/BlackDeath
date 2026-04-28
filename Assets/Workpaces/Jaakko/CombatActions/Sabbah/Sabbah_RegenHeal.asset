@@ -13,16 +13,16 @@ MonoBehaviour:
   m_Name: Sabbah_RegenHeal
   m_EditorClassIdentifier: Assembly-CSharp::SkillAction
   actionName: Regen
-  description: Apply 5 health regen on an ally for 3 turns
+  description: Apply 10 health regen on an ally for 3 turns
   apCost: 2
-  animationClip: {fileID: 7400000, guid: 057a6b60d3e1d704abbaf2f735d70c82, type: 2}
-  isReactive: 1
+  animationClip: {fileID: 7400000, guid: 7aea40f2fc8dee84583fa268e56bcfc3, type: 2}
   grantsApOnUse: 0
   baseDamage: 0
   confirmDamageMultipler: 1.2
   AppliedEffects:
   - {fileID: 11400000, guid: bcb5a33cb1f167f43b9532c55d0cd367, type: 2}
   targetType: 2
+  isReactive: 1
   clip: {fileID: 0}
   damage: 0
   bonusDamageOnSuccess: 0

@@ -1079,8 +1079,8 @@ MonoBehaviour:
     m_Bits: 1
   m_visualCapsule: {fileID: 5352185317220870533}
   m_playerStats:
-    WalkSpeed: 5
-    RunSpeed: 8
+    WalkSpeed: 3
+    RunSpeed: 5
     TimeToRun: 0.3
     Stamina: 0
     MaxStamina: 4
@@ -1137,7 +1137,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthComponent
   ch: 0
-  m_maxHealth: 8
+  m_maxHealth: 75
 --- !u!114 &3503855421779288309
 MonoBehaviour:
   m_ObjectHideFlags: 0

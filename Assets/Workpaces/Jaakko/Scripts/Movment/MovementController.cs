@@ -118,6 +118,16 @@ public class MovementController : MonoBehaviour, IActorComponent
         if (m_inputSource == null) return;
 
         m_inputState = m_inputSource.GetInput();
+        // Flip visuals based on direction of movement.
+        if (m_inputState.InputDirection.x > 0.1f)
+        {
+            m_visualCapsule.transform.rotation = Quaternion.Euler(0, 180, 0);
+        }
+        else if (m_inputState.InputDirection.x < -0.1f)
+        {
+            m_visualCapsule.transform.rotation = Quaternion.Euler(0, 0, 0);
+        }
+        
 
         UpdateContact();
         CollisionFlags flags = m_controller.Move(Velocity * Time.deltaTime);

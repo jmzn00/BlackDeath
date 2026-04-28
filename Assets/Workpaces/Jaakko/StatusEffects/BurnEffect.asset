@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: BurnEffect
   m_EditorClassIdentifier: Assembly-CSharp::BurnStatusEffect
   <duration>k__BackingField: 2
-  <damage>k__BackingField: 1
+  <damage>k__BackingField: 10
   <heal>k__BackingField: 0
   <displayName>k__BackingField: BurnEffect
   <isStackable>k__BackingField: 1

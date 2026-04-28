@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab7a988b895ede04e8f4a0ffc4dc52cd, type: 3}
   m_Name: PoisonEffect
   m_EditorClassIdentifier: Assembly-CSharp::TickStatusEffect
-  <duration>k__BackingField: 2
-  <damage>k__BackingField: 2
+  <duration>k__BackingField: 4
+  <damage>k__BackingField: 8
   <heal>k__BackingField: 0
   <displayName>k__BackingField: StatusEffect
   <isStackable>k__BackingField: 0
