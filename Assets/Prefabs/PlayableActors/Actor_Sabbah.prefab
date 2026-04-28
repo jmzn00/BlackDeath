@@ -3024,7 +3024,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 43128709d72f1bf4f992d8864ff14641, type: 2}
   - {fileID: 11400000, guid: 14e7f3102a690ff428da828eca9f9b4d, type: 2}
   - {fileID: 11400000, guid: dd13382c071febf4e91e1568201f3d61, type: 2}
-  m_maxActionPoints: 3
+  m_maxActionPoints: 100
 --- !u!1 &8639479524924660798
 GameObject:
   m_ObjectHideFlags: 0

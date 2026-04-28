@@ -22,7 +22,7 @@ MonoBehaviour:
   AppliedEffects:
   - {fileID: 11400000, guid: 9ddaa3627144404428ec362ea1116370, type: 2}
   targetType: 1
-  isReactive: 1
+  isReactive: 0
   clip: {fileID: 0}
   damage: 0
   bonusDamageOnSuccess: 0
