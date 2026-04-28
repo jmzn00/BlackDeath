@@ -552,6 +552,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AnimatorComponent
   m_idle: {fileID: 7400000, guid: d35f6297425bc6048b20c6e0d6dfcbe7, type: 2}
   m_walk: {fileID: 7400000, guid: 5ec48817f2b047342bf6f884353b74d2, type: 2}
+  m_combatIdle: {fileID: 7400000, guid: d35f6297425bc6048b20c6e0d6dfcbe7, type: 2}
   m_parry: {fileID: 0}
   m_dodge: {fileID: 0}
   m_transition: {fileID: 7400000, guid: 5ec48817f2b047342bf6f884353b74d2, type: 2}
