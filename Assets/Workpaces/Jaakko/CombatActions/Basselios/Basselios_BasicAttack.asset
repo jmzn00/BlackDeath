@@ -19,7 +19,8 @@ MonoBehaviour:
   grantsApOnUse: 0
   baseDamage: 10
   confirmDamageMultipler: 2
-  AppliedEffects: []
+  AppliedEffects:
+  - {fileID: 0}
   targetType: 3
   isReactive: 1
   clip: {fileID: 8300000, guid: 0e1af24dd7d2e3d429bb789867c89057, type: 3}

@@ -10,20 +10,20 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 65f161edcf478ca46bc930f75680de10, type: 3}
-  m_Name: Sabbah_RegenHeal
+  m_Name: Villager_TorchHit
   m_EditorClassIdentifier: Assembly-CSharp::SkillAction
-  actionName: Regen
-  description: Apply 10 health regen on all allies for 4 turns
-  apCost: 3
-  animationClip: {fileID: 7400000, guid: 7aea40f2fc8dee84583fa268e56bcfc3, type: 2}
+  actionName: Torch Stun
+  description: 
+  apCost: 0
+  animationClip: {fileID: 7400000, guid: 6f3cb10a7ea495a4aa87e2bb3e1e785c, type: 2}
   grantsApOnUse: 0
-  baseDamage: 0
+  baseDamage: 10
   confirmDamageMultipler: 1.2
   AppliedEffects:
-  - {fileID: 11400000, guid: bcb5a33cb1f167f43b9532c55d0cd367, type: 2}
-  targetType: 2
+  - {fileID: 11400000, guid: 07353e042d95fc04cbaec8dcd8871259, type: 2}
+  targetType: 3
   isReactive: 1
-  clip: {fileID: 0}
+  clip: {fileID: 8300000, guid: 0e1af24dd7d2e3d429bb789867c89057, type: 3}
   damage: 0
   bonusDamageOnSuccess: 0
   targetEffects: []
