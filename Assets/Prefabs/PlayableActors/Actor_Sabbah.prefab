@@ -105,6 +105,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5244883977150221487}
+  - component: {fileID: 208575569957092115}
   m_Layer: 0
   m_Name: Visuals
   m_TagString: Untagged
@@ -143,6 +144,19 @@ Transform:
   - {fileID: 318825973518748106}
   m_Father: {fileID: 5717115951537732525}
   m_LocalEulerAnglesHint: {x: 0, y: -180, z: 0}
+--- !u!210 &208575569957092115
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 899935035846688040}
+  m_Enabled: 1
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortAtRoot: 0
+  m_Sort3DAs2D: 0
 --- !u!1 &1260697806395863173
 GameObject:
   m_ObjectHideFlags: 0
