@@ -49,6 +49,7 @@ public class ActionSystem : CombatSystemBase
         if (!m_currentAction.Action.isReactive)
             return;
 
+        Debug.Log($"Open Window {promptKey}");
         m_currentAction.PromptKey = promptKey;
         m_reaction.Open(m_currentAction);
     }
@@ -67,6 +68,7 @@ public class ActionSystem : CombatSystemBase
         if (!m_currentAction.Action.isReactive)
             return;
 
+        Debug.Log($"ReactionWIndow Closed");
         m_reaction.Close();
         ActionResult res = m_reaction.ResolveResults();
 
@@ -92,6 +94,8 @@ public class ActionSystem : CombatSystemBase
 
         // for actions that have no prompt thus they
         // do not open / close the window
+
+        Debug.Log($"{m_currentAction.Action.actionName} finished. Reactive: {m_currentAction.Action.isReactive}");
         if (!m_currentAction.Action.isReactive) 
         {
             OnActionResolved?.Invoke(m_currentAction, ActionResult.Confirmed);
