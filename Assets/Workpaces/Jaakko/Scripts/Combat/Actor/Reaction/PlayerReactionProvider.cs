@@ -19,6 +19,23 @@ public class PlayerReactionProvider : IReactionProvider
         {
             return;
         }
-        OnCommandReady?.Invoke(new ReactionCommand(m_actor, prompt));      
+
+        bool success = false;
+        if (prompt.inputType == PromptInputType.Dodge) 
+        {
+            if (m_actor.Animator.DodgeOpen) 
+            {
+                success = true;
+            }
+        }
+        if (prompt.inputType == PromptInputType.Parry) 
+        {
+            if (m_actor.Animator.ParryOpen) 
+            {
+                success = true;
+            }
+        }
+        if (success)
+            OnCommandReady?.Invoke(new ReactionCommand(m_actor, prompt));
     }
 }

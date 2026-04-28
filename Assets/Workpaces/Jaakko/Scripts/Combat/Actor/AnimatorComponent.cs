@@ -68,7 +68,31 @@ public class AnimatorComponent : MonoBehaviour, IActorComponent
         if (m_movement != null)
             m_movement.OnMove += Move;
     }
+    public bool IsAnimationPlaying(AnimationClip clip)
+    {
+        if (clip == null || m_animator == null)
+            return false;
 
+        AnimatorStateInfo stateInfo = m_animator.GetCurrentAnimatorStateInfo(0);
+
+        return stateInfo.IsName(clip.name);
+    }
+    public void PlayParry() 
+    {
+        if (IsAnimationPlaying(m_parry))
+            return;
+        if (!isInCombat) return;
+
+        m_animator.Play(m_parry.name);
+    }
+    public void PlayDodge() 
+    {
+        if (IsAnimationPlaying(m_dodge))
+            return;
+        if (!isInCombat) return;
+
+        m_animator.Play(m_dodge.name);
+    }
     private void TransitionEnded()
     {
         m_animator.Play(m_combatIdle.name, 0, 0f);
@@ -144,4 +168,25 @@ public class AnimatorComponent : MonoBehaviour, IActorComponent
         m_animator.Play(m_combatIdle.name, 0, 0f);
         OnActionAnimationFinished?.Invoke();
     }    
+
+    public bool ParryOpen { get; private set; }
+    public bool DodgeOpen { get; private set; }
+    public void Anim_OpenParry() 
+    {
+        ParryOpen = true;
+    }
+    public void Anim_CloseParry() 
+    {
+        ParryOpen = false;
+    }
+    public void Anim_OpenDodge() 
+    {
+        Debug.Log("Open Dodge");
+        DodgeOpen = true;
+    }
+    public void Anim_CloseDodge() 
+    {
+        Debug.Log("Close Dodge");
+        DodgeOpen = false;
+    }
 }

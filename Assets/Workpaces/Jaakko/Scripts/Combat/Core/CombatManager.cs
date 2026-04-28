@@ -41,6 +41,8 @@ public class CombatManager : ManagerBase
     private Container m_container;
     public Container Container => m_container;
 
+    private ActorManager m_actor;
+
     public CombatManager(GameManager game)
     {
         m_game = game;
@@ -89,6 +91,8 @@ public class CombatManager : ManagerBase
     }
     public override bool Init()
     {
+        m_actor = m_game.Resolve<ActorManager>();
+
         m_container = new Container();
 
         m_container.RegisterInstance<CombatManager>(this);
@@ -145,6 +149,13 @@ public class CombatManager : ManagerBase
             EndCombat();
             return;
         }
+
+        // jank ass fix for the parry / dodge animations
+        if (actor is PlayerCombatActor)
+        {
+            m_actor.SetControlledActor(actor.Actor);
+        }
+
         CombatEvents.TurnStarted(actor);
 
         m_context.SetCurrentActor(actor);

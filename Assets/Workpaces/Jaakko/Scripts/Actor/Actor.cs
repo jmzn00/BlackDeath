@@ -68,6 +68,8 @@ public class Actor : MonoBehaviour, IActor
     }
     void ChangeComponentInputSource(IInputSource source)
     {
+        m_inputSource = source;
+
         foreach (var comp in m_components.Values)
         {
             comp.SetInputSource(source);

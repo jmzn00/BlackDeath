@@ -29,6 +29,7 @@ public class CombatActor : MonoBehaviour, IActorComponent, IDamageSource
     private Actor m_actor;
     public Actor Actor => m_actor;
     private AnimatorComponent m_animator;
+    public AnimatorComponent Animator => m_animator;
 
     private IActionProvider m_actionProvider;
     public IActionProvider ActionProvider => m_actionProvider;
@@ -69,6 +70,22 @@ public class CombatActor : MonoBehaviour, IActorComponent, IDamageSource
 
     private CameraTarget m_cameraTarget;
     public CameraTarget Target => m_cameraTarget;
+
+    private void Update()
+    {
+        if (Actor == null) return;
+        if (Actor.InputSource == null) return;
+
+        InputState input = Actor.InputSource.GetInput();
+        if (input.ParryPressedThisFrame) 
+        {
+            m_animator.PlayParry();
+        }
+        else if (input.DodgePressedThisFrame) 
+        {
+            m_animator.PlayDodge();
+        }
+    }
 
     #region AiPattern
     // this regions content is just for Ai CombatAction PatternBehaviours

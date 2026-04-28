@@ -390,7 +390,7 @@ public class BattleManager : MonoBehaviour
 
                         prevMoveY = move.y;
 
-                        if (actions.Player.Confirm.WasPressedThisFrame()) confirm = true;
+                        //if (actions.Player.Confirm.WasPressedThisFrame()) confirm = true;
                     }
                 }
                 catch { }
@@ -418,8 +418,8 @@ public class BattleManager : MonoBehaviour
 
             try
             {
-                if (actions != null && actions.Player.Confirm.IsPressed())
-                    confirmStillPressed = true;
+                //if (actions != null && actions.Player.Confirm.IsPressed())
+                    //confirmStillPressed = true;
             }
             catch { }
 
@@ -527,7 +527,7 @@ public class BattleManager : MonoBehaviour
 
                             prevMoveX = move.x;
 
-                            if (actions.Player.Confirm.WasPressedThisFrame()) confirm = true;
+                            //if (actions.Player.Confirm.WasPressedThisFrame()) confirm = true;
                         }
                     }
                     catch { }
@@ -618,7 +618,7 @@ public class BattleManager : MonoBehaviour
 
                         prevMoveY = move.y;
 
-                        if (actions.Player.Confirm.WasPressedThisFrame()) confirm = true;
+                        //if (actions.Player.Confirm.WasPressedThisFrame()) confirm = true;
                     }
                 }
                 catch { }
@@ -662,8 +662,8 @@ public class BattleManager : MonoBehaviour
 
                 try
                 {
-                    if (actions != null && actions.Player.Confirm.IsPressed())
-                        confirmStillPressed = true;
+                    //if (actions != null && actions.Player.Confirm.IsPressed())
+                        //confirmStillPressed = true;
                 }
                 catch { }
 
@@ -837,20 +837,26 @@ public class BattleManager : MonoBehaviour
     {
         var kb = Keyboard.current;
         if (kb != null && (kb.spaceKey.wasPressedThisFrame || kb.enterKey.wasPressedThisFrame)) return true;
-        try { return actions != null && actions.Player.Confirm.WasPressedThisFrame(); } catch { return false; }
+
+        return false;
+        //try { return actions != null && actions.Player.Confirm.WasPressedThisFrame(); } catch { return false; }
     }
 
     private static bool WasParryPressed(InputSystem_Actions actions)
     {
         var kb = Keyboard.current;
         if (kb != null && kb.leftShiftKey.wasPressedThisFrame) return true;
-        try { return actions != null && actions.Player.Parry.WasPressedThisFrame(); } catch { return false; }
+
+        return false;
+        //try { return actions != null && actions.Player.Parry.WasPressedThisFrame(); } catch { return false; }
     }
 
     private static bool WasDodgePressed(InputSystem_Actions actions)
     {
         var kb = Keyboard.current;
         if (kb != null && kb.leftAltKey.wasPressedThisFrame) return true;
-        try { return actions != null && actions.Player.Dodge.WasPressedThisFrame(); } catch { return false; }
+
+        return false;
+        //try { return actions != null && actions.Player.Dodge.WasPressedThisFrame(); } catch { return false; }
     }
 }
