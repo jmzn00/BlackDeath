@@ -105,6 +105,7 @@ public class AnimatorComponent : MonoBehaviour, IActorComponent
     private void CombatEnded(CombatResult result) 
     {
         m_animator.Play(m_idle.name, 0, 0f);
+        isInCombat = false;
     }
     // from m_combatActor.OnPlayRequested
     public void PlayCombatAction(AnimationClip clip) 

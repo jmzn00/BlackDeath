@@ -203,6 +203,7 @@ public class CombatManager : ManagerBase
 
         m_area.AreaFinished(result);
         m_area = null;
+        CombatEvents.CombatCameraEnded();
     }
     public void EndScreenFinished() 
     {

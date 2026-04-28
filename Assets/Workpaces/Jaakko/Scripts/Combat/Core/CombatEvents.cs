@@ -8,6 +8,7 @@ public static class CombatEvents
     public static event Action OnCombatStarted;
     public static event Action<CombatResult> OnCombatEnded;
     public static event Action<CombatState> OnCombatStateChanged;
+    public static event Action OnCombatCameraEnded;
 
     // ACTORS
     public static event Action<List<CombatActor>> OnCombatActorsChanged;
@@ -110,7 +111,12 @@ public static class CombatEvents
     {
         OnCombatEnded?.Invoke(res);
     }
-    
+
+    public static void CombatCameraEnded() 
+    {
+        OnCombatCameraEnded?.Invoke();
+    }
+
     public static void CombatStateChanged(CombatState state)  // NEW
     {
         OnCombatStateChanged?.Invoke(state);

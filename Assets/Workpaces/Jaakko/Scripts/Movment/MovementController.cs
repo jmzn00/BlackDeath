@@ -46,11 +46,28 @@ public class MovementController : MonoBehaviour, IActorComponent
 
     [Header("TempVisuals")]
     [SerializeField] private GameObject m_visualCapsule;
+    private Vector3 m_initialVisualRotation;
 
     public event Action<Vector3> OnMove;
 
     [SerializeField] private PlayerStats m_playerStats;
     public PlayerStats RuntimeStats => m_playerStats;
+
+    private void Awake()
+    {
+        m_initialVisualRotation = m_visualCapsule.transform.rotation.eulerAngles;
+    }
+    private void OnEnable()
+    {
+        CombatEvents.OnCombatStarted += ResetVisualRotation;
+        
+    }
+
+    private void OnDisable()
+    {
+        CombatEvents.OnCombatStarted -= ResetVisualRotation;
+    }
+
     public void Move(Vector3 pos) 
     {
         m_controller.enabled = false;
@@ -112,7 +129,13 @@ public class MovementController : MonoBehaviour, IActorComponent
         if (module is IImpulseModule imp) impulseModules.Add(imp);
         if (module is IForceModule force) forceModules.Add(force);
         if (module is IPostProcessModule post) postProcessModules.Add(post);
-    }    
+    }
+
+    private void ResetVisualRotation()
+    {
+        m_visualCapsule.transform.rotation = Quaternion.Euler(m_initialVisualRotation);
+    }
+
     private void Update()
     {
         if (m_inputSource == null) return;

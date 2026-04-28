@@ -43,6 +43,7 @@ public class CameraManager : ManagerBase
         }
 
         CombatEvents.OnCombatStarted += OnCombatStarted;
+        CombatEvents.OnCombatCameraEnded += OnCombatEnded;
 
         // Sorting mode so no transparency with sprites
 
@@ -66,6 +67,11 @@ public class CameraManager : ManagerBase
     {
         SetMode(m_cameraModes.FirstOrDefault(m => m is CombatCameraMode));
     }
+
+    private void OnCombatEnded()
+    {
+        SetMode(m_cameraModes.FirstOrDefault(m => m is FollowActorCameraMode));
+    }   
 
     public override bool Init() 
     {
