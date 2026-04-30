@@ -80,9 +80,11 @@ public class AnimatorComponent : MonoBehaviour, IActorComponent
     }
     public void PlayParry()
     {
-        if (IsAnimationPlaying(m_parry) || isInTurn)
-            return;
         if (!isInCombat) return;
+
+        if (isInTurn) return;
+        if (IsAnimationPlaying(m_parry))
+            return;
 
         m_animator.Play(m_parry.name);
     }
@@ -111,7 +113,7 @@ public class AnimatorComponent : MonoBehaviour, IActorComponent
     private void TurnStarted(CombatActor actor)
     {
         if (actor != m_combatActor) return;
-
+        if (!isInCombat) isInCombat = true;
         isInTurn = true;
         m_animator.Play(m_combatIdle.name, 0, 0f);
     }

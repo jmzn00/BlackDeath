@@ -127,6 +127,9 @@ public class CombatManager : ManagerBase
 
         CombatEvents.CombatActorsChanged(actors);
 
+        // Ensure components know combat started so AnimatorComponent.isInCombat is set.
+        CombatEvents.CombatStarted();
+
         m_area = area;
         ChangeState(CombatState.Active);
         m_game.SetState(GameState.Combat);
