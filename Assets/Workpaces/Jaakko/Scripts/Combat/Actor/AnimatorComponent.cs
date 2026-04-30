@@ -4,13 +4,13 @@ using UnityEngine;
 [RequireComponent(typeof(Animator))]
 public class AnimatorComponent : MonoBehaviour, IActorComponent
 {
-    public bool Initialize(GameManager game) {  return true; }    
-    public bool Dispose() 
+    public bool Initialize(GameManager game) { return true; }
+    public bool Dispose()
     {
         m_combatActor.OnPlayRequested -= PlayCombatAction;
 
         if (m_movement != null)
-            m_movement.OnMove += Move;
+            m_movement.OnMove -= Move;
 
         CombatEvents.OnCombatStarted -= CombatStarted;
         CombatEvents.OnCombatEnded -= CombatEnded;
@@ -52,7 +52,8 @@ public class AnimatorComponent : MonoBehaviour, IActorComponent
 
     private MovementController m_movement;
     private bool isInCombat = false;
-    public void OnActorComponentsInitialized(Actor actor) 
+    public bool isInTurn = false;
+    public void OnActorComponentsInitialized(Actor actor)
     {
         m_combatActor = actor.Get<CombatActor>();
         m_animator = GetComponent<Animator>();
@@ -77,16 +78,17 @@ public class AnimatorComponent : MonoBehaviour, IActorComponent
 
         return stateInfo.IsName(clip.name);
     }
-    public void PlayParry() 
+    public void PlayParry()
     {
-        if (IsAnimationPlaying(m_parry))
+        if (IsAnimationPlaying(m_parry) || isInTurn)
             return;
         if (!isInCombat) return;
 
         m_animator.Play(m_parry.name);
     }
-    public void PlayDodge() 
+    public void PlayDodge()
     {
+        if (isInTurn) return;
         if (IsAnimationPlaying(m_dodge))
             return;
         if (!isInCombat) return;
@@ -100,53 +102,59 @@ public class AnimatorComponent : MonoBehaviour, IActorComponent
 
     private void TurnEnded(CombatActor actor)
     {
+        if (actor != m_combatActor) return;
+
+        isInTurn = false;
         m_animator.Play(m_combatIdle.name, 0, 0f);
     }
 
     private void TurnStarted(CombatActor actor)
     {
+        if (actor != m_combatActor) return;
+
+        isInTurn = true;
         m_animator.Play(m_combatIdle.name, 0, 0f);
     }
 
-    private void Move(Vector3 vel) 
+    private void Move(Vector3 vel)
     {
         if (isInCombat) return;
 
-        if (vel.magnitude > 0.5f) 
+        if (vel.magnitude > 0.5f)
         {
             m_animator.Play(m_walk.name);
         }
-        else 
+        else
         {
             m_animator.Play(m_idle.name);
         }
     }
-    private void CombatStarted() 
+    private void CombatStarted()
     {
         isInCombat = true;
         m_animator.Play(m_combatIdle.name, 0, 0f);
     }
-    private void CombatEnded(CombatResult result) 
+    private void CombatEnded(CombatResult result)
     {
         m_animator.Play(m_idle.name, 0, 0f);
         isInCombat = false;
     }
     // from m_combatActor.OnPlayRequested
-    public void PlayCombatAction(AnimationClip clip) 
+    public void PlayCombatAction(AnimationClip clip)
     {
         m_animator.Play(clip.name, 0, 0f);
     }
-    public void PlayTransition() 
+    public void PlayTransition()
     {
         m_animator.Play(m_transition.name, 0, 0f);
     }
     // called by animation
-    public void Anim_OpenWindow(string promptKey) 
+    public void Anim_OpenWindow(string promptKey)
     {
         m_combatActor.OpenWindow(promptKey);
     }
     // called by animation
-    public void Anim_CloseWindow() 
+    public void Anim_CloseWindow()
     {
         if (m_combatActor == null)
         {
@@ -155,36 +163,36 @@ public class AnimatorComponent : MonoBehaviour, IActorComponent
         }
 
         m_combatActor.CloseWindow();
-        
+
     }
     // called by animation
-    public void Anim_Finished() 
+    public void Anim_Finished()
     {
-        if (m_combatActor == null) 
+        if (m_combatActor == null)
         {
             Debug.LogWarning("Combat Actor is NULL on AnimatiorComponent");
             return;
         }
         m_animator.Play(m_combatIdle.name, 0, 0f);
         OnActionAnimationFinished?.Invoke();
-    }    
+    }
 
     public bool ParryOpen { get; private set; }
     public bool DodgeOpen { get; private set; }
-    public void Anim_OpenParry() 
+    public void Anim_OpenParry()
     {
         ParryOpen = true;
     }
-    public void Anim_CloseParry() 
+    public void Anim_CloseParry()
     {
         ParryOpen = false;
     }
-    public void Anim_OpenDodge() 
+    public void Anim_OpenDodge()
     {
         Debug.Log("Open Dodge");
         DodgeOpen = true;
     }
-    public void Anim_CloseDodge() 
+    public void Anim_CloseDodge()
     {
         Debug.Log("Close Dodge");
         DodgeOpen = false;

@@ -2973,7 +2973,7 @@ MonoBehaviour:
   m_idle: {fileID: 7400000, guid: 2a18f3566308f2f47b0b44328dfb5778, type: 2}
   m_walk: {fileID: 7400000, guid: 61951fec83555b94eb7cf2c624c6efcd, type: 2}
   m_combatIdle: {fileID: 7400000, guid: 2a18f3566308f2f47b0b44328dfb5778, type: 2}
-  m_parry: {fileID: 0}
+  m_parry: {fileID: 7400000, guid: 2a18f3566308f2f47b0b44328dfb5778, type: 2}
   m_dodge: {fileID: 0}
   m_transition: {fileID: 7400000, guid: 61951fec83555b94eb7cf2c624c6efcd, type: 2}
 --- !u!114 &3719123717056353617

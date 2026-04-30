@@ -18,7 +18,7 @@ public enum CombatResult
     Lost
 }
 [Serializable]
-public class CombatSaveData 
+public class CombatSaveData
 {
     public List<string> CompletedAreas = new();
 }
@@ -61,11 +61,11 @@ public class CombatManager : ManagerBase
             {
                 foreach (var completed in m_save.CompletedAreas)
                 {
-                    if (completed == area.ID) 
+                    if (completed == area.ID)
                     {
                         area.SetCompleted(true);
                     }
-                    
+
                 }
             }
             area.Initialize(m_game);
@@ -79,7 +79,7 @@ public class CombatManager : ManagerBase
         for (int i = 0; i < m_systems.Count; i++)
             m_systems[i].Update(dt);
     }
-    public override void OnSceneLoaded(SceneData data) 
+    public override void OnSceneLoaded(SceneData data)
     {
         IsReady = false;
 
@@ -98,7 +98,7 @@ public class CombatManager : ManagerBase
         m_container.RegisterInstance<CombatManager>(this);
 
         m_container.Register<TurnSystem>();
-        m_container.Register<ReactionSystem>(); 
+        m_container.Register<ReactionSystem>();
         m_container.Register<ActionSystem>();
         m_container.Register<TransitionSystem>();
         m_container.Register<DamageSystem>();
@@ -124,23 +124,30 @@ public class CombatManager : ManagerBase
     public void StartCombat(List<CombatActor> actors, CombatArea area)
     {
         if (m_state != CombatState.Inactive) return;
-        
+
         CombatEvents.CombatActorsChanged(actors);
 
         m_area = area;
         ChangeState(CombatState.Active);
-        m_game.SetState(GameState.Combat);    
+        m_game.SetState(GameState.Combat);
 
         m_container.Resolve<TransitionSystem>().UpdateArea(area);
 
         m_context = new CombatContext(actors);
         foreach (var s in m_systems)
             s.Init(m_context);
-          
+
         NextTurn();
     }
     private void NextTurn()
     {
+        // ensure previous actor receives TurnEnded
+        CombatActor previous = m_context?.CurrentActor;
+        if (previous != null)
+        {
+            CombatEvents.TurnEnded(previous);
+        }
+
         CombatActor actor = m_container.Resolve<TurnSystem>().Next();
 
         if (actor == null)
@@ -163,6 +170,7 @@ public class CombatManager : ManagerBase
 
         m_container.Resolve<ActionSystem>().TurnStarted();
     }
+
     private void ActionFinished(ActionContext aCtx)
     {
         if (CheckEnd())
@@ -188,22 +196,22 @@ public class CombatManager : ManagerBase
         if (m_state == CombatState.Inactive) return;
         CombatResult result = CombatResult.Lost;
         if (m_context.Actors.ToList().Exists(a => a.Team == Team.Player
-        && !a.IsDead)) 
+        && !a.IsDead))
         {
             result = CombatResult.Won;
         }
         CombatEvents.CombatEnded(result);
 
-        if (result == CombatResult.Won) 
+        if (result == CombatResult.Won)
         {
-            if (m_save == null) 
+            if (m_save == null)
             {
                 m_save = new CombatSaveData();
             }
-            if (!m_save.CompletedAreas.Contains(m_area.ID)) 
+            if (!m_save.CompletedAreas.Contains(m_area.ID))
             {
                 m_save.CompletedAreas.Add(m_area.ID);
-            }            
+            }
         }
 
         foreach (var a in m_context.Actors)
@@ -216,12 +224,12 @@ public class CombatManager : ManagerBase
         m_area = null;
         CombatEvents.CombatCameraEnded();
     }
-    public void EndScreenFinished() 
+    public void EndScreenFinished()
     {
         m_game.SetState(GameState.None);
         ChangeState(CombatState.Inactive);
     }
-    public void ChangeState(CombatState state) 
+    public void ChangeState(CombatState state)
     {
         if (state == m_state) return;
 
