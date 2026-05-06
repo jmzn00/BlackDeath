@@ -6,90 +6,107 @@ public class TransitionSystem : CombatSystemBase
     CombatArea m_area;
     ActionSystem m_action;
     CombatManager m_combat;
-    public TransitionSystem(ActionSystem action
-        , CombatManager combat) 
+
+    public TransitionSystem(ActionSystem action, CombatManager combat)
     {
         m_action = action;
         m_combat = combat;
     }
-    public void UpdateArea(CombatArea area) 
+
+    public void UpdateArea(CombatArea area)
     {
         m_area = area;
     }
+
     public override void Init(CombatContext context)
     {
         m_action.OnActionSubmitted += Start;
         m_action.OnActionFinished += ActionFinished;
     }
-    public override void Reset() 
+
+    public override void Reset()
     {
         m_action.OnActionSubmitted -= Start;
         m_action.OnActionFinished -= ActionFinished;
-
         m_area = null;
     }
+
     public event Action OnTransitionFinished;
 
+    // Forward transition
     private Transform m_sourceActor;
     private Transform m_targetActor;
 
     private Vector3 m_sourceStart;
     private Vector3 m_targetStart;
-
     private Vector3 m_sourceEnd;
-    private Vector3 m_targetEnd;
 
     private float m_sourceTime;
-    private float m_targetTime;
-
     private float m_sourceDuration;
-    private float m_targetDuration;
     private const float DEFAULT_DURATION = 3f;
 
     private bool m_transitionOpen;
-    private void ActionFinished(ActionContext actx) 
+
+    // Return transition
+    private bool m_returningToStart;
+    private float m_returnTime;
+    private Vector3 m_returnStartPos;
+    private const float RETURN_DURATION = 0.55f;
+
+    private void ActionFinished(ActionContext actx)
     {
-        ResetTransition();
+        if (m_sourceActor == null) return;
+
+        m_returnStartPos = m_sourceActor.position;
+        m_returnTime = 0f;
+        m_returningToStart = true;
     }
-    public override void Update(float dt) 
+
+    public override void Update(float dt)
     {
-        if (!m_transitionOpen) return;
-
-        m_sourceTime += dt;
-        m_targetTime += dt;
-
-        float sourceT = Mathf.Clamp01(m_sourceTime / m_sourceDuration);
-        float targetT = Mathf.Clamp01(m_targetTime / m_targetDuration);
-
-        if (m_sourceActor != null)
-            m_sourceActor.position = Vector3.Lerp(m_sourceStart, m_sourceEnd, sourceT);
-        if (m_targetActor != null)
-            m_targetActor.position = Vector3.Lerp(m_targetStart, m_targetEnd, targetT);
-
-        if (sourceT >= 1f && targetT >= 1f) 
+        if (m_transitionOpen)
         {
-            Finish();
-        }        
-    }    
-    public void ResetTransition() 
+            m_sourceTime += dt;
+            float sourceT = Mathf.Clamp01(m_sourceTime / m_sourceDuration);
+
+            if (m_sourceActor != null)
+                m_sourceActor.position = Vector3.Lerp(m_sourceStart, m_sourceEnd, sourceT);
+
+            if (sourceT >= 1f)
+                Finish();
+        }
+
+        if (m_returningToStart)
+        {
+            m_returnTime += dt;
+            float t = Mathf.Clamp01(m_returnTime / RETURN_DURATION);
+
+            if (m_sourceActor != null)
+                m_sourceActor.position = Vector3.Lerp(m_returnStartPos, m_sourceStart, t);
+
+            if (t >= 1f)
+                FinishReturn();
+        }
+    }
+
+    public void ResetTransition()
     {
-        if (m_sourceActor != null)
-            m_sourceActor.position = m_sourceStart;
-        if (m_targetActor != null)
-            m_targetActor.position = m_targetStart;
+        if (m_sourceActor != null) m_sourceActor.position = m_sourceStart;
+        if (m_targetActor != null) m_targetActor.position = m_targetStart;
 
         m_sourceActor = null;
         m_targetActor = null;
-
         m_transitionOpen = false;
+        m_returningToStart = false;
     }
-    public void Start(ActionContext actx) 
+
+    public void Start(ActionContext actx)
     {
         m_combat.ChangeState(CombatState.Transition);
 
-        if (actx.Source == null) 
+        if (actx.Source == null)
         {
-            Debug.LogWarning($"Transition Source == NULL");
+            Debug.LogWarning("Transition Source == NULL");
             Finish();
             return;
         }
@@ -101,53 +118,62 @@ public class TransitionSystem : CombatSystemBase
 
         SetupActors(actx, out m_sourceActor, out m_targetActor);
 
-        if (m_sourceActor == null) 
+        if (m_sourceActor == null)
         {
             Finish();
             return;
         }
+
         m_sourceStart = m_sourceActor.position;
         if (m_targetActor != null)
-            m_targetStart = m_targetActor.transform.position;
+            m_targetStart = m_targetActor.position;
 
-        bool isPlayer = actx.Source.Team == Team.Player;
-
-        m_sourceEnd = isPlayer
-            ? m_area.Preferences.m_partyActionPoint.position
-            : m_area.Preferences.m_enemyActionPoint.position;
-        if (m_targetActor != null) 
+        // Move attacker to a point in front of the target, flat on the horizontal plane
+        if (m_targetActor != null)
         {
-            m_targetEnd = isPlayer 
-                ? m_area.Preferences.m_enemyActionPoint.position
-                : m_area.Preferences.m_partyActionPoint.position;
+            Vector3 toSource = m_sourceStart - m_targetActor.position;
+            toSource.y = 0f;
+            Vector3 dir = toSource.normalized;
+            float offset = m_area != null ? m_area.Preferences.m_attackOffset : 1.5f;
+            m_sourceEnd = new Vector3(
+                m_targetActor.position.x + dir.x * offset,
+                m_sourceStart.y,
+                m_targetActor.position.z + dir.z * offset);
         }
+        else
+        {
+            m_sourceEnd = m_sourceStart;
+        }
+
         m_sourceDuration = GetDuration(actx.Source);
-        m_targetDuration = GetDuration(actx.PrimaryTarget);
-        
+        m_sourceTime = 0f;
+
+        // Only the attacker plays the transition animation
         PlayTransition(actx.Source);
-        PlayTransition(actx.PrimaryTarget);
 
         m_transitionOpen = true;
         CombatEvents.TransitionStarted();
-    }    
-    private bool ShouldSkip(TargetType type) 
+    }
+
+    private bool ShouldSkip(TargetType type)
     {
-        return type == TargetType.Self 
-            || type == TargetType.Ally 
+        return type == TargetType.Self
+            || type == TargetType.Ally
             || type == TargetType.AOEAlly;
     }
-    private void SetupActors(ActionContext actx, out Transform sourceT, out Transform targetT) 
-    {        
+
+    private void SetupActors(ActionContext actx, out Transform sourceT, out Transform targetT)
+    {
         sourceT = actx.Source.transform;
         targetT = null;
 
         if (actx.PrimaryTarget == null)
         {
-            Debug.LogWarning($"SetupActors: PrimaryTarget == NULL");
+            Debug.LogWarning("SetupActors: PrimaryTarget == NULL");
             return;
         }
 
-        switch (actx.Action.targetType) 
+        switch (actx.Action.targetType)
         {
             case TargetType.Enemy:
             case TargetType.AOEEnemy:
@@ -161,28 +187,36 @@ public class TransitionSystem : CombatSystemBase
                 break;
         }
     }
-    private float GetDuration(CombatActor actor) 
+
+    private float GetDuration(CombatActor actor)
     {
         if (actor == null) return DEFAULT_DURATION;
-
-        return actor.HasTransition() && actor.TransitionClip
-            ? actor.TransitionClip.length : DEFAULT_DURATION;
+        return actor.HasTransition() && actor.TransitionClip ? actor.TransitionClip.length : DEFAULT_DURATION;
     }
-    private void PlayTransition(CombatActor actor) 
+
+    private void PlayTransition(CombatActor actor)
     {
         if (actor == null) return;
         if (actor.HasTransition())
-        {
             actor.PlayTransition();
-        }
     }
-    private void Finish() 
+
+    private void Finish()
     {
         m_transitionOpen = false;
         m_sourceTime = 0f;
-        m_targetTime = 0f;
 
         OnTransitionFinished?.Invoke();
         CombatEvents.TransitionEnded();
+    }
+
+    private void FinishReturn()
+    {
+        if (m_sourceActor != null)
+            m_sourceActor.position = m_sourceStart;
+
+        m_sourceActor = null;
+        m_targetActor = null;
+        m_returningToStart = false;
     }
 }
