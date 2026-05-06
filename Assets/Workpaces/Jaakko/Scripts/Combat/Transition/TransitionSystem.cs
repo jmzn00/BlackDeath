@@ -128,17 +128,24 @@ public class TransitionSystem : CombatSystemBase
         if (m_targetActor != null)
             m_targetStart = m_targetActor.position;
 
-        // Move attacker to a point in front of the target, flat on the horizontal plane
+        // Move attacker to a point directly beside the target.
+        // Offset only on the dominant separation axis so the attacker
+        // snaps to the target's position on the other axis.
         if (m_targetActor != null)
         {
             Vector3 toSource = m_sourceStart - m_targetActor.position;
             toSource.y = 0f;
-            Vector3 dir = toSource.normalized;
             float offset = m_area != null ? m_area.Preferences.m_attackOffset : 1.5f;
-            m_sourceEnd = new Vector3(
-                m_targetActor.position.x + dir.x * offset,
-                m_sourceStart.y,
-                m_targetActor.position.z + dir.z * offset);
+
+            Vector3 attackPos = m_targetActor.position;
+            attackPos.y = m_sourceStart.y;
+
+            if (Mathf.Abs(toSource.x) >= Mathf.Abs(toSource.z))
+                attackPos.x += Mathf.Sign(toSource.x) * offset;
+            else
+                attackPos.z += Mathf.Sign(toSource.z) * offset;
+
+            m_sourceEnd = attackPos;
         }
         else
         {
