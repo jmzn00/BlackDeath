@@ -197,7 +197,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5054865828436891339}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0.0077638915, w: -0.9999699}
+  m_LocalRotation: {x: -0, y: -0, z: 0.09299109, w: 0.995667}
   m_LocalPosition: {x: 1.62, y: -0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -228,7 +228,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5517137385225870180}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: 0.015210565, w: -0.99988437}
+  m_LocalRotation: {x: -0, y: -0, z: 0.16920452, w: 0.985581}
   m_LocalPosition: {x: 1.38, y: -0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -344,6 +344,7 @@ MonoBehaviour:
   m_parry: {fileID: 0}
   m_dodge: {fileID: 0}
   m_transition: {fileID: 7400000, guid: bcd28d65e0398b54abf3216e22009118, type: 2}
+  isInTurn: 0
 --- !u!114 &4184719319971826959
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -391,6 +392,7 @@ MonoBehaviour:
   m_actions:
   - {fileID: 11400000, guid: f3b71fd51aae8ec4781640265ad957b9, type: 2}
   - {fileID: 11400000, guid: 7bd1c35fbefb7b3438277af5778813a5, type: 2}
+  - {fileID: 11400000, guid: 0dbbd21e8b65677469967d7e7b4a8fd9, type: 2}
   m_maxActionPoints: 0
   m_reactionSettings:
     dodgePercentage: 10
@@ -551,7 +553,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6979500687572363325}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: 0.000034108758, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0.09262467, w: 0.99570113}
   m_LocalPosition: {x: 2.34, y: -0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -647,7 +649,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8575681338240310042}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0.0000010281799, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0.016271112, w: 0.9998677}
   m_LocalPosition: {x: 2.2, y: -0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0

@@ -15,7 +15,7 @@ public class CombatPreferences
     public Transform m_enemyActionPoint;
 
     [Tooltip("Distance the attacker stops in front of the target during a transition.")]
-    public float m_attackOffset = 2f;
+    public float m_attackOffset = 2.5f;
 }
 
 [RequireComponent(typeof(BoxCollider))]
