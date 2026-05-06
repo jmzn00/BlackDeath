@@ -54,14 +54,19 @@ public class Actor : MonoBehaviour, IActor
         return false;
     }
 #endif
-    private void OnControlChanged(Actor actor) 
+    private void OnControlChanged(Actor actor)
     {
-        if (actor == this) 
+        if (actor == this)
         {
             ChangeComponentInputSource(m_playerInputSource);
         }
-        else 
+        else
         {
+            // During combat all player-team actors must keep playerInputSource
+            // so they can react (parry/dodge) when they are the attack target.
+            if (m_game?.State == GameState.Combat && m_team == Team.Player)
+                return;
+
             m_aiInputSource.SetTarget(actor.transform);
             ChangeComponentInputSource(m_aiInputSource);
         }
@@ -84,7 +89,38 @@ public class Actor : MonoBehaviour, IActor
     }
     protected virtual void GameStateChanged(GameState state)
     {
+        // Ensure input sources exist (lazy create if Init hasn't run fully).
+        if (m_playerInputSource == null && m_game != null)
+            m_playerInputSource = new PlayerInputSource(m_game.Resolve<InputManager>());
+        if (m_aiInputSource == null)
+            m_aiInputSource = new AIInputSource(transform);
 
+        // When combat starts, give all player-team actors the player input source
+        // so they can react (parry/dodge) even when they're not the currently
+        // controlled actor. When combat ends, restore input to controlled/AI.
+        if (state == GameState.Combat)
+        {
+            if (m_team == Team.Player)
+                ChangeComponentInputSource(m_playerInputSource);
+        }
+        else
+        {
+            // If we're exiting combat, restore per-actor control behavior.
+            // Use ActorManager to decide which actor should have the player input.
+            if (m_game != null)
+            {
+                var am = m_game.Resolve<ActorManager>();
+                if (am != null && am.CurrentControlled == this)
+                    ChangeComponentInputSource(m_playerInputSource);
+                else
+                    ChangeComponentInputSource(m_aiInputSource);
+            }
+            else
+            {
+                // Fallback
+                ChangeComponentInputSource(m_aiInputSource);
+            }
+        }
     }
 
     public ActorSaveData Save()

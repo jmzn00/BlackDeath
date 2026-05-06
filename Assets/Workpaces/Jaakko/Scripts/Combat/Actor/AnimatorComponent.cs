@@ -65,6 +65,18 @@ public class AnimatorComponent : MonoBehaviour, IActorComponent
         CombatEvents.OnTurnEnded += TurnEnded;
         CombatEvents.OnTransitionEnded += TransitionEnded;
 
+        // Defensive: if combat already active when this component initializes,
+        // ensure isInCombat is set so parry gating works.
+        try
+        {
+            if (actor != null && actor.Game != null)
+                isInCombat = actor.Game.State == GameState.Combat;
+        }
+        catch
+        {
+            // swallow any unexpected errors here to avoid breaking init flow
+        }
+
         m_movement = actor.Get<MovementController>();
         if (m_movement != null)
             m_movement.OnMove += Move;
@@ -80,11 +92,25 @@ public class AnimatorComponent : MonoBehaviour, IActorComponent
     }
     public void PlayParry()
     {
-        if (!isInCombat) return;
-
-        if (isInTurn) return;
-        if (IsAnimationPlaying(m_parry))
+        // Debugging log to show which guard blocks the parry when it fails.
+        // Keep this lightweight — remove or gate behind a debug flag if noisy.
+        if (!isInCombat)
+        {
+            Debug.Log($"{name}.PlayParry blocked: not in combat (isInCombat=false)");
             return;
+        }
+
+        if (isInTurn)
+        {
+            Debug.Log($"{name}.PlayParry blocked: actor is in its own turn (isInTurn=true)");
+            return;
+        }
+
+        if (IsAnimationPlaying(m_parry))
+        {
+            Debug.Log($"{name}.PlayParry blocked: parry animation already playing");
+            return;
+        }
 
         m_animator.Play(m_parry.name);
     }

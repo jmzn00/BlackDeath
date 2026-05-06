@@ -160,12 +160,6 @@ public class CombatManager : ManagerBase
             return;
         }
 
-        // jank ass fix for the parry / dodge animations
-        if (actor is PlayerCombatActor)
-        {
-            m_actor.SetControlledActor(actor.Actor);
-        }
-
         CombatEvents.TurnStarted(actor);
 
         m_context.SetCurrentActor(actor);

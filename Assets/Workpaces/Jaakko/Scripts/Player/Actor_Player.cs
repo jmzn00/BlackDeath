@@ -13,9 +13,11 @@ public class Actor_Player : Actor
 
     protected override void GameStateChanged(GameState state)
     {
+        base.GameStateChanged(state);
+
         if (m_movement == null) return;
 
-        switch (state) 
+        switch (state)
         {
             case GameState.Combat:
                 m_movement.enabled = false;
