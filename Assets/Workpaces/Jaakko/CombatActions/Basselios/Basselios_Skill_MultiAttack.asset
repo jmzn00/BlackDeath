@@ -19,6 +19,8 @@ MonoBehaviour:
   grantsApOnUse: 0
   baseDamage: 15
   confirmDamageMultipler: 1.2
+  confirmPerfectMultiplier: 1.8
+  confirmPerfectFraction: 0.65
   AppliedEffects: []
   targetType: 3
   isReactive: 1

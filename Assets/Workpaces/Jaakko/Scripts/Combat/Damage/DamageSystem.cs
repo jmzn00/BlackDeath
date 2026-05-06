@@ -34,13 +34,14 @@ public class DamageSystem : CombatSystemBase
         switch (result) 
         {
             case ActionResult.Confirmed:
-                foreach (var t in ctx.Targets) 
+                float multiplier = ctx.ConfirmGrade == ConfirmGrade.Perfect
+                    ? a.confirmPerfectMultiplier
+                    : a.confirmDamageMultipler;
+                foreach (var t in ctx.Targets)
                 {
-                    ApplyDamage(a.baseDamage * a.confirmDamageMultipler
-                        , ctx.Source, t);
-
+                    ApplyDamage(a.baseDamage * multiplier, ctx.Source, t);
                     UpdateStatusEffects(a.AppliedEffects, t, ctx.Source);
-                }                    
+                }
                 break;
             case ActionResult.Hit:
                 foreach (var t in ctx.Targets)

@@ -14,4 +14,6 @@ public class ActionContext
 
     public string PromptKey;
     public InputPrompt Prompt;
+
+    public ConfirmGrade ConfirmGrade;
 }

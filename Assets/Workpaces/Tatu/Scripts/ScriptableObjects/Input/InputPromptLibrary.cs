@@ -19,6 +19,10 @@ public class InputPromptLibrary : ScriptableObject
 
     public Entry[] entries;
 
+    [Header("Confirm Pool")]
+    [Tooltip("Random prompt picked from this list each time a player confirm window opens.")]
+    public InputPrompt[] confirmPool;
+
     private Dictionary<string, InputPrompt> m_lookup;
 
     /// <summary>Returns the prompt for the given key, or null if not found.</summary>

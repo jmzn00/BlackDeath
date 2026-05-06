@@ -93,12 +93,12 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
 
         m_resultView.View();
     }
-    private void AttackerPromptOpened(InputPrompt prompt) 
+    private void AttackerPromptOpened(InputPrompt prompt)
     {
         m_reactionView.AttackerPromptOpened(prompt);
         m_reactionView.View();
     }
-    private void ReactionWindowClosed(ActionContext ctx) 
+    private void ReactionWindowClosed(ActionContext ctx)
     {
         m_reactionView.Hide();
     }

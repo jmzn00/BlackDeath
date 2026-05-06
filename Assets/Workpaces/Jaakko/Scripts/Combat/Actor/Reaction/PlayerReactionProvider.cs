@@ -21,20 +21,21 @@ public class PlayerReactionProvider : IReactionProvider
         }
 
         bool success = false;
-        if (prompt.inputType == PromptInputType.Dodge) 
+        if (prompt.inputType == PromptInputType.Dodge)
         {
-            if (m_actor.Animator.DodgeOpen) 
-            {
+            if (m_actor.Animator.DodgeOpen)
                 success = true;
-            }
         }
-        if (prompt.inputType == PromptInputType.Parry) 
+        else if (prompt.inputType == PromptInputType.Parry)
         {
-            if (m_actor.Animator.ParryOpen) 
-            {
+            if (m_actor.Animator.ParryOpen)
                 success = true;
-            }
         }
+        else if (prompt.inputType == PromptInputType.Confirm)
+        {
+            success = true;
+        }
+
         if (success)
             OnCommandReady?.Invoke(new ReactionCommand(m_actor, prompt));
     }

@@ -46,7 +46,8 @@ public static class CombatEvents
     public static event Action<ActionContext> OnReactionWindowClosed;
     public static event Action<ActionContext, ActionResult> OnReactionResolved;
     public static event Action<InputPrompt> OnDefenderPromptOpened;
-    public static event Action<InputPrompt> OnAttackerPromptOpened; 
+    public static event Action<InputPrompt> OnAttackerPromptOpened;
+    public static event Action<ActionContext, ConfirmGrade> OnConfirmGraded;
     #region Reaction
     public static void ReactionWindowOpened(ActionContext ctx)
     {
@@ -64,9 +65,13 @@ public static class CombatEvents
     {
         OnDefenderPromptOpened?.Invoke(prompt);
     }
-    public static void AttackerPromptOpened(InputPrompt prompt) 
+    public static void AttackerPromptOpened(InputPrompt prompt)
     {
         OnAttackerPromptOpened?.Invoke(prompt);
+    }
+    public static void ConfirmGraded(ActionContext ctx, ConfirmGrade grade)
+    {
+        OnConfirmGraded?.Invoke(ctx, grade);
     }
     #endregion
     // TURN

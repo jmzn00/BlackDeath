@@ -68,9 +68,18 @@ public class ActionSystem : CombatSystemBase
         if (!m_currentAction.Action.isReactive)
             return;
 
-        Debug.Log($"ReactionWIndow Closed");
+        Debug.Log($"ReactionWindow Closed");
         m_reaction.Close();
         ActionResult res = m_reaction.ResolveResults();
+
+        m_currentAction.ConfirmGrade = m_reaction.ResolveConfirmGrade();
+
+        // Fire grade event only for player-attacker reactive actions (confirm window)
+        if (m_currentAction.Source.Team == Team.Player
+            && (res == ActionResult.Confirmed || res == ActionResult.Hit))
+        {
+            CombatEvents.ConfirmGraded(m_currentAction, m_currentAction.ConfirmGrade);
+        }
 
         CombatEvents.ActionResolved(m_currentAction, res);
         OnActionResolved?.Invoke(m_currentAction, res);

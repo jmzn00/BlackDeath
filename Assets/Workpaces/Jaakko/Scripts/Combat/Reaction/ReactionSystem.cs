@@ -1,31 +1,30 @@
-using System;
 using System.Collections.Generic;
-using Unity.VisualScripting;
-using UnityEditor.Rendering;
 using UnityEngine;
+
 public class ReactionSystem : CombatSystemBase
 {
     private InputPromptLibrary m_promptLibrary;
-    private InputPromptLibrary Library 
+    private InputPromptLibrary Library
     {
-        get 
+        get
         {
-            if (m_promptLibrary == null) 
+            if (m_promptLibrary == null)
             {
-                m_promptLibrary =
-                    Resources.Load<InputPromptLibrary>("InputPrompts/PromptLibrary");
+                m_promptLibrary = Resources.Load<InputPromptLibrary>("InputPrompts/PromptLibrary");
                 if (m_promptLibrary == null)
                     Debug.LogError("InputPromptLibrary not found");
             }
             return m_promptLibrary;
         }
     }
+
     private ReactiveWindow m_window;
     private ActionContext m_context;
 
     private List<InputPrompt> m_defensivePrompts = new();
+    private List<InputPrompt> m_confirmPool = new();
 
-    public ReactionSystem() 
+    public ReactionSystem()
     {
         m_window = new ReactiveWindow();
 
@@ -33,56 +32,55 @@ public class ReactionSystem : CombatSystemBase
         InputPrompt dodgePrompt = Library.Get("DodgePrompt");
 
         if (!m_defensivePrompts.Contains(parryPrompt))
-        {
             m_defensivePrompts.Add(parryPrompt);
-        }
         if (!m_defensivePrompts.Contains(dodgePrompt))
-        {
-            m_defensivePrompts.Add((dodgePrompt));
-        }
+            m_defensivePrompts.Add(dodgePrompt);
+
+        if (Library.confirmPool != null)
+            m_confirmPool.AddRange(Library.confirmPool);
     }
+
     public void Open(ActionContext ctx)
     {
-        if (m_window.IsOpen) 
+        if (m_window.IsOpen)
         {
-            Debug.LogWarning("Cannot Open: Window allready open");
+            Debug.LogWarning("Cannot Open: Window already open");
             return;
         }
-        m_context = ctx;
-        InputPrompt attackerPrompt = Library.Get(ctx.PromptKey);
-        m_context.Prompt = attackerPrompt;
 
-        // this can be null if the animation calls open with an empty prompt
-        if (m_context.Prompt != null) 
+        m_context = ctx;
+        m_window.Open(ctx.Action.confirmPerfectFraction);
+
+        // Pick attacker prompt: random from pool for player attackers, library key otherwise
+        if (ctx.Source.Team == Team.Player && m_confirmPool.Count > 0)
+        {
+            m_context.Prompt = m_confirmPool[Random.Range(0, m_confirmPool.Count)];
+        }
+        else
+        {
+            m_context.Prompt = Library.Get(ctx.PromptKey);
+        }
+
+        if (m_context.Prompt != null)
         {
             m_context.Prompt.action.Enable();
-
             if (ctx.Source.Team == Team.Player)
-                CombatEvents.AttackerPromptOpened(m_context.Prompt);            
+                CombatEvents.AttackerPromptOpened(m_context.Prompt);
         }
 
         TargetType t = ctx.Action.targetType;
 
-        if (t == TargetType.Ally 
-            || t == TargetType.AOEAlly) 
+        if (t == TargetType.Enemy || t == TargetType.AOEEnemy)
         {
-            // skip defender prompts
-        }
-        else if (t == TargetType.Enemy 
-            || t == TargetType.AOEEnemy)
-        {
-            if (ctx.Source.Team == Team.Enemy) 
+            if (ctx.Source.Team == Team.Enemy)
             {
                 foreach (var p in m_defensivePrompts)
                 {
                     p.action.Enable();
-                    
                     CombatEvents.DefenderPromptOpened(p);
                 }
-            }            
+            }
         }
-            
-        m_window.Open();
 
         if (ctx.Source != null)
             ctx.Source.ReactionProvider.OpenReaction();
@@ -91,28 +89,30 @@ public class ReactionSystem : CombatSystemBase
 
         CombatEvents.ReactionWindowOpened(ctx);
     }
-    public void Close() 
+
+    public void Close()
     {
-        if (!m_window.IsOpen) 
+        if (!m_window.IsOpen)
         {
             Debug.LogWarning("Cannot Close: Window Is Not Open");
             return;
         }
 
-        // this can be null if the animation calls open with an empty prompt
         if (m_context.Prompt != null)
             m_context.Prompt.action.Disable();
 
-        
         foreach (var p in m_defensivePrompts)
             p.action.Disable();
 
         m_window.Close(m_context);
         CombatEvents.ReactionWindowClosed(m_context);
     }
+
     public override void Update(float dt)
     {
         if (!m_window.IsOpen) return;
+
+        m_window.Tick(dt);
 
         m_context.Source.ReactionProvider.TryReact(this, m_context.Prompt);
 
@@ -123,21 +123,22 @@ public class ReactionSystem : CombatSystemBase
                 m_context.PrimaryTarget.ReactionProvider.TryReact(this, p);
         }
     }
-    public void ReceiveReaction(ReactionCommand command) 
+
+    public void ReceiveReaction(ReactionCommand command)
     {
         CombatActor actor = command.Source;
         InputPrompt prompt = command.Prompt;
 
-        if (!m_window.IsOpen) 
+        if (!m_window.IsOpen)
         {
-            Debug.LogWarning("Cannot recive reaction while window is closed");
+            Debug.LogWarning("Cannot receive reaction while window is closed");
             return;
         }
         if (actor == m_context.PrimaryTarget
             && m_window.ConsumeDefenderReaction() != ReactionType.None)
             return;
 
-        switch (prompt.inputType) 
+        switch (prompt.inputType)
         {
             case PromptInputType.Parry:
                 m_window.TryActivateParry();
@@ -147,14 +148,14 @@ public class ReactionSystem : CombatSystemBase
                 break;
             case PromptInputType.Confirm:
                 m_window.TryActivateConfirm();
-                break; 
+                break;
         }
     }
+
     public ActionResult ResolveResults()
     {
         ReactionType attacker = m_window.ConsumeAttackerReaction();
         ReactionType defender = m_window.ConsumeDefenderReaction();
-
 
         if (defender == ReactionType.Parry)
             return ActionResult.Parried;
@@ -165,4 +166,6 @@ public class ReactionSystem : CombatSystemBase
 
         return ActionResult.Hit;
     }
+
+    public ConfirmGrade ResolveConfirmGrade() => m_window.GetConfirmGrade();
 }

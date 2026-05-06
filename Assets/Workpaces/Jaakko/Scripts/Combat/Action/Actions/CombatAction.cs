@@ -1,13 +1,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-public enum ActionResult 
+public enum ActionResult
 {
     Hit,
     Dodged,
     Parried,
     Confirmed,
     None
+}
+public enum ConfirmGrade
+{
+    Missed,
+    Good,
+    Perfect
 }
 public enum TargetType 
 {
@@ -40,6 +46,9 @@ public abstract class CombatAction : ScriptableObject
 
     public float baseDamage = 1;
     public float confirmDamageMultipler = 1.2f;
+    public float confirmPerfectMultiplier = 1.5f;
+    [Tooltip("Fraction (0-1) of the window that must have elapsed before the press counts as Perfect. E.g. 0.65 = press in the last 35% of the window.")]
+    [Range(0f, 1f)] public float confirmPerfectFraction = 0.65f;
 
     public List<ActorStatusEffect> AppliedEffects = new List<ActorStatusEffect>();
 
