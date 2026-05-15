@@ -1125,6 +1125,7 @@ MonoBehaviour:
   m_parry: {fileID: 7400000, guid: 0103cc0fa71d9c94f83eca86c7eed753, type: 2}
   m_dodge: {fileID: 7400000, guid: b403ac86f7985454981ca0a38e154f44, type: 2}
   m_transition: {fileID: 7400000, guid: be290ff9cd29b504ba86c56573ead1b5, type: 2}
+  isInTurn: 0
 --- !u!114 &593964147284919549
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1187,7 +1188,7 @@ MonoBehaviour:
   m_actions:
   - {fileID: 11400000, guid: f686adb9eb0efeb48a581f4d3605d497, type: 2}
   - {fileID: 11400000, guid: 8b06f7ca976b9604483b267fdb0be5f4, type: 2}
-  m_maxActionPoints: 2
+  m_maxActionPoints: 3
 --- !u!1 &2525937036844501322
 GameObject:
   m_ObjectHideFlags: 0

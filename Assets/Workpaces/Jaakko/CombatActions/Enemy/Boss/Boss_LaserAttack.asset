@@ -10,21 +10,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8ce69bea004d10248b490ecd7d16709b, type: 3}
-  m_Name: Basselios_BasicAttack
+  m_Name: Boss_LaserAttack
   m_EditorClassIdentifier: Assembly-CSharp::AttackAction
-  actionName: BasicAttack
+  actionName: Plague Blast
   description: 
   apCost: 0
-  animationClip: {fileID: 7400000, guid: 37ac6af3d261aca4cb7698bb7824edbc, type: 2}
+  animationClip: {fileID: 7400000, guid: b9b7699dc6d757946a1c00d298026f16, type: 2}
   grantsApOnUse: 0
-  baseDamage: 12
-  confirmDamageMultipler: 1.2
-  confirmPerfectMultiplier: 1.8
+  baseDamage: 25
+  confirmDamageMultipler: 1
+  confirmPerfectMultiplier: 1
   confirmPerfectFraction: 0.65
   AppliedEffects: []
-  targetType: 3
+  targetType: 4
   isReactive: 1
-  clip: {fileID: 8300000, guid: 0e1af24dd7d2e3d429bb789867c89057, type: 3}
+  clip: {fileID: 0}
   damage: 1
   bonusDamageOnSuccess: 1
   ApAmount: 1

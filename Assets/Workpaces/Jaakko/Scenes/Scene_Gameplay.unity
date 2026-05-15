@@ -3048,17 +3048,25 @@ PrefabInstance:
       value: 45f31004-4603-4276-a96c-647b26247749
       objectReference: {fileID: 0}
     - target: {fileID: 8308307896277485454, guid: 85ef8995bad49724dabaa7f9824d0e6b, type: 3}
+      propertyPath: m_combatPreferences.m_attackOffset
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 8308307896277485454, guid: 85ef8995bad49724dabaa7f9824d0e6b, type: 3}
       propertyPath: m_combatPreferences.m_enemies.Array.size
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8308307896277485454, guid: 85ef8995bad49724dabaa7f9824d0e6b, type: 3}
       propertyPath: 'm_combatPreferences.m_enemies.Array.data[0]'
       value: 
-      objectReference: {fileID: 1150977804664838214, guid: 2f4ddfecfebefac4a852413f0e25719a, type: 3}
+      objectReference: {fileID: 2619175573243590476, guid: c985ccf70abb30b49aee679678628940, type: 3}
     - target: {fileID: 8308307896277485454, guid: 85ef8995bad49724dabaa7f9824d0e6b, type: 3}
       propertyPath: 'm_combatPreferences.m_enemies.Array.data[1]'
       value: 
       objectReference: {fileID: 2071846275302041565, guid: 41fd462dc5473ea4bb2694cd702cc3a2, type: 3}
+    - target: {fileID: 8308307896277485454, guid: 85ef8995bad49724dabaa7f9824d0e6b, type: 3}
+      propertyPath: m_combatPreferences.m_enemySpawnPoints.Array.size
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8558772789353973411, guid: 85ef8995bad49724dabaa7f9824d0e6b, type: 3}
       propertyPath: m_LocalPosition.x
       value: -4.875

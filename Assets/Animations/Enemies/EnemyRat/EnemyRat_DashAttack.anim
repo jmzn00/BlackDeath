@@ -24978,7 +24978,7 @@ AnimationClip:
   m_HasGenericRootTransform: 0
   m_HasMotionFloatCurves: 0
   m_Events:
-  - time: 1.0166667
+  - time: 0.98333335
     functionName: Anim_OpenWindow
     data: Confirm_X
     objectReferenceParameter: {fileID: 0}

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SkillAction
   actionName: Raging Slash
   description: Multislash against single enemy
-  apCost: 2
+  apCost: 3
   animationClip: {fileID: 7400000, guid: 8d3a61d54d33c3144970f0e9d54ec64a, type: 2}
   grantsApOnUse: 0
   baseDamage: 15
