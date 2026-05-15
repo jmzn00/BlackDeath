@@ -201,7 +201,7 @@ MonoBehaviour:
   m_actionBehaviours:
   - {fileID: 11400000, guid: f6e23ee59cf2ae44498d3e6986272651, type: 2}
   m_targetingBehaviours:
-  - {fileID: 11400000, guid: 8f3478a99276447438279a9c425747d3, type: 2}
+  - {fileID: 11400000, guid: cb1ef68f319351143a3f56762ecde7db, type: 2}
 --- !u!114 &4463816166269684999
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -215,7 +215,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthComponent
   ch: 0
-  m_maxHealth: 500
+  m_maxHealth: 666
 --- !u!114 &8621714182438236920
 MonoBehaviour:
   m_ObjectHideFlags: 0
