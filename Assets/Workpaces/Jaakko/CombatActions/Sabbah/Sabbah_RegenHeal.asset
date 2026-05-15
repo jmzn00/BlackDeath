@@ -18,8 +18,8 @@ MonoBehaviour:
   animationClip: {fileID: 7400000, guid: 7aea40f2fc8dee84583fa268e56bcfc3, type: 2}
   grantsApOnUse: 0
   baseDamage: 0
-  confirmDamageMultipler: 1.2
-  confirmPerfectMultiplier: 1.5
+  confirmDamageMultipler: 1
+  confirmPerfectMultiplier: 1
   confirmPerfectFraction: 0.65
   AppliedEffects:
   - {fileID: 11400000, guid: bcb5a33cb1f167f43b9532c55d0cd367, type: 2}

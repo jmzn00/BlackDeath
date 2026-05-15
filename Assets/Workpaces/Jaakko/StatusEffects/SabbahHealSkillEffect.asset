@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a309c967f255d24c9aac7a2bb8d10ec, type: 3}
   m_Name: SabbahHealSkillEffect
   m_EditorClassIdentifier: Assembly-CSharp::HealStatusEffect
-  <duration>k__BackingField: 3
+  <duration>k__BackingField: 2
   <damage>k__BackingField: 0
   <heal>k__BackingField: 10
   <displayName>k__BackingField: Regen
