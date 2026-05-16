@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75e792c160efac44db28bf3e54f6c4a4, type: 3}
+  m_Name: CombatSFXConfig
+  m_EditorClassIdentifier: Assembly-CSharp::CombatSFXConfig
+  hitSound: {fileID: 8300000, guid: 44c2d2f000c1a4586ab6225f6d060e82, type: 3}
+  parrySound: {fileID: 8300000, guid: 97b2e9f6b3edb48b1bcc915d34384d63, type: 3}
+  dodgeSound: {fileID: 0}
+  confirmGoodSound: {fileID: 8300000, guid: 50cf82665037a4992848023e0ea3853a, type: 3}
+  confirmPerfectSound: {fileID: 8300000, guid: f9c2a859037494442b02899223b913c0, type: 3}
+  combatStartSound: {fileID: 8300000, guid: 9e68fb0ba87c74d7ca8cafdb34e1ce35, type: 3}
+  actorDeathSound: {fileID: 0}

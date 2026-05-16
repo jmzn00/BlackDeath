@@ -32,37 +32,44 @@ public class AudioManager : ManagerBase
         m_game.OnStateChanged -= GameStateChanged;
         return true;
     }
-    public override void OnManagersInitialzied() 
+    public override void OnManagersInitialzied()
     {
         m_modules = new()
         {
-            new CombatAudioModule(this)
+            new CombatAudioModule(this),
+            new MusicModule(this)
         };
+
+        var music = GetModule<MusicModule>();
+        music?.Activate();
+        music?.PlayForState(GameState.None);
     }
     public override void Update(float dt)
     {
-        for (int i = 0; i < m_modules.Count; i++) 
+        for (int i = 0; i < m_modules.Count; i++)
         {
              m_modules[i].Update(dt);
         }
     }
-    private void GameStateChanged(GameState state) 
+    private void GameStateChanged(GameState state)
     {
+        // MusicModule.Deactivate() is a no-op — music keeps playing across state changes
         foreach (var m in m_modules)
             m.Deactivate();
 
-        switch (state) 
+        switch (state)
         {
             case GameState.Combat:
                 GetModule<CombatAudioModule>()?.Activate();
                 break;
             case GameState.Dialogue:
-                
                 break;
             case GameState.None:
-
                 break;
         }
+
+        // Always crossfade music to the track appropriate for the new state
+        GetModule<MusicModule>()?.PlayForState(state);
     }
     private T GetModule<T>() where T : class, IAudioModule 
     {

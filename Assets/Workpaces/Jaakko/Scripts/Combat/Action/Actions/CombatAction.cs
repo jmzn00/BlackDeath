@@ -58,7 +58,9 @@ public abstract class CombatAction : ScriptableObject
     public bool isReactive = true;
 
     [Header("Audio")]
-    public AudioClip clip;
+    public AudioClip transitionSound;  // actor walks toward target
+    public AudioClip attackSound;      // attack/skill animation starts
+    public AudioClip strikeSound;      // Anim_OpenWindow hit frame
     /// <summary>
     /// Execute this action. Called by Combatant.PlayAction.
     /// Base implementation plays the animation; override for special logic.

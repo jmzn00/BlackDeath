@@ -10,9 +10,21 @@ public class AudioController : MonoBehaviour
     [SerializeField] private AudioSource m_musicSource;
     [SerializeField] private AudioSource m_dialogueSource;
 
-    public AudioSource CombatSouce => m_combatSource;
-    public AudioSource MusicSource => m_musicSource;
-    public AudioSource DialogueSource => m_dialogueSource;
+    [Header("Music")]
+    [SerializeField] private AudioClip m_explorationMusic;
+    [SerializeField] private AudioClip m_combatMusic;
+    [SerializeField, Range(0f, 1f)] private float m_musicVolume = 0.6f;
+
+    [Header("Combat SFX")]
+    [SerializeField] private CombatSFXConfig m_combatSFX;
+
+    public AudioSource     CombatSouce      => m_combatSource;
+    public AudioSource     MusicSource      => m_musicSource;
+    public AudioSource     DialogueSource   => m_dialogueSource;
+    public AudioClip       ExplorationMusic => m_explorationMusic;
+    public AudioClip       CombatMusic      => m_combatMusic;
+    public float           MusicVolume      => m_musicVolume;
+    public CombatSFXConfig CombatSFX        => m_combatSFX;
     
     private void Awake()
     {

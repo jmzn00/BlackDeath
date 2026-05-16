@@ -2838,6 +2838,7 @@ GameObject:
   - component: {fileID: 3719123717056353617}
   - component: {fileID: 8216566851284939765}
   - component: {fileID: 5225474487877745728}
+  - component: {fileID: 8360358422550261991}
   m_Layer: 6
   m_Name: Actor_Sabbah
   m_TagString: Untagged
@@ -3026,6 +3027,27 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 14e7f3102a690ff428da828eca9f9b4d, type: 2}
   - {fileID: 11400000, guid: dd13382c071febf4e91e1568201f3d61, type: 2}
   m_maxActionPoints: 5
+--- !u!114 &8360358422550261991
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8495283171240600977}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa442b5e59aac3d4a884c79c5728f4e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterShadow
+  m_visualRoot: {fileID: 5244883977150221487}
+  m_footBones:
+  - {fileID: 5623003367117550715}
+  - {fileID: 686865816033697757}
+  m_shadowOpacity: 1
+  m_groundOffset: -0.06
+  m_blobScale: 4
+  m_fadeHeight: 0.5
+  m_shadowSortingOrder: 1
 --- !u!1 &8639479524924660798
 GameObject:
   m_ObjectHideFlags: 0

@@ -267,6 +267,7 @@ public class CombatActor : MonoBehaviour, IActorComponent, IDamageSource
             return;
         }
         OnPlayRequested?.Invoke(ctx.Action.animationClip);
+        CombatEvents.ActionAnimationStarted(ctx);
 
         if (m_animationTimeout == null)
             StartCoroutine(AnimationTimeout(ctx.Action.animationClip.length * 1.25f));

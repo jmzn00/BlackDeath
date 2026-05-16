@@ -24,7 +24,9 @@ MonoBehaviour:
   AppliedEffects: []
   targetType: 4
   isReactive: 1
-  clip: {fileID: 0}
+  transitionSound: {fileID: 8300000, guid: 120217732bbd647efa461f200fca809e, type: 3}
+  attackSound: {fileID: 8300000, guid: 77318aa799e4d42cdab746ff00bc3297, type: 3}
+  strikeSound: {fileID: 8300000, guid: ff501252ab89e47cca6f163db9b9d711, type: 3}
   damage: 1
   bonusDamageOnSuccess: 1
   ApAmount: 1

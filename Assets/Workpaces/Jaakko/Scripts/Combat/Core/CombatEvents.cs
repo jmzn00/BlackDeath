@@ -22,6 +22,8 @@ public static class CombatEvents
     public static event Action<ActionContext> OnActionSubmitted;
     public static event Action<ActionContext, ActionResult> OnActionResolved;
     public static event Action<CombatActor, CombatActor> OnActorTargetChanged; // Source, Target
+    public static event Action<ActionContext> OnActionAnimationStarted; // fires when attack animation actually begins
+    public static event Action<ActionContext> OnActionStrikeMoment;    // fires at Anim_OpenWindow (hit frame), before reactive guard
     #region Action
     public static void ActionSubmitted(ActionContext ctx)
     {
@@ -34,6 +36,14 @@ public static class CombatEvents
     public static void ActionFinished(ActionContext ctx)
     {
         OnActionFinished?.Invoke(ctx);
+    }
+    public static void ActionAnimationStarted(ActionContext ctx)
+    {
+        OnActionAnimationStarted?.Invoke(ctx);
+    }
+    public static void ActionStrikeMoment(ActionContext ctx)
+    {
+        OnActionStrikeMoment?.Invoke(ctx);
     }
     public static void ActorTargetChanged(CombatActor source, CombatActor target) 
     {

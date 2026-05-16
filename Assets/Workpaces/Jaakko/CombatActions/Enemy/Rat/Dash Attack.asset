@@ -19,11 +19,13 @@ MonoBehaviour:
   grantsApOnUse: 0
   baseDamage: 10
   confirmDamageMultipler: 2
+  confirmPerfectMultiplier: 1.5
+  confirmPerfectFraction: 0.65
   AppliedEffects:
   - {fileID: 11400000, guid: 1e00e8df307b0d9469d906410a575a8e, type: 2}
   targetType: 3
   isReactive: 1
-  clip: {fileID: 8300000, guid: bf5278aa3416e8047b17f139fe24cac1, type: 3}
+  clip: {fileID: 8300000, guid: 235cd19f6539543eb915bd97b267a228, type: 3}
   damage: 1
   bonusDamageOnSuccess: 1
   ApAmount: 1

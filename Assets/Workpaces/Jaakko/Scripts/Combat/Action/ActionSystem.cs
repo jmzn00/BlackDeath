@@ -46,6 +46,8 @@ public class ActionSystem : CombatSystemBase
             Debug.LogWarning("AS: actor != currentAction.Source");
             return;
         }
+        CombatEvents.ActionStrikeMoment(m_currentAction);
+
         if (!m_currentAction.Action.isReactive)
             return;
 
