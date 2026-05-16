@@ -155,6 +155,7 @@ public class MovementController : MonoBehaviour, IActorComponent
         UpdateContact();
         CollisionFlags flags = m_controller.Move(Velocity * Time.deltaTime);
         OnMove?.Invoke(Velocity);
+        GameEvents.PlayerMoved(Velocity);
 
         for (int i = 0; i < environmentModules.Count; i++)
         {

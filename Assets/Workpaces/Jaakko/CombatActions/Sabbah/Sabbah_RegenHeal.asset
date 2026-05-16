@@ -25,7 +25,10 @@ MonoBehaviour:
   - {fileID: 11400000, guid: bcb5a33cb1f167f43b9532c55d0cd367, type: 2}
   targetType: 2
   isReactive: 0
-  clip: {fileID: 8300000, guid: 366fd432f7688404098af6a588377330, type: 3}
+  transitionSound: {fileID: 0}
+  attackSound: {fileID: 8300000, guid: c68e3142056f44f93adac1cc68fbf69e, type: 3}
+  strikeSound: {fileID: 8300000, guid: 93a1f243bf42a4b1f9ffda1883b21a22, type: 3}
+  useHumanFootsteps: 0
   damage: 0
   bonusDamageOnSuccess: 0
   targetEffects: []

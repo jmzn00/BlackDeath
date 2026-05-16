@@ -61,6 +61,7 @@ public abstract class CombatAction : ScriptableObject
     public AudioClip transitionSound;  // actor walks toward target
     public AudioClip attackSound;      // attack/skill animation starts
     public AudioClip strikeSound;      // Anim_OpenWindow hit frame
+    public bool useHumanFootsteps;     // play footstep bank during transition
     /// <summary>
     /// Execute this action. Called by Combatant.PlayAction.
     /// Base implementation plays the animation; override for special logic.

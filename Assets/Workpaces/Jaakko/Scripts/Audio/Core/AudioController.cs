@@ -18,6 +18,9 @@ public class AudioController : MonoBehaviour
     [Header("Combat SFX")]
     [SerializeField] private CombatSFXConfig m_combatSFX;
 
+    [Header("Footsteps")]
+    [SerializeField] private FootstepBank m_humanFootstepBank;
+
     public AudioSource     CombatSouce      => m_combatSource;
     public AudioSource     MusicSource      => m_musicSource;
     public AudioSource     DialogueSource   => m_dialogueSource;
@@ -25,6 +28,7 @@ public class AudioController : MonoBehaviour
     public AudioClip       CombatMusic      => m_combatMusic;
     public float           MusicVolume      => m_musicVolume;
     public CombatSFXConfig CombatSFX        => m_combatSFX;
+    public FootstepBank    HumanFootstepBank => m_humanFootstepBank;
     
     private void Awake()
     {

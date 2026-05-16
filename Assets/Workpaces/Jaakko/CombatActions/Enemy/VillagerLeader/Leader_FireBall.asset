@@ -10,24 +10,25 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8ce69bea004d10248b490ecd7d16709b, type: 3}
-  m_Name: Dash Attack
+  m_Name: Leader_FireBall
   m_EditorClassIdentifier: Assembly-CSharp::AttackAction
-  actionName: Dash Attack
+  actionName: FireBall
   description: 
   apCost: 0
-  animationClip: {fileID: 7400000, guid: 283c51a397d1fc74cab650d35e9ee5c1, type: 2}
+  animationClip: {fileID: 7400000, guid: f31898998c0485b4b8331802dba5b5c9, type: 2}
   grantsApOnUse: 0
-  baseDamage: 10
-  confirmDamageMultipler: 2
-  confirmPerfectMultiplier: 1.5
+  baseDamage: 15
+  confirmDamageMultipler: 1
+  confirmPerfectMultiplier: 1
   confirmPerfectFraction: 0.65
   AppliedEffects:
-  - {fileID: 11400000, guid: 1e00e8df307b0d9469d906410a575a8e, type: 2}
+  - {fileID: 11400000, guid: 49f52cc500f44b14dbd658d71c5d7625, type: 2}
   targetType: 3
   isReactive: 1
-  transitionSound: {fileID: 8300000, guid: 235cd19f6539543eb915bd97b267a228, type: 3}
+  transitionSound: {fileID: 0}
   attackSound: {fileID: 0}
   strikeSound: {fileID: 0}
+  useHumanFootsteps: 1
   damage: 1
   bonusDamageOnSuccess: 1
   ApAmount: 1

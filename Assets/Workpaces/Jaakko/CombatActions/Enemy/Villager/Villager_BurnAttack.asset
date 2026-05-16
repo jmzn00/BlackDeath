@@ -16,14 +16,19 @@ MonoBehaviour:
   description: 
   apCost: 0
   animationClip: {fileID: 7400000, guid: 2c366afef9b2f804bb9b2b0ef5702c7c, type: 2}
-  isReactive: 1
   grantsApOnUse: 0
   baseDamage: 1
   confirmDamageMultipler: 1
+  confirmPerfectMultiplier: 1.5
+  confirmPerfectFraction: 0.65
   AppliedEffects:
   - {fileID: 11400000, guid: 49f52cc500f44b14dbd658d71c5d7625, type: 2}
   targetType: 3
-  clip: {fileID: 8300000, guid: 16cec8d392c059e4f80d0ca2a90ee570, type: 3}
+  isReactive: 1
+  transitionSound: {fileID: 0}
+  attackSound: {fileID: 8300000, guid: a91542b0e6a524c13ba320d9ede1739a, type: 3}
+  strikeSound: {fileID: 8300000, guid: 16cec8d392c059e4f80d0ca2a90ee570, type: 3}
+  useHumanFootsteps: 1
   damage: 1
   bonusDamageOnSuccess: 1
   ApAmount: 1

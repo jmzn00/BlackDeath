@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e76452e3bfe421c489c6f345151d5c4c, type: 3}
+  m_Name: FootstepBank
+  m_EditorClassIdentifier: Assembly-CSharp::FootstepBank
+  clips:
+  - {fileID: 8300000, guid: 55d6caca38632457f828fede3c5b359e, type: 3}
+  - {fileID: 8300000, guid: 594150bbec9c24f0da994e7a39eef890, type: 3}
+  - {fileID: 8300000, guid: 6377ae07524614e8889903b85393736c, type: 3}
+  - {fileID: 8300000, guid: 122890ed9134e4246909de9f9d9dccfe, type: 3}
+  - {fileID: 8300000, guid: e78bf01bb1b2142af9c2442883badcdc, type: 3}
+  - {fileID: 8300000, guid: 7eab004d115544dea9c58f58ed34cf09, type: 3}
+  stepInterval: 0.45

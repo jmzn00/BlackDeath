@@ -601,15 +601,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8931c9d27803dc488d26d7f2c67d9a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AICombatActor
-  m_visual: {fileID: 0}
-  m_actions: []
+  m_visual: {fileID: 1894636272499781150}
+  m_actions:
+  - {fileID: 11400000, guid: a6fc1f4a1f8f8c143a2d33c160cf69a8, type: 2}
+  - {fileID: 11400000, guid: b846859bcddf2124e81b44d02e925bf0, type: 2}
   m_maxActionPoints: 0
   m_reactionSettings:
     dodgePercentage: 0
     parryPercentage: 0
     confirmPercentage: 0
-  m_actionBehaviours: []
-  m_targetingBehaviours: []
+  m_actionBehaviours:
+  - {fileID: 11400000, guid: f6e23ee59cf2ae44498d3e6986272651, type: 2}
+  m_targetingBehaviours:
+  - {fileID: 11400000, guid: 8f3478a99276447438279a9c425747d3, type: 2}
 --- !u!114 &4348074537858673611
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1061,6 +1065,9 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 6500807680170416935}
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: -8653719598885068355, guid: ded315b627f472b408a7efb124abf04f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 9284156164727404}
     - targetCorrespondingSourceObject: {fileID: 386791141387813222, guid: ded315b627f472b408a7efb124abf04f, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4601075075824081498}
@@ -1113,6 +1120,24 @@ MonoBehaviour:
     showGizmo: 1
   - color: {r: 0, g: 1, b: 0, a: 1}
     showGizmo: 1
+--- !u!1 &1894636272499781150 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -8653719598885068355, guid: ded315b627f472b408a7efb124abf04f, type: 3}
+  m_PrefabInstance: {fileID: 2138319738717458339}
+  m_PrefabAsset: {fileID: 0}
+--- !u!210 &9284156164727404
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1894636272499781150}
+  m_Enabled: 1
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortAtRoot: 0
+  m_Sort3DAs2D: 0
 --- !u!4 &1918336333945876408 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8704443494700916709, guid: ded315b627f472b408a7efb124abf04f, type: 3}

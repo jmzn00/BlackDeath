@@ -37,12 +37,17 @@ public class AudioManager : ManagerBase
         m_modules = new()
         {
             new CombatAudioModule(this),
-            new MusicModule(this)
+            new MusicModule(this),
+            new FootstepModule(this)
         };
 
         var music = GetModule<MusicModule>();
         music?.Activate();
         music?.PlayForState(GameState.None);
+
+        var footsteps = GetModule<FootstepModule>();
+        footsteps?.Activate();
+        footsteps?.SetGameState(GameState.None);
     }
     public override void Update(float dt)
     {
@@ -70,6 +75,7 @@ public class AudioManager : ManagerBase
 
         // Always crossfade music to the track appropriate for the new state
         GetModule<MusicModule>()?.PlayForState(state);
+        GetModule<FootstepModule>()?.SetGameState(state);
     }
     private T GetModule<T>() where T : class, IAudioModule 
     {
