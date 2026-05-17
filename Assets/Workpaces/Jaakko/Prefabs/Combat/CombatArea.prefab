@@ -159,6 +159,7 @@ Transform:
   - {fileID: 2733823572473214989}
   - {fileID: 73728073088005052}
   - {fileID: 8829880876550613665}
+  - {fileID: 3257823262651733664}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &8308307896277485454
@@ -187,6 +188,8 @@ MonoBehaviour:
     - {fileID: 8693432963987603294}
     m_partyActionPoint: {fileID: 73728073088005052}
     m_enemyActionPoint: {fileID: 8829880876550613665}
+    m_centerActionPoint: {fileID: 3257823262651733664}
+    m_attackOffset: 2.5
   m_conditionFlag: 
   m_setFlag: flag_testWonBattle
   m_areaID: bc67bdf7-d8d9-4519-a763-5c1480a7d43e
@@ -402,4 +405,35 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2733823572473214989}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8905397228519295138
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3257823262651733664}
+  m_Layer: 0
+  m_Name: CenterActionPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3257823262651733664
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8905397228519295138}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0.688}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4681209029199842852}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

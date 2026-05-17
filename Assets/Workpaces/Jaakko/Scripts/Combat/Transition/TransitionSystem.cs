@@ -128,24 +128,35 @@ public class TransitionSystem : CombatSystemBase
         if (m_targetActor != null)
             m_targetStart = m_targetActor.position;
 
-        // Move attacker to a point directly beside the target.
-        // Offset only on the dominant separation axis so the attacker
-        // snaps to the target's position on the other axis.
         if (m_targetActor != null)
         {
-            Vector3 toSource = m_sourceStart - m_targetActor.position;
-            toSource.y = 0f;
-            float offset = m_area != null ? m_area.Preferences.m_attackOffset : 1.5f;
-
-            Vector3 attackPos = m_targetActor.position;
-            attackPos.y = m_sourceStart.y;
-
-            if (Mathf.Abs(toSource.x) >= Mathf.Abs(toSource.z))
-                attackPos.x += Mathf.Sign(toSource.x) * offset;
+            if (actx.Action.targetType == TargetType.AOEEnemy
+                && m_area?.Preferences.m_centerActionPoint != null)
+            {
+                // AOE: move to the designated arena center point
+                Vector3 center = m_area.Preferences.m_centerActionPoint.position;
+                center.y = m_sourceStart.y;
+                m_sourceEnd = center;
+            }
             else
-                attackPos.z += Mathf.Sign(toSource.z) * offset;
+            {
+                // Single-target: move to a point directly beside the target.
+                // Offset only on the dominant separation axis so the attacker
+                // snaps to the target's position on the other axis.
+                Vector3 toSource = m_sourceStart - m_targetActor.position;
+                toSource.y = 0f;
+                float offset = m_area != null ? m_area.Preferences.m_attackOffset : 1.5f;
 
-            m_sourceEnd = attackPos;
+                Vector3 attackPos = m_targetActor.position;
+                attackPos.y = m_sourceStart.y;
+
+                if (Mathf.Abs(toSource.x) >= Mathf.Abs(toSource.z))
+                    attackPos.x += Mathf.Sign(toSource.x) * offset;
+                else
+                    attackPos.z += Mathf.Sign(toSource.z) * offset;
+
+                m_sourceEnd = attackPos;
+            }
         }
         else
         {

@@ -94,14 +94,17 @@ public class AIActionProvider : IActionProvider
             }
         }        
         ActionContext ctx = null;
-        if (bestAction != null && bestTarget != null) 
+        if (bestAction != null && bestTarget != null)
         {
             ctx = new ActionContext()
             {
-                Action = bestAction                
+                Action = bestAction
             };
-            ctx.Targets.Add(bestTarget);
-        }        
+            if (bestAction.targetType == TargetType.AOEEnemy || bestAction.targetType == TargetType.AOEAlly)
+                ctx.Targets = bestAction.GetValidTargets(m_actor, participants);
+            else
+                ctx.Targets.Add(bestTarget);
+        }
         OnCommandReady?.Invoke(new AttackCommand(m_actor, bestTarget, bestAction, ctx.Targets));
         
         //m_actor.SubmitAction(m_actor, bestTarget, bestAction);                

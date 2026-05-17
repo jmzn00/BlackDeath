@@ -13,6 +13,7 @@ public class CombatPreferences
 
     public Transform m_partyActionPoint;
     public Transform m_enemyActionPoint;
+    public Transform m_centerActionPoint;
 
     [Tooltip("Distance the attacker stops in front of the target during a transition.")]
     public float m_attackOffset = 2.5f;
