@@ -37,6 +37,7 @@ public class AnimatorComponent : MonoBehaviour, IActorComponent
     [Header("Out Of Combat")]
     [SerializeField] private AnimationClip m_idle;
     [SerializeField] private AnimationClip m_walk;
+    [SerializeField] private AnimationClip m_run;
     [Header("Combat")]
     [SerializeField] private AnimationClip m_combatIdle;
     [SerializeField] private AnimationClip m_parry;
@@ -93,7 +94,7 @@ public class AnimatorComponent : MonoBehaviour, IActorComponent
     public void PlayParry()
     {
         // Debugging log to show which guard blocks the parry when it fails.
-        // Keep this lightweight — remove or gate behind a debug flag if noisy.
+        // Keep this lightweight ï¿½ remove or gate behind a debug flag if noisy.
         if (!isInCombat)
         {
             Debug.Log($"{name}.PlayParry blocked: not in combat (isInCombat=false)");
@@ -150,7 +151,8 @@ public class AnimatorComponent : MonoBehaviour, IActorComponent
 
         if (vel.magnitude > 0.5f)
         {
-            m_animator.Play(m_walk.name);
+            bool isRunning = m_movement != null && m_movement.InputState.RunHeld && m_run != null;
+            m_animator.Play(isRunning ? m_run.name : m_walk.name);
         }
         else
         {

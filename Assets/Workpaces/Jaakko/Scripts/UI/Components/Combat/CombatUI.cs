@@ -21,6 +21,7 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
     private ReactionView m_reactionView;
     private StatusView m_statusView;
     private ResultView m_resultView;
+    private AnnouncementView m_announcementView;
 
     private CombatActor m_currentActor;
 
@@ -43,7 +44,8 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
         m_damageView = group.Get<DamageView>();
         m_reactionView = group.Get<ReactionView>();
         m_statusView = group.Get<StatusView>();
-        m_resultView = group.Get<ResultView>();  
+        m_resultView = group.Get<ResultView>();
+        m_announcementView = group.Get<AnnouncementView>();
     }
     public override void Initialize()
     {
@@ -61,7 +63,10 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
         CombatEvents.OnCombatStarted += CombatStarted;
         CombatEvents.OnCombatEnded += CombatEnded;
 
-        m_input.OnSelectTarget += SelectTarget;        
+        CombatEvents.OnActionSubmitted += ShowAnnouncement;
+        CombatEvents.OnActionFinished  += HideAnnouncement;
+
+        m_input.OnSelectTarget += SelectTarget;
     }
     public override void Dispose()
     {
@@ -77,9 +82,20 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
         CombatEvents.OnCombatStarted -= CombatStarted;
         CombatEvents.OnCombatEnded -= CombatEnded;
 
+        CombatEvents.OnActionSubmitted -= ShowAnnouncement;
+        CombatEvents.OnActionFinished  -= HideAnnouncement;
+
         List<UIViewBase> views = m_group.GetAllViews();
     }
-    private void CombatStarted() 
+    private void ShowAnnouncement(ActionContext ctx)
+    {
+        m_announcementView?.Display(ctx.Source.DisplayName, ctx.Action.actionName);
+    }
+    private void HideAnnouncement(ActionContext ctx)
+    {
+        m_announcementView?.Hide();
+    }
+    private void CombatStarted()
     {
         m_statusView.View();
     }

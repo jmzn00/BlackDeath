@@ -194,6 +194,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 6dd945342cce7b94bac004cf8cb9e251, type: 2}
   - {fileID: 11400000, guid: 57aace21b5e284049b62880446904550, type: 2}
   - {fileID: 11400000, guid: c46c9bb9a2169054883a4716f4b5d368, type: 2}
+  m_displayName: Plague Demon
   m_maxActionPoints: 0
   m_reactionSettings:
     dodgePercentage: 0
@@ -231,6 +232,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AnimatorComponent
   m_idle: {fileID: 7400000, guid: eb047f80fc0cb0e4d8a121072339fa6e, type: 2}
   m_walk: {fileID: 0}
+  m_run: {fileID: 0}
   m_combatIdle: {fileID: 7400000, guid: eb047f80fc0cb0e4d8a121072339fa6e, type: 2}
   m_parry: {fileID: 0}
   m_dodge: {fileID: 0}

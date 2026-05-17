@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ce69bea004d10248b490ecd7d16709b, type: 3}
   m_Name: Leader_FireBall
   m_EditorClassIdentifier: Assembly-CSharp::AttackAction
-  actionName: FireBall
+  actionName: Blazing Orb
   description: 
   apCost: 0
   animationClip: {fileID: 7400000, guid: f31898998c0485b4b8331802dba5b5c9, type: 2}

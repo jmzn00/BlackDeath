@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ce69bea004d10248b490ecd7d16709b, type: 3}
   m_Name: Villager_MultiAttack
   m_EditorClassIdentifier: Assembly-CSharp::AttackAction
-  actionName: Villager Attack
+  actionName: Multi Hit
   description: 
   apCost: 0
   animationClip: {fileID: 7400000, guid: 549837c0b7f70f5429f407f822c2d3a1, type: 2}

@@ -15,6 +15,7 @@ public struct InputState
 
     public bool DashPressed;
     public bool DashPressedThisFrame;
+    public bool RunHeld;
     public bool CrouchPressed;
 
     public bool ParryPressed;
@@ -112,6 +113,9 @@ public class InputManager : ManagerBase
 
         m_inputState.DashPressed =
             m_inputActions.Player.Dash.IsPressed();
+
+        m_inputState.RunHeld =
+            m_inputActions.Player.Sprint.IsPressed();
 
         m_inputState.CrouchPressed =
             m_inputActions.Player.Crouch.IsPressed();

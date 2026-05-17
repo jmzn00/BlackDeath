@@ -3,12 +3,13 @@ using UnityEngine;
 public class WalkRunModule : IIntentModule
 {
     private MovementController m_controller;
-    private float m_movementHeldTime;
-    public WalkRunModule(MovementController controller) 
+    private bool m_wasRunning;
+
+    public WalkRunModule(MovementController controller)
     {
         m_controller = controller;
     }
-    public void UpdateIntent() 
+    public void UpdateIntent()
     {
         if (!m_controller.MovmentState.IsGrounded
             || m_controller.MovmentState.IsSliding) return;
@@ -19,9 +20,14 @@ public class WalkRunModule : IIntentModule
         Vector2 input = m_controller.InputState.InputDirection;
         if (input.sqrMagnitude > 1f) input.Normalize();
 
-        float targetSpeed = (m_movementHeldTime >= stats.TimeToRun)
-            ? stats.RunSpeed : stats.WalkSpeed;
+        bool isRunning = m_controller.InputState.RunHeld && input.sqrMagnitude > 0.01f;
+        float targetSpeed = isRunning ? stats.RunSpeed : stats.WalkSpeed;
 
+        if (isRunning != m_wasRunning)
+        {
+            GameEvents.PlayerRunChanged(isRunning);
+            m_wasRunning = isRunning;
+        }
 
         Vector3 vel = m_controller.Velocity;
         Vector3 groundNormal = m_controller.MovmentState.ContactNormal;
@@ -37,7 +43,7 @@ public class WalkRunModule : IIntentModule
         m_controller.Velocity = hor + Vector3.Project(vel, groundNormal);
     }
     private Vector3 AccelerateAlong(Vector3 velocity, Vector3 axis, float input, float maxSpeed, float accel)
-    { 
+    {
         axis.Normalize();
 
         if (Mathf.Abs(input) < 0.01f)
@@ -50,5 +56,4 @@ public class WalkRunModule : IIntentModule
         velocity -= axis * currentSpeed; velocity += axis * newSpeed;
         return velocity;
     }
-
 }

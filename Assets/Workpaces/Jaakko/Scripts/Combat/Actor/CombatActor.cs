@@ -54,6 +54,11 @@ public class CombatActor : MonoBehaviour, IActorComponent, IDamageSource
 
     public AnimationClip TransitionClip => m_animator.TransitionClip;
 
+    [SerializeField] private string m_displayName;
+    public string DisplayName => string.IsNullOrEmpty(m_displayName)
+        ? name.Replace("(Clone)", "").Trim()
+        : m_displayName;
+
     public CombatActor SourceActor { get; private set; }
     public string SourceName { get; private set; }
 

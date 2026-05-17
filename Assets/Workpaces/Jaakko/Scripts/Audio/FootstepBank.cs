@@ -5,6 +5,7 @@ public class FootstepBank : ScriptableObject
 {
     public AudioClip[] clips;
     [Min(0.05f)] public float stepInterval = 0.35f;
+    [Min(0.05f)] public float runStepInterval = 0.2f;
 
     public AudioClip GetRandom()
     {

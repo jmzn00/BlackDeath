@@ -992,7 +992,7 @@ GameObject:
   - component: {fileID: 944227234634294388}
   - component: {fileID: 358198684617041155}
   m_Layer: 6
-  m_Name: Actor_Basselios
+  m_Name: Basselios
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1122,6 +1122,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AnimatorComponent
   m_idle: {fileID: 7400000, guid: 93d19528bdb4cc642a5c848832dc4dfe, type: 2}
   m_walk: {fileID: 7400000, guid: be290ff9cd29b504ba86c56573ead1b5, type: 2}
+  m_run: {fileID: 7400000, guid: be290ff9cd29b504ba86c56573ead1b5, type: 2}
   m_combatIdle: {fileID: 7400000, guid: d5faa68e81875a845ad3d8e29b983a7d, type: 2}
   m_parry: {fileID: 7400000, guid: 0103cc0fa71d9c94f83eca86c7eed753, type: 2}
   m_dodge: {fileID: 7400000, guid: b403ac86f7985454981ca0a38e154f44, type: 2}
@@ -1189,6 +1190,7 @@ MonoBehaviour:
   m_actions:
   - {fileID: 11400000, guid: f686adb9eb0efeb48a581f4d3605d497, type: 2}
   - {fileID: 11400000, guid: 8b06f7ca976b9604483b267fdb0be5f4, type: 2}
+  m_displayName: Basselios
   m_maxActionPoints: 3
 --- !u!114 &358198684617041155
 MonoBehaviour:

@@ -605,6 +605,7 @@ MonoBehaviour:
   m_actions:
   - {fileID: 11400000, guid: a6fc1f4a1f8f8c143a2d33c160cf69a8, type: 2}
   - {fileID: 11400000, guid: b846859bcddf2124e81b44d02e925bf0, type: 2}
+  m_displayName: Leader of the Villagers
   m_maxActionPoints: 0
   m_reactionSettings:
     dodgePercentage: 0

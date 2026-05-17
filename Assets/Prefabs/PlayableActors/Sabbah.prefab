@@ -2840,7 +2840,7 @@ GameObject:
   - component: {fileID: 5225474487877745728}
   - component: {fileID: 8360358422550261991}
   m_Layer: 6
-  m_Name: Actor_Sabbah
+  m_Name: Sabbah
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3026,6 +3026,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 43128709d72f1bf4f992d8864ff14641, type: 2}
   - {fileID: 11400000, guid: 14e7f3102a690ff428da828eca9f9b4d, type: 2}
   - {fileID: 11400000, guid: dd13382c071febf4e91e1568201f3d61, type: 2}
+  m_displayName: Sabbah
   m_maxActionPoints: 5
 --- !u!114 &8360358422550261991
 MonoBehaviour:

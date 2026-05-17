@@ -10,6 +10,7 @@ public class FootstepModule : AudioModuleBase
 
     private bool m_inExploration;
     private bool m_isMoving;
+    private bool m_isRunning;
     private const float MovingThreshold = 0.5f;
 
     public FootstepModule(AudioManager audio) : base(audio) { }
@@ -20,9 +21,10 @@ public class FootstepModule : AudioModuleBase
         m_bank   = m_audio.Controller.HumanFootstepBank;
         m_active = true;
 
-        CombatEvents.OnActionSubmitted += OnActionSubmitted;
-        CombatEvents.OnTransitionEnded += OnTransitionEnded;
-        GameEvents.OnPlayerMoved       += OnPlayerMoved;
+        CombatEvents.OnActionSubmitted  += OnActionSubmitted;
+        CombatEvents.OnTransitionEnded  += OnTransitionEnded;
+        GameEvents.OnPlayerMoved        += OnPlayerMoved;
+        GameEvents.OnPlayerRunChanged   += OnRunChanged;
     }
 
     public override void Deactivate()
@@ -63,6 +65,11 @@ public class FootstepModule : AudioModuleBase
         m_isMoving = velocity.magnitude > MovingThreshold;
     }
 
+    private void OnRunChanged(bool isRunning)
+    {
+        m_isRunning = isRunning;
+    }
+
     public override void Update(float dt)
     {
         if (m_bank == null) return;
@@ -75,7 +82,8 @@ public class FootstepModule : AudioModuleBase
         }
 
         m_stepTimer += dt;
-        if (m_stepTimer >= m_bank.stepInterval)
+        float interval = m_isRunning ? m_bank.runStepInterval : m_bank.stepInterval;
+        if (m_stepTimer >= interval)
         {
             m_stepTimer = 0f;
             PlayStep();

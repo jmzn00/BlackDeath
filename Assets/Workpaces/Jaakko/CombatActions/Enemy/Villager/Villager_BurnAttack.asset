@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ce69bea004d10248b490ecd7d16709b, type: 3}
   m_Name: Villager_BurnAttack
   m_EditorClassIdentifier: Assembly-CSharp::AttackAction
-  actionName: Action
+  actionName: Fire Breath
   description: 
   apCost: 0
   animationClip: {fileID: 7400000, guid: 2c366afef9b2f804bb9b2b0ef5702c7c, type: 2}

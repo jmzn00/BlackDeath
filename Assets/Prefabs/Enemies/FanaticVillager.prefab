@@ -394,6 +394,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: f3b71fd51aae8ec4781640265ad957b9, type: 2}
   - {fileID: 11400000, guid: 7bd1c35fbefb7b3438277af5778813a5, type: 2}
   - {fileID: 11400000, guid: 0dbbd21e8b65677469967d7e7b4a8fd9, type: 2}
+  m_displayName: Fanatic Villager
   m_maxActionPoints: 0
   m_reactionSettings:
     dodgePercentage: 10
