@@ -38,7 +38,8 @@ public class AudioManager : ManagerBase
         {
             new CombatAudioModule(this),
             new MusicModule(this),
-            new FootstepModule(this)
+            new FootstepModule(this),
+            new UIAudioModule(this)
         };
 
         var music = GetModule<MusicModule>();
@@ -48,6 +49,8 @@ public class AudioManager : ManagerBase
         var footsteps = GetModule<FootstepModule>();
         footsteps?.Activate();
         footsteps?.SetGameState(GameState.None);
+
+        GetModule<UIAudioModule>()?.Activate();
     }
     public override void Update(float dt)
     {

@@ -145,6 +145,7 @@ public class ReactionSystem : CombatSystemBase
                 break;
             case PromptInputType.Dodge:
                 m_window.TryActivateDodge();
+                CombatEvents.DodgeAttempted(m_context);
                 break;
             case PromptInputType.Confirm:
                 m_window.TryActivateConfirm();

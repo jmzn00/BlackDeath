@@ -8,7 +8,9 @@ public class AudioController : MonoBehaviour
     [Header("AudioSources")]
     [SerializeField] private AudioSource m_combatSource;
     [SerializeField] private AudioSource m_musicSource;
+    [SerializeField] private AudioSource m_musicSourceB;
     [SerializeField] private AudioSource m_dialogueSource;
+    [SerializeField] private AudioSource m_uiSource;
 
     [Header("Music")]
     [SerializeField] private AudioClip m_explorationMusic;
@@ -21,14 +23,20 @@ public class AudioController : MonoBehaviour
     [Header("Footsteps")]
     [SerializeField] private FootstepBank m_humanFootstepBank;
 
-    public AudioSource     CombatSouce      => m_combatSource;
-    public AudioSource     MusicSource      => m_musicSource;
-    public AudioSource     DialogueSource   => m_dialogueSource;
-    public AudioClip       ExplorationMusic => m_explorationMusic;
-    public AudioClip       CombatMusic      => m_combatMusic;
-    public float           MusicVolume      => m_musicVolume;
-    public CombatSFXConfig CombatSFX        => m_combatSFX;
+    [Header("UI SFX")]
+    [SerializeField] private UISFXConfig m_uiSFX;
+
+    public AudioSource     CombatSouce       => m_combatSource;
+    public AudioSource     MusicSource       => m_musicSource;
+    public AudioSource     MusicSourceB      => m_musicSourceB;
+    public AudioSource     DialogueSource    => m_dialogueSource;
+    public AudioSource     UISource          => m_uiSource;
+    public AudioClip       ExplorationMusic  => m_explorationMusic;
+    public AudioClip       CombatMusic       => m_combatMusic;
+    public float           MusicVolume       => m_musicVolume;
+    public CombatSFXConfig CombatSFX         => m_combatSFX;
     public FootstepBank    HumanFootstepBank => m_humanFootstepBank;
+    public UISFXConfig     UISFX             => m_uiSFX;
     
     private void Awake()
     {

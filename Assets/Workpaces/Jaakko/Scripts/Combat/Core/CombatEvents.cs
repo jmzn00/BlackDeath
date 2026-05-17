@@ -58,6 +58,7 @@ public static class CombatEvents
     public static event Action<InputPrompt> OnDefenderPromptOpened;
     public static event Action<InputPrompt> OnAttackerPromptOpened;
     public static event Action<ActionContext, ConfirmGrade> OnConfirmGraded;
+    public static event Action<ActionContext> OnDodgeAttempted;
     #region Reaction
     public static void ReactionWindowOpened(ActionContext ctx)
     {
@@ -82,6 +83,10 @@ public static class CombatEvents
     public static void ConfirmGraded(ActionContext ctx, ConfirmGrade grade)
     {
         OnConfirmGraded?.Invoke(ctx, grade);
+    }
+    public static void DodgeAttempted(ActionContext ctx)
+    {
+        OnDodgeAttempted?.Invoke(ctx);
     }
     #endregion
     // TURN

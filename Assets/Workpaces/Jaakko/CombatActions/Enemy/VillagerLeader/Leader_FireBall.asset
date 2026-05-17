@@ -26,8 +26,8 @@ MonoBehaviour:
   targetType: 3
   isReactive: 1
   transitionSound: {fileID: 0}
-  attackSound: {fileID: 0}
-  strikeSound: {fileID: 0}
+  attackSound: {fileID: 8300000, guid: bb4915d593fc44fca9f7fdc8bd6b8679, type: 3}
+  strikeSound: {fileID: 8300000, guid: ff501252ab89e47cca6f163db9b9d711, type: 3}
   useHumanFootsteps: 1
   damage: 1
   bonusDamageOnSuccess: 1

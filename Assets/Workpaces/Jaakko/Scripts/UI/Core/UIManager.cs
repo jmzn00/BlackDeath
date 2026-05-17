@@ -140,12 +140,17 @@ public class UIManager : ManagerBase
             if (!m_submitConsumed && input.SubmitPressed)
             {
                 top.OnSubmit();
+                GameEvents.UIConfirmed();
                 m_submitConsumed = true;
             }
             if (input.SubmitReleased)
                 m_submitConsumed = false;
-            
-            if (input.CancelPressed) top.OnCancel();
+
+            if (input.CancelPressed)
+            {
+                top.OnCancel();
+                GameEvents.UICancelled();
+            }
         }
     }
 }

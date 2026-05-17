@@ -73,11 +73,13 @@ public class UIControllerNavigation
     {
         m_currentIndex = (m_currentIndex - 1 + m_selectables.Count) % m_selectables.Count;
         SetCurrentSelected(m_selectables[m_currentIndex].gameObject);
+        GameEvents.UINavigated();
     }
     private void MoveDown()
     {
         m_currentIndex = (m_currentIndex + 1) % m_selectables.Count;
         SetCurrentSelected(m_selectables[m_currentIndex].gameObject);
+        GameEvents.UINavigated();
     }
     private void MoveRight()
     {
@@ -92,6 +94,7 @@ public class UIControllerNavigation
         if (next != null)
         {
             SetCurrentSelected(next.gameObject);
+            GameEvents.UINavigated();
         }
     }
 
@@ -108,6 +111,7 @@ public class UIControllerNavigation
         if (next != null)
         {
             SetCurrentSelected(next.gameObject);
+            GameEvents.UINavigated();
         }
     }
 }

@@ -2,18 +2,21 @@ using UnityEngine;
 
 public class MusicModule : AudioModuleBase
 {
-    private AudioSource m_source;
+    private AudioSource m_sourceA;
+    private AudioSource m_sourceB;
     private float m_maxVolume;
-    private float m_currentVolume;
-    private float m_targetVolume;
-    private AudioClip m_pendingClip;
+    private bool m_sourceAIsActive = true;
     private const float FadeSpeed = 1.5f;
+
+    private AudioSource ActiveSource   => m_sourceAIsActive ? m_sourceA : m_sourceB;
+    private AudioSource InactiveSource => m_sourceAIsActive ? m_sourceB : m_sourceA;
 
     public MusicModule(AudioManager audio) : base(audio) { }
 
     public override void Activate()
     {
-        m_source    = m_audio.Controller.MusicSource;
+        m_sourceA   = m_audio.Controller.MusicSource;
+        m_sourceB   = m_audio.Controller.MusicSourceB;
         m_maxVolume = m_audio.Controller.MusicVolume;
         m_active    = true;
     }
@@ -26,45 +29,34 @@ public class MusicModule : AudioModuleBase
 
     public void PlayForState(GameState state)
     {
-        if (m_source == null) return;
+        if (m_sourceA == null || m_sourceB == null) return;
 
         AudioClip clip = state == GameState.Combat
             ? m_audio.Controller.CombatMusic
             : m_audio.Controller.ExplorationMusic;
 
-        if (clip == null) { m_targetVolume = 0f; return; }
-        if (m_source.clip == clip && m_source.isPlaying) return;
+        if (clip == null) return;
+        if (ActiveSource.clip == clip && ActiveSource.isPlaying) return;
 
-        if (!m_source.isPlaying)
-        {
-            m_source.clip  = clip;
-            m_source.loop  = true;
-            m_source.Play();
-            m_targetVolume = m_maxVolume;
-        }
-        else
-        {
-            // Fade out current track then switch
-            m_pendingClip  = clip;
-            m_targetVolume = 0f;
-        }
+        // Start new clip on the inactive source at zero volume
+        InactiveSource.clip   = clip;
+        InactiveSource.volume = 0f;
+        InactiveSource.loop   = true;
+        InactiveSource.Play();
+
+        // Swap: the previously inactive source is now the one fading in
+        m_sourceAIsActive = !m_sourceAIsActive;
     }
 
     public override void Update(float dt)
     {
         // Bypass base.Update() — music runs regardless of m_active
-        if (m_source == null) return;
+        if (m_sourceA == null || m_sourceB == null) return;
 
-        m_currentVolume = Mathf.MoveTowards(m_currentVolume, m_targetVolume, FadeSpeed * dt);
-        m_source.volume = m_currentVolume;
+        ActiveSource.volume   = Mathf.MoveTowards(ActiveSource.volume,   m_maxVolume, FadeSpeed * dt);
+        InactiveSource.volume = Mathf.MoveTowards(InactiveSource.volume, 0f,          FadeSpeed * dt);
 
-        if (m_pendingClip != null && m_currentVolume <= 0f)
-        {
-            m_source.clip  = m_pendingClip;
-            m_source.loop  = true;
-            m_source.Play();
-            m_targetVolume = m_maxVolume;
-            m_pendingClip  = null;
-        }
+        if (InactiveSource.volume <= 0f && InactiveSource.isPlaying)
+            InactiveSource.Stop();
     }
 }

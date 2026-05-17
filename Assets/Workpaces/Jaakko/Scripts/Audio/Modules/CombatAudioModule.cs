@@ -20,6 +20,7 @@ public class CombatAudioModule : AudioModuleBase
         CombatEvents.OnActorDied              += OnActorDied;
         CombatEvents.OnConfirmGraded          += OnConfirmGraded;
         CombatEvents.OnCombatStarted          += OnCombatStarted;
+        CombatEvents.OnDodgeAttempted         += OnDodgeAttempted;
     }
 
     public override void Deactivate()
@@ -32,6 +33,7 @@ public class CombatAudioModule : AudioModuleBase
         CombatEvents.OnActorDied              -= OnActorDied;
         CombatEvents.OnConfirmGraded          -= OnConfirmGraded;
         CombatEvents.OnCombatStarted          -= OnCombatStarted;
+        CombatEvents.OnDodgeAttempted         -= OnDodgeAttempted;
     }
 
     public override void Update(float dt) { }
@@ -56,7 +58,15 @@ public class CombatAudioModule : AudioModuleBase
 
     private void OnActionResolved(ActionContext ctx, ActionResult res)
     {
-        // Generic sounds are a fallback — skip if the action has any custom audio
+        // Parry sound always plays on a successful parry
+        if (res == ActionResult.Parried)
+        {
+            if (m_config?.parrySound != null)
+                m_source.PlayOneShot(m_config.parrySound);
+            return;
+        }
+
+        // Hit sound is a fallback — skip if the action has any custom audio
         bool actionHasAudio = ctx.Action.transitionSound != null
                            || ctx.Action.attackSound     != null
                            || ctx.Action.strikeSound     != null;
@@ -65,12 +75,16 @@ public class CombatAudioModule : AudioModuleBase
 
         AudioClip clip = res switch
         {
-            ActionResult.Parried                       => m_config.parrySound,
-            ActionResult.Dodged                        => m_config.dodgeSound,
             ActionResult.Hit or ActionResult.Confirmed => m_config.hitSound,
             _                                          => null
         };
         if (clip != null) m_source.PlayOneShot(clip);
+    }
+
+    private void OnDodgeAttempted(ActionContext ctx)
+    {
+        if (m_config?.dodgeSound != null)
+            m_source.PlayOneShot(m_config.dodgeSound);
     }
 
     private void OnActorDied(CombatActor actor)

@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: CombatSFXConfig
   m_EditorClassIdentifier: Assembly-CSharp::CombatSFXConfig
   hitSound: {fileID: 8300000, guid: 44c2d2f000c1a4586ab6225f6d060e82, type: 3}
-  parrySound: {fileID: 8300000, guid: 97b2e9f6b3edb48b1bcc915d34384d63, type: 3}
-  dodgeSound: {fileID: 0}
+  parrySound: {fileID: 8300000, guid: 69c3b3e302a7a417bb22bef9fb843061, type: 3}
+  dodgeSound: {fileID: 8300000, guid: 449ec1515979442f59b016c70298525a, type: 3}
   confirmGoodSound: {fileID: 8300000, guid: 50cf82665037a4992848023e0ea3853a, type: 3}
   confirmPerfectSound: {fileID: 8300000, guid: f9c2a859037494442b02899223b913c0, type: 3}
   combatStartSound: {fileID: 8300000, guid: 9e68fb0ba87c74d7ca8cafdb34e1ce35, type: 3}
-  actorDeathSound: {fileID: 0}
+  actorDeathSound: {fileID: 8300000, guid: 9e68fb0ba87c74d7ca8cafdb34e1ce35, type: 3}
