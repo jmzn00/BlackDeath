@@ -20,3 +20,4 @@ MonoBehaviour:
   - {fileID: 8300000, guid: e78bf01bb1b2142af9c2442883badcdc, type: 3}
   - {fileID: 8300000, guid: 7eab004d115544dea9c58f58ed34cf09, type: 3}
   stepInterval: 0.45
+  runStepInterval: 0.35
