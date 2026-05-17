@@ -7406,7 +7406,7 @@ AnimationClip:
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 3.5333333
+  - time: 3.4833333
     functionName: Anim_CloseWindow
     data: 
     objectReferenceParameter: {fileID: 0}

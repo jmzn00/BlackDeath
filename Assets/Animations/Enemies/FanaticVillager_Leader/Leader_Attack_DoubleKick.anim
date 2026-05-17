@@ -8630,7 +8630,7 @@ AnimationClip:
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 1.5
+  - time: 1.4166666
     functionName: Anim_CloseWindow
     data: 
     objectReferenceParameter: {fileID: 0}
@@ -8644,21 +8644,21 @@ AnimationClip:
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 2.8333333
+  - time: 2.7333333
     functionName: Anim_CloseWindow
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 3.1666667
+  - time: 3.05
     functionName: Anim_OpenWindow
     data: Confirm_X
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 3.3666666
+  - time: 3.1833334
     functionName: Anim_CloseWindow
     data: 
     objectReferenceParameter: {fileID: 0}

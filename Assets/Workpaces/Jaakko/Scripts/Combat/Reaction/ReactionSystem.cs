@@ -98,6 +98,22 @@ public class ReactionSystem : CombatSystemBase
             return;
         }
 
+        if (m_context.PrimaryTarget != null)
+        {
+            AnimatorComponent anim = m_context.PrimaryTarget.Animator;
+            if (anim != null && anim.ParryOpen)
+            {
+                m_window.TryActivateParry();
+                anim.Anim_CloseParry();
+            }
+            else if (anim != null && anim.DodgeOpen)
+            {
+                m_window.TryActivateDodge();
+                anim.Anim_CloseDodge();
+                CombatEvents.DodgeAttempted(m_context);
+            }
+        }
+
         if (m_context.Prompt != null)
             m_context.Prompt.action.Disable();
 

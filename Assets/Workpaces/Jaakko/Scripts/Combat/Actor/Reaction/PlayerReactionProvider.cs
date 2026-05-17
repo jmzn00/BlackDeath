@@ -13,30 +13,15 @@ public class PlayerReactionProvider : IReactionProvider
     {
     
     }
-    public void TryReact(ReactionSystem reactionSystem, InputPrompt prompt) 
+    public void TryReact(ReactionSystem reactionSystem, InputPrompt prompt)
     {
-        if (!prompt.action.WasPressedThisFrame()) 
-        {
+        if (prompt.inputType == PromptInputType.Parry || prompt.inputType == PromptInputType.Dodge)
             return;
-        }
 
-        bool success = false;
-        if (prompt.inputType == PromptInputType.Dodge)
-        {
-            if (m_actor.Animator.DodgeOpen)
-                success = true;
-        }
-        else if (prompt.inputType == PromptInputType.Parry)
-        {
-            if (m_actor.Animator.ParryOpen)
-                success = true;
-        }
-        else if (prompt.inputType == PromptInputType.Confirm)
-        {
-            success = true;
-        }
+        if (!prompt.action.WasPressedThisFrame())
+            return;
 
-        if (success)
+        if (prompt.inputType == PromptInputType.Confirm)
             OnCommandReady?.Invoke(new ReactionCommand(m_actor, prompt));
     }
 }

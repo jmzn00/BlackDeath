@@ -21929,7 +21929,7 @@ AnimationClip:
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 4.133333
+  - time: 4.016667
     functionName: Anim_CloseWindow
     data: 
     objectReferenceParameter: {fileID: 0}

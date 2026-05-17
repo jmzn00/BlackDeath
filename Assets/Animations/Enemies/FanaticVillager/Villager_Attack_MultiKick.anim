@@ -6503,7 +6503,7 @@ AnimationClip:
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 1.55
+  - time: 1.5
     functionName: Anim_CloseWindow
     data: 
     objectReferenceParameter: {fileID: 0}
@@ -6517,7 +6517,7 @@ AnimationClip:
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 2.7333333
+  - time: 2.6666667
     functionName: Anim_CloseWindow
     data: 
     objectReferenceParameter: {fileID: 0}
@@ -6531,7 +6531,7 @@ AnimationClip:
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 3.2333333
+  - time: 3.1666667
     functionName: Anim_CloseWindow
     data: 
     objectReferenceParameter: {fileID: 0}
