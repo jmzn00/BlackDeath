@@ -1208,7 +1208,7 @@ MonoBehaviour:
   - {fileID: 5002752790532265112}
   m_shadowOpacity: 1
   m_groundOffset: 0.15
-  m_blobScale: 4
+  m_blobScale: 2
   m_fadeHeight: 0.5
   m_shadowSortingOrder: -1
 --- !u!1 &2525937036844501322
