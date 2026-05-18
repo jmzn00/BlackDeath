@@ -1,18 +1,6 @@
 using System;
-using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
-/*
-public struct InputState
-{
-    public Vector2 InputDir;
-    public bool JumpPressed;
-    public bool JumpJustPressed;
-    public bool DashPressed;
-    public bool DashPressedThisFrame;
-    public bool CrouchPressed;
-}
-*/
+
 public struct MovmentState
 {
     public bool IsGrounded;
@@ -24,244 +12,121 @@ public struct MovmentState
 [RequireComponent(typeof(CharacterController))]
 public class MovementController : MonoBehaviour, IActorComponent
 {
-    private CharacterController m_controller;
-    private InputState m_inputState;
-    public InputState InputState => m_inputState;
+    [Header("Stats")]
+    [SerializeField] private PlayerStats m_playerStats;
 
-    private MovmentState m_movmentState;
-    public MovmentState MovmentState => m_movmentState; 
-
-    public Vector3 Velocity { get; set; }
-
-    public Transform Player => transform;
-
-    private List<IEnvironmentModule> environmentModules = new();
-    private List<IIntentModule> intentModules = new();
-    private List<IImpulseModule> impulseModules = new();
-    private List<IForceModule> forceModules = new();
-    private List<IPostProcessModule> postProcessModules = new();
-
-    [Header("RayCast")]
-    [SerializeField] private LayerMask m_defaultLayer;
-
-    [Header("TempVisuals")]
+    [Header("Visuals")]
     [SerializeField] private GameObject m_visualCapsule;
-    private Vector3 m_initialVisualRotation;
+
+    private CharacterController m_controller;
+    private IInputSource m_inputSource;
+    private InputState m_inputState;
+    private Vector3 m_velocity;
+    private bool m_isGrounded;
+    private bool m_wasRunning;
+
+    public Vector3 Velocity => m_velocity;
+    public InputState InputState => m_inputState;
+    public MovmentState MovmentState => new MovmentState { IsGrounded = m_isGrounded, ContactNormal = Vector3.up };
+    public PlayerStats RuntimeStats => m_playerStats;
+    public Transform Player => transform;
 
     public event Action<Vector3> OnMove;
 
-    [SerializeField] private PlayerStats m_playerStats;
-    public PlayerStats RuntimeStats => m_playerStats;
+    // ── IActorComponent ──────────────────────────────────────────────
 
-    private void Awake()
+    public bool Initialize(GameManager game)
     {
-        m_initialVisualRotation = m_visualCapsule.transform.rotation.eulerAngles;
-    }
-    private void OnEnable()
-    {
-        CombatEvents.OnCombatStarted += ResetVisualRotation;
-        
+        m_controller = GetComponent<CharacterController>();
+        m_controller.slopeLimit = 45f;
+        m_controller.stepOffset = 0.35f;
+        return true;
     }
 
-    private void OnDisable()
-    {
-        CombatEvents.OnCombatStarted -= ResetVisualRotation;
-    }
+    public void OnActorComponentsInitialized(Actor actor) { }
+    public bool Dispose() => true;
+    public void SaveData(ActorSaveData data) { }
 
-    public void Move(Vector3 pos) 
-    {
-        m_controller.enabled = false;
-        Velocity = Vector3.zero;
-        transform.position = pos;
-        m_controller.enabled = true;
-    }    
-    public void MoveTo(Transform t) 
-    {
-        m_controller.enabled = false;
-        transform.position = t.position;
-        transform.rotation = t.rotation;
-        m_controller.enabled = true;
-    }
-    public void SaveData(ActorSaveData data)
-    {
-
-    }
     public void LoadData(ActorSaveData data)
     {
         m_controller.enabled = false;
         transform.position = data.Position;
         m_controller.enabled = true;
     }
-    public void Load(object data)
-    {
 
-    }
-    public object Save()
-    {
-        return null;
-    }
-    public bool Initialize(GameManager game)
-    {
-        m_controller = GetComponent<CharacterController>();
+    // ── Public API ───────────────────────────────────────────────────
 
-        AddModule(new WalkRunModule(this));
-        AddModule(new GroundFrictionModule(this));
-        return true;
-    }    
-    public bool Dispose()
-    {
-        return true;
-    }
-    public void OnActorComponentsInitialized(Actor actor)
-    {
+    public void SetInputSource(IInputSource source) => m_inputSource = source;
 
-    }
-    private IInputSource m_inputSource;
-    public void SetInputSource(IInputSource source)
+    public void Move(Vector3 pos)
     {
-        m_inputSource = source;
+        m_controller.enabled = false;
+        m_velocity = Vector3.zero;
+        transform.position = pos;
+        m_controller.enabled = true;
     }
 
-    private void AddModule(object module)
+    public void MoveTo(Transform t)
     {
-        if (module is IEnvironmentModule env) environmentModules.Add(env);
-        if (module is IIntentModule intent) intentModules.Add(intent);
-        if (module is IImpulseModule imp) impulseModules.Add(imp);
-        if (module is IForceModule force) forceModules.Add(force);
-        if (module is IPostProcessModule post) postProcessModules.Add(post);
+        m_controller.enabled = false;
+        transform.position = t.position;
+        transform.rotation = t.rotation;
+        m_controller.enabled = true;
     }
 
-    private void ResetVisualRotation()
-    {
-        m_visualCapsule.transform.rotation = Quaternion.Euler(m_initialVisualRotation);
-    }
+    // ── Update ───────────────────────────────────────────────────────
 
     private void Update()
     {
         if (m_inputSource == null) return;
 
         m_inputState = m_inputSource.GetInput();
-        // Flip visuals based on direction of movement.
+        m_isGrounded = m_controller.isGrounded;
+
+        UpdateVisuals();
+        ApplyGravity();
+        ApplyMovement();
+
+        m_controller.Move(m_velocity * Time.deltaTime);
+        Vector3 horizontalVelocity = new Vector3(m_velocity.x, 0f, m_velocity.z);
+        OnMove?.Invoke(horizontalVelocity);
+        GameEvents.PlayerMoved(horizontalVelocity);
+    }
+
+    private void UpdateVisuals()
+    {
+        if (m_visualCapsule == null) return;
         if (m_inputState.InputDirection.x > 0.1f)
-        {
             m_visualCapsule.transform.rotation = Quaternion.Euler(0, 180, 0);
-        }
         else if (m_inputState.InputDirection.x < -0.1f)
-        {
             m_visualCapsule.transform.rotation = Quaternion.Euler(0, 0, 0);
-        }
-        
-
-        UpdateContact();
-        CollisionFlags flags = m_controller.Move(Velocity * Time.deltaTime);
-        OnMove?.Invoke(Velocity);
-        GameEvents.PlayerMoved(Velocity);
-
-        for (int i = 0; i < environmentModules.Count; i++)
-        {
-            environmentModules[i].UpdateEnviroment();
-        }
-        for (int i = 0; i < intentModules.Count; i++)
-        {
-            intentModules[i].UpdateIntent();
-        }                
-        for (int i = 0; i < impulseModules.Count; i++)
-        {
-            impulseModules[i].UpdateImpulse();
-        }
-        for (int i = 0; i < forceModules.Count; i++)
-        {
-            forceModules[i].UpdateForce();
-        }
-        for (int i = 0; i < postProcessModules.Count; i++)
-        {
-            postProcessModules[i].UpdatePostProcess();
-        }
     }
-    private void OnControllerColliderHit(ControllerColliderHit hit)
-    {        
-        m_movmentState.ContactNormal = hit.normal;
 
-        float slope = Vector3.Angle(hit.normal, Vector3.up);
-        bool isSteep = slope > 45f; // This should be a parameter in stats
-
-        bool notGrounded = !m_movmentState.IsGrounded;
-
-        bool movingIntoWall = Vector3.Dot(Velocity, -hit.normal) > 0f;
-
-        m_movmentState.OnWall = isSteep && notGrounded && movingIntoWall;        
-    }
-    public void SetSliding(bool value) 
+    private void ApplyGravity()
     {
-        m_movmentState.IsSliding = value;    
-        
-        if (value) 
-        {
-            m_visualCapsule.transform.localRotation = Quaternion.Euler(-90f, 0f, 0f);
-        }
-        else        
-        {
-            m_visualCapsule.transform.localRotation = Quaternion.identity;
-        }
+        if (m_isGrounded && m_velocity.y < 0f)
+            m_velocity.y = -2f;
+        else
+            m_velocity.y += m_playerStats.Gravity * Time.deltaTime;
     }
 
-    private void UpdateContact()
+    private void ApplyMovement()
     {
-        m_movmentState.IsGrounded = m_controller.isGrounded;
-        m_movmentState.OnWall = false;
+        Vector2 input = m_inputState.InputDirection;
+        if (input.sqrMagnitude > 1f) input.Normalize();
 
-        if (!m_movmentState.IsGrounded)
+        bool isRunning = m_inputState.RunHeld && input.sqrMagnitude > 0.01f;
+        if (isRunning != m_wasRunning)
         {
-            GroundedRayCheck();
-        }
-    }
-    private void GroundedRayCheck() 
-    {
-        float rayLength = 0.1f;
-        Vector3 origin = transform.position + m_controller.center;
-
-        if (Physics.SphereCast(origin, m_controller.radius * 0.9f, Vector3.down,
-            out RaycastHit hit, m_controller.height / 2 + rayLength)) 
-        {
-            float slope = Vector3.Angle(hit.normal, Vector3.up);
-            if (slope <= 45f) // This should be a parameter in stats 
-            {
-                m_movmentState.IsGrounded = true;
-                m_movmentState.ContactNormal = hit.normal;
-            }
-        }
-    }
-    private void OnDrawGizmos()
-    {
-        /*
-        if (m_controller == null || m_cameraManager == null) return;
-
-        Vector3 origin = transform.position + m_controller.center;
-        Vector3 normal = m_movmentState.ContactNormal;
-
-        // Contact normal
-        if (normal.sqrMagnitude > 0.0001f)
-        {
-            Gizmos.color = Color.red;
-            Gizmos.DrawRay(origin, normal * 2f);
+            GameEvents.PlayerRunChanged(isRunning);
+            m_wasRunning = isRunning;
         }
 
-        // Input direction (world space)
-        Vector3 camForward = m_cameraManager.transform.forward;
-        Vector3 camRight = m_cameraManager.transform.right;
+        float targetSpeed = isRunning ? m_playerStats.RunSpeed : m_playerStats.WalkSpeed;
+        Vector3 wish = (transform.forward * input.y + transform.right * input.x) * targetSpeed;
 
-        camForward.y = 0f;
-        camRight.y = 0f;
-
-        Vector3 moveDir =
-            camForward.normalized * m_inputState.InputDir.y +
-            camRight.normalized * m_inputState.InputDir.x;
-
-        if (moveDir.sqrMagnitude > 0.0001f)
-        {
-            Gizmos.color = Color.cyan;
-            Gizmos.DrawRay(origin, moveDir * 2f);
-        }
-        */
+        float rate = input.sqrMagnitude > 0.01f ? m_playerStats.Acceleration : m_playerStats.Deceleration;
+        m_velocity.x = Mathf.MoveTowards(m_velocity.x, wish.x, rate * Time.deltaTime);
+        m_velocity.z = Mathf.MoveTowards(m_velocity.z, wish.z, rate * Time.deltaTime);
     }
 }
