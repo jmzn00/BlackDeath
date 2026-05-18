@@ -294,7 +294,7 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
     private void ActionTypeSelected(Type type)
     {
         m_state = CombatUIState.ActionSelecting;
-        m_actionView.ShowActionsOfType(type, m_currentActor.Actions);
+        m_actionView.ShowActionsOfType(type, m_currentActor.Actions, m_currentActor);
     }
     private void ActionSelected(CombatAction action)
     {
