@@ -192,7 +192,7 @@ MonoBehaviour:
     m_attackOffset: 2.5
   m_conditionFlag: 
   m_setFlag: flag_testWonBattle
-  m_areaID: c985da7f-cfa0-4c3b-8a6b-eca9ea73029a
+  m_areaID: 4f1c7bc5-7ea0-4f1b-968e-5d219a1634d8
 --- !u!65 &6757304353328434931
 BoxCollider:
   m_ObjectHideFlags: 0
