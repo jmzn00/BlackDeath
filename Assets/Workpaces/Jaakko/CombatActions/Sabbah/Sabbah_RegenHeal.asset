@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65f161edcf478ca46bc930f75680de10, type: 3}
   m_Name: Sabbah_RegenHeal
   m_EditorClassIdentifier: Assembly-CSharp::SkillAction
-  actionName: Regen
-  description: Apply 10 health regen on all allies for 4 turns
+  actionName: Regeneration
+  description: 
   apCost: 4
   animationClip: {fileID: 7400000, guid: 7aea40f2fc8dee84583fa268e56bcfc3, type: 2}
   grantsApOnUse: 0

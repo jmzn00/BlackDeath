@@ -10,24 +10,24 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 65f161edcf478ca46bc930f75680de10, type: 3}
-  m_Name: Basselios_Skill_MultiAttack
+  m_Name: Bassselios_Skill_RushStab
   m_EditorClassIdentifier: Assembly-CSharp::SkillAction
-  actionName: Raging Slash
-  description: Multislash against single enemy
-  apCost: 6
-  animationClip: {fileID: 7400000, guid: 8d3a61d54d33c3144970f0e9d54ec64a, type: 2}
+  actionName: Slice of Life
+  description: 
+  apCost: 3
+  animationClip: {fileID: 7400000, guid: 24797361e8d684a41a9490a63d3cbc5b, type: 2}
   grantsApOnUse: 0
-  baseDamage: 20
+  baseDamage: 14
   confirmDamageMultipler: 1.2
-  confirmPerfectMultiplier: 1.8
+  confirmPerfectMultiplier: 1.5
   confirmPerfectFraction: 0.65
   AppliedEffects: []
   targetType: 3
   isReactive: 1
   transitionSound: {fileID: 0}
-  attackSound: {fileID: 0}
-  strikeSound: {fileID: 8300000, guid: 44c2d2f000c1a4586ab6225f6d060e82, type: 3}
-  useHumanFootsteps: 1
+  attackSound: {fileID: 8300000, guid: d07027292c92847209f7f4b58dbf7bde, type: 3}
+  strikeSound: {fileID: 8300000, guid: 5afd963bdced54d3aa821debb418ff7a, type: 3}
+  useHumanFootsteps: 0
   damage: 0
   bonusDamageOnSuccess: 0
   targetEffects: []

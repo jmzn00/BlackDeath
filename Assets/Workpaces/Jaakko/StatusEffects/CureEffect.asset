@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CureStatusEffect
   <duration>k__BackingField: 1
   <damage>k__BackingField: 0
-  <heal>k__BackingField: 0
+  <heal>k__BackingField: 10
   <displayName>k__BackingField: CureEffect
   <isStackable>k__BackingField: 0
   <statusEffectSprite>k__BackingField: {fileID: -569601670, guid: aa97425742e4c774d82ae6e50fe04072, type: 3}

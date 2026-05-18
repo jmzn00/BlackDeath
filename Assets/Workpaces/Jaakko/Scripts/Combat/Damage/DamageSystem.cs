@@ -51,6 +51,8 @@ public class DamageSystem : CombatSystemBase
                 break;
             case ActionResult.Parried:
                 ApplyDamage(a.baseDamage, ctx.PrimaryTarget, ctx.Source);
+                if (ctx.PrimaryTarget.Team == Team.Player)
+                    ctx.PrimaryTarget.AddActionPoints(1);
                 break;
             case ActionResult.Dodged:
                 
