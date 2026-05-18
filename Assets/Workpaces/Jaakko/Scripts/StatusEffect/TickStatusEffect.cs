@@ -8,12 +8,12 @@ public class TickStatusEffect : ActorStatusEffect
         base.OnApply(instance);
     }
     public override void OnTurnStart(StatusEffectInstance instance)
-    {        
+    {
+        instance.TickDuration();
         base.OnTurnStart(instance);
     }
     public override void OnTurnEnd(StatusEffectInstance instance)
     {
-        instance.TickDuration();     
         base.OnTurnEnd(instance);
     }
     public override void OnExpire(StatusEffectInstance instance)

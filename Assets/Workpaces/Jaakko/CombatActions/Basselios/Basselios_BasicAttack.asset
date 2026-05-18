@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ce69bea004d10248b490ecd7d16709b, type: 3}
   m_Name: Basselios_BasicAttack
   m_EditorClassIdentifier: Assembly-CSharp::AttackAction
-  actionName: BasicAttack
+  actionName: Slash
   description: 
   apCost: 0
   animationClip: {fileID: 7400000, guid: 37ac6af3d261aca4cb7698bb7824edbc, type: 2}

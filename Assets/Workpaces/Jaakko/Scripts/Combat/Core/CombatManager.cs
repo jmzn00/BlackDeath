@@ -165,6 +165,15 @@ public class CombatManager : ManagerBase
         m_context.SetCurrentActor(actor);
         m_context.AdvanceTurn();
 
+        if (actor.IsDead)
+        {
+            if (CheckEnd())
+                EndCombat();
+            else
+                NextTurn();
+            return;
+        }
+
         m_container.Resolve<ActionSystem>().TurnStarted();
     }
 
