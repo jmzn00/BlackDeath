@@ -28,6 +28,7 @@ public class ActionView : UIViewBase
 
     private Dictionary<Type, Button> m_typeButtons;
     private Dictionary<CombatActionButton, Button> m_actionButtons;
+
     public override void Init() 
     {
         m_typeButtons = new();
@@ -94,7 +95,7 @@ public class ActionView : UIViewBase
             }
         }                
     }
-    public void ShowActionsOfType(Type type, List<CombatAction> actions) 
+    public void ShowActionsOfType(Type type, List<CombatAction> actions, CombatActor actor) 
     {
         HideTypeButtons();
         HideActionButtons();
@@ -118,7 +119,7 @@ public class ActionView : UIViewBase
             CombatActionButton cab = pair.Key;
             Button button = pair.Value;
 
-            cab.UpdateAction(action);
+            cab.UpdateAction(action, actor);
 
             button.onClick.RemoveAllListeners();
             button.onClick.AddListener(() =>
