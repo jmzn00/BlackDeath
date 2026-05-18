@@ -107,6 +107,9 @@ public class ActionSystem : CombatSystemBase
         // do not open / close the window
 
         Debug.Log($"{m_currentAction.Action.actionName} finished. Reactive: {m_currentAction.Action.isReactive}");
+
+        ActionContext current = m_currentAction;
+
         if (!m_currentAction.Action.isReactive) 
         {
             OnActionResolved?.Invoke(m_currentAction, ActionResult.Confirmed);
@@ -116,8 +119,8 @@ public class ActionSystem : CombatSystemBase
         CombatEvents.TurnEnded(m_currentAction.Source);
         CombatEvents.ActionFinished(m_currentAction);
 
-        OnActionFinished?.Invoke(m_currentAction);
         m_currentAction = null;
+        OnActionFinished?.Invoke(current);
     }
     public void TurnStarted()
     {
@@ -140,6 +143,7 @@ public class ActionSystem : CombatSystemBase
         if (m_currentAction != null)
         {
             Debug.LogWarning("Cannot Submit Action, Action already Set");
+            Debug.LogWarning($"Current Action is {m_currentAction.Action.actionName}");
             return;
         }
 

@@ -10,11 +10,12 @@ public class CombatActionButton : MonoBehaviour
 
     public void UpdateAction(CombatAction action) 
     {
-        
         m_actionNameText.text = action.actionName;
 
         string description = $"Applies {action.baseDamage} damage with " +
             $"multiplier {action.confirmDamageMultipler} on confirm.";
+
+        description += $" Costs {action.apCost} AP";
 
         if (action.AppliedEffects.Count > 0) 
         {
@@ -22,19 +23,9 @@ public class CombatActionButton : MonoBehaviour
             foreach (var e in action.AppliedEffects) 
             {
                 description += $"{e.displayName} for {e.duration} turns.";
-
-                if (e.isStackable) 
-                {
-                    description += $"{e.displayName} can be stacked";
-                }
-                else 
-                {
-                    description += $"{e.displayName} can not be stacked";
-                }
-            }
+            }            
         }
         m_actionDesciptionText.text = description;
-        name = "Button " + action.actionName;
-        
+        name = "Button " + action.actionName;        
     }
 }

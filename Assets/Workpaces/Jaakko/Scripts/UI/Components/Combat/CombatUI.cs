@@ -228,6 +228,8 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
         }
         m_currentActor.
             ActionProvider.SetAction(ctx);
+
+        Debug.Log($"{m_currentActor.name} Set Action, {ctx.Action.actionName}");
         m_targetView.Hide();
     }
     private void GoBack()
@@ -250,11 +252,17 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
     private void TurnStart(CombatActor actor)
     {
         if (actor.Team == Team.Enemy) return;
-        
-        
+                
         m_currentActor = actor;
         m_currentAction = null;
         m_currentTarget = null;
+
+        if (m_currentActor.HasEffect<StunStatusEffect>()) 
+        {
+            m_currentAction = m_currentActor.SkipAction;
+            SubmitAction();
+            return;
+        }
 
         m_actionView.View();
         m_actionView.SetPosition(actor.transform.position);
