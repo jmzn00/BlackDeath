@@ -25,16 +25,13 @@ public class CombatActionButton : MonoBehaviour
             }            
         }
         m_actionDesciptionText.text = description;
+        m_apCostText.text = action.apCost.ToString();
 
-        if (action.apCost > 0)
-        {
-            m_apCostText.text = action.apCost.ToString();
+        bool hasAp = action.apCost <= actor.ActionPoints;
 
-            bool hasAp = action.apCost <= actor.ActionPoints;
+        m_apCostText.color = hasAp ? Color.green : Color.red;
+        Debug.Log($"HasAp {hasAp}");
 
-            m_apCostText.color = hasAp ? Color.green : Color.red;
-            Debug.Log($"HasAp {hasAp}");
-        }
         name = "Button " + action.actionName;        
     }
 }
