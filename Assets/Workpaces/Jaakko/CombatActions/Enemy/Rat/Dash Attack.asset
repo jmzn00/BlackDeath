@@ -17,9 +17,9 @@ MonoBehaviour:
   apCost: 0
   animationClip: {fileID: 7400000, guid: 283c51a397d1fc74cab650d35e9ee5c1, type: 2}
   grantsApOnUse: 0
-  baseDamage: 10
-  confirmDamageMultipler: 2
-  confirmPerfectMultiplier: 1.5
+  baseDamage: 14
+  confirmDamageMultipler: 1
+  confirmPerfectMultiplier: 1
   confirmPerfectFraction: 0.65
   AppliedEffects:
   - {fileID: 11400000, guid: 1e00e8df307b0d9469d906410a575a8e, type: 2}
@@ -28,6 +28,7 @@ MonoBehaviour:
   transitionSound: {fileID: 8300000, guid: 235cd19f6539543eb915bd97b267a228, type: 3}
   attackSound: {fileID: 0}
   strikeSound: {fileID: 0}
+  useHumanFootsteps: 0
   damage: 1
   bonusDamageOnSuccess: 1
   ApAmount: 1

@@ -149,6 +149,7 @@ public class CombatArea : MonoBehaviour
                 
                 break;
         }
+        Destroy(gameObject);
     }
     public void StartCombat()
     {        

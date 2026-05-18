@@ -228,7 +228,8 @@ public class CombatActor : MonoBehaviour, IActorComponent, IDamageSource
         if (m_action == null)
             m_action = m_combatManager.Container.Resolve<ActionSystem>();
 
-        AddActionPoints(m_maxActionPoints);
+        m_actionPoints = Mathf.Min(Team == Team.Player ? 2 : m_maxActionPoints, m_maxActionPoints);
+        OnActionPointsChanged?.Invoke(m_actionPoints);
     }
     public virtual void CombatEnded(CombatResult result) 
     {        

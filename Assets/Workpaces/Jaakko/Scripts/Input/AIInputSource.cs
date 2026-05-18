@@ -45,6 +45,9 @@ public class AIInputSource : IInputSource
 
         state.InputDirection = new Vector2(localDir.x, localDir.z);
 
+        float distSq = (m_target.position - m_actor.position).sqrMagnitude;
+        state.RunHeld = distSq > 9f;
+
         return state;
     }
 }

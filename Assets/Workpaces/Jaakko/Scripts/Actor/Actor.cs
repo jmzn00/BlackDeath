@@ -113,7 +113,10 @@ public class Actor : MonoBehaviour, IActor
                 if (am != null && am.CurrentControlled == this)
                     ChangeComponentInputSource(m_playerInputSource);
                 else
+                {
+                    m_aiInputSource.SetTarget(am.CurrentControlled.transform);
                     ChangeComponentInputSource(m_aiInputSource);
+                }
             }
             else
             {

@@ -17,9 +17,9 @@ MonoBehaviour:
   apCost: 0
   animationClip: {fileID: 7400000, guid: 37ac6af3d261aca4cb7698bb7824edbc, type: 2}
   grantsApOnUse: 0
-  baseDamage: 12
+  baseDamage: 8
   confirmDamageMultipler: 1.2
-  confirmPerfectMultiplier: 1.8
+  confirmPerfectMultiplier: 1.5
   confirmPerfectFraction: 0.65
   AppliedEffects: []
   targetType: 3
