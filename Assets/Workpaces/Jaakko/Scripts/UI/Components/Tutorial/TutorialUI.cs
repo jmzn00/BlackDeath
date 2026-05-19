@@ -16,4 +16,10 @@ public class TutorialUI : UIComponentBase<TutorialGroup>
         else
             m_group.HideAll();
     }
+
+    public override bool OnSubmit()
+    {
+        Toggle(false);
+        return true;
+    }
 }

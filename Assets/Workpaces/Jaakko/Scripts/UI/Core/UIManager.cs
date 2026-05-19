@@ -78,11 +78,6 @@ public class UIManager : ManagerBase
                 m_uiController.ShowComponent<MainMenuUI>(true);
                 return true;
             case UIInputAction.Submit:
-                if (m_uiController.IsVisible<TutorialUI>()) 
-                {
-                    m_uiController.ShowComponent<TutorialUI>(false);
-                    return true;
-                }               
                 return false;
             default:
                 return false;

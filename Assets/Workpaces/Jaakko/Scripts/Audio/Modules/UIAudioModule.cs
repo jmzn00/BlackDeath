@@ -9,6 +9,7 @@ public class UIAudioModule : AudioModuleBase
 
     public override void Activate()
     {
+        if (m_active) return;
         base.Activate();
         m_source = m_audio.Controller.UISource;
         m_config = m_audio.Controller.UISFX;
@@ -18,7 +19,13 @@ public class UIAudioModule : AudioModuleBase
         GameEvents.OnUINavigate += OnNavigate;
     }
 
-    public override void Deactivate() { }
+    public override void Deactivate()
+    {
+        base.Deactivate();
+        GameEvents.OnUIConfirm  -= OnConfirm;
+        GameEvents.OnUICancel   -= OnCancel;
+        GameEvents.OnUINavigate -= OnNavigate;
+    }
 
     public override void Update(float dt) { }
 

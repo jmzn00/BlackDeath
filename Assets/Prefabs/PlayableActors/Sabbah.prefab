@@ -2841,7 +2841,7 @@ GameObject:
   - component: {fileID: 8360358422550261991}
   m_Layer: 6
   m_Name: Sabbah
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

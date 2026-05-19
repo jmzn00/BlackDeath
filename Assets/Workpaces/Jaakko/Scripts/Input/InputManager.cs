@@ -142,11 +142,9 @@ public class InputManager : ManagerBase
         m_uiInputState.CancelPressed =
             m_inputActions.UI.Cancel.WasPressedThisFrame();
 
-        if (m_inputActions.UI.Submit.WasPressedThisFrame()) 
+        m_uiInputState.SubmitPressed = m_inputActions.UI.Submit.WasPressedThisFrame();
+        if (m_uiInputState.SubmitPressed)
         {
-            m_uiInputState.SubmitPressed =
-            m_inputActions.UI.Submit.WasPressedThisFrame();
-
             OnUIInputAction?.Invoke(UIInputAction.Submit);
         }
         

@@ -102,7 +102,7 @@ Transform:
   m_GameObject: {fileID: 4565832294483301445}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.1, y: 9.85, z: 0}
+  m_LocalPosition: {x: 2.28, y: 9.89, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -308,14 +308,13 @@ GameObject:
   - component: {fileID: 757130338736482871}
   - component: {fileID: 3198172837958669775}
   - component: {fileID: 8681587685500809059}
-  - component: {fileID: 4184719319971826959}
-  - component: {fileID: 1150977804664838214}
-  - component: {fileID: 3737589589554500310}
   - component: {fileID: 1059427666897710142}
-  - component: {fileID: 8027744719888331703}
   - component: {fileID: 8649757380453092170}
+  - component: {fileID: 6854122135224864076}
+  - component: {fileID: 7172464170725332048}
+  - component: {fileID: 1810283582848467659}
   m_Layer: 0
-  m_Name: FanaticVillager
+  m_Name: FanaticVillagerNPC
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -380,64 +379,6 @@ MonoBehaviour:
   m_dodge: {fileID: 0}
   m_transition: {fileID: 7400000, guid: bcd28d65e0398b54abf3216e22009118, type: 2}
   isInTurn: 0
---- !u!114 &4184719319971826959
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5758744524229300783}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 80c1c75e03f205d42aab4767c478f87e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::HealthComponent
-  ch: 0
-  m_maxHealth: 75
---- !u!114 &1150977804664838214
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5758744524229300783}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7703f0d091e12574c985a35ce98fc52f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::AiActor
-  m_actorID: 8d756dc2-8f47-4dc4-b0b1-cf39d595ce2d
-  m_team: 1
-  m_controlType: 1
-  m_trackingTarget: {fileID: 4672786338507661158}
-  actorSprite: {fileID: -2917373411362216977, guid: 271528420f77b0844a8f322d604f755c, type: 3}
---- !u!114 &3737589589554500310
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5758744524229300783}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d8931c9d27803dc488d26d7f2c67d9a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::AICombatActor
-  m_visual: {fileID: 632873740022171218}
-  m_actions:
-  - {fileID: 11400000, guid: f3b71fd51aae8ec4781640265ad957b9, type: 2}
-  - {fileID: 11400000, guid: 7bd1c35fbefb7b3438277af5778813a5, type: 2}
-  - {fileID: 11400000, guid: 0dbbd21e8b65677469967d7e7b4a8fd9, type: 2}
-  m_displayName: Fanatic Villager
-  m_maxActionPoints: 0
-  m_reactionSettings:
-    dodgePercentage: 10
-    parryPercentage: 0
-    confirmPercentage: 100
-  m_actionBehaviours:
-  - {fileID: 11400000, guid: f6e23ee59cf2ae44498d3e6986272651, type: 2}
-  m_targetingBehaviours:
-  - {fileID: 11400000, guid: cb1ef68f319351143a3f56762ecde7db, type: 2}
 --- !u!114 &1059427666897710142
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -459,20 +400,6 @@ MonoBehaviour:
   m_blobScale: 4
   m_fadeHeight: 0.5
   m_shadowSortingOrder: -1
---- !u!114 &8027744719888331703
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5758744524229300783}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f7115fc7a8c586747873db663a8fe6b6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::HealthBarSpawner
-  m_anchor: {fileID: 1005710269347723827}
-  m_prefab: {fileID: 2674936422528750418, guid: 1beee482bce1e1e408d1573b652d6b25, type: 3}
 --- !u!135 &8649757380453092170
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -494,6 +421,61 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &6854122135224864076
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5758744524229300783}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2698d358fc738f44fb93f01a13316e1c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NPCInteraction
+  m_text: Hello!
+  m_anchor: {fileID: 8460245961171643377}
+  m_bubblePrefab: {fileID: 7426253855518740505, guid: 206fd6d6cfaff094fa24fd8ca88ab026, type: 3}
+  m_triggerRadius: 5
+--- !u!114 &7172464170725332048
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5758744524229300783}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 018f890d9c1cfb34f926ea827b44e9f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Actor
+  m_actorID: 7393ec8d-83c3-485b-a66a-88994fb1f422
+  m_team: 2
+  m_controlType: 1
+  m_trackingTarget: {fileID: 4672786338507661158}
+  actorSprite: {fileID: 0}
+--- !u!114 &1810283582848467659
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5758744524229300783}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8931c9d27803dc488d26d7f2c67d9a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AICombatActor
+  m_visual: {fileID: 632873740022171218}
+  m_actions: []
+  m_displayName: 
+  m_maxActionPoints: 0
+  m_reactionSettings:
+    dodgePercentage: 0
+    parryPercentage: 0
+    confirmPercentage: 0
+  m_actionBehaviours: []
+  m_targetingBehaviours: []
 --- !u!1 &6079320455359159318
 GameObject:
   m_ObjectHideFlags: 0

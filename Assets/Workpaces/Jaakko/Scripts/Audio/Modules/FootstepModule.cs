@@ -17,6 +17,7 @@ public class FootstepModule : AudioModuleBase
 
     public override void Activate()
     {
+        if (m_active) return;
         m_source = m_audio.Controller.CombatSouce;
         m_bank   = m_audio.Controller.HumanFootstepBank;
         m_active = true;
@@ -29,7 +30,11 @@ public class FootstepModule : AudioModuleBase
 
     public override void Deactivate()
     {
-        // Intentionally empty — state managed via SetGameState
+        m_active = false;
+        CombatEvents.OnActionSubmitted  -= OnActionSubmitted;
+        CombatEvents.OnTransitionEnded  -= OnTransitionEnded;
+        GameEvents.OnPlayerMoved        -= OnPlayerMoved;
+        GameEvents.OnPlayerRunChanged   -= OnRunChanged;
     }
 
     public void SetGameState(GameState state)

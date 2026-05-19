@@ -69,10 +69,14 @@ public class AudioManager : ManagerBase
         {
             case GameState.Combat:
                 GetModule<CombatAudioModule>()?.Activate();
+                GetModule<FootstepModule>()?.Activate();
                 break;
             case GameState.Dialogue:
+                GetModule<UIAudioModule>()?.Activate();
                 break;
             case GameState.None:
+                GetModule<FootstepModule>()?.Activate();
+                GetModule<UIAudioModule>()?.Activate();
                 break;
         }
 
