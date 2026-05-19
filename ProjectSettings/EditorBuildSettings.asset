@@ -10,7 +10,7 @@ EditorBuildSettings:
     guid: 1b4ac8a3e7debe5448a9998f287afb9b
   - enabled: 1
     path: Assets/Workpaces/Jaakko/Scenes/Scene_Gameplay.unity
-    guid: 1f08cf98823cb8647b59911e9045d27f
+    guid: e1c8fc49ef1a4e344a1d3fdbe80fff99
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0
