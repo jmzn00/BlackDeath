@@ -41,6 +41,11 @@ public class UIManager : ManagerBase
         IsReady = false;
         m_uiController.SceneChanged(data);
         SetReady();
+
+        if (data.IsGameplay) 
+        {
+            m_uiController.ShowComponent<TutorialUI>(true);
+        }
     }
     public override bool Dispose()
     {
@@ -72,10 +77,17 @@ public class UIManager : ManagerBase
 
                 m_uiController.ShowComponent<MainMenuUI>(true);
                 return true;
+            case UIInputAction.Submit:
+                if (m_uiController.IsVisible<TutorialUI>()) 
+                {
+                    m_uiController.ShowComponent<TutorialUI>(false);
+                    return true;
+                }               
+                return false;
             default:
                 return false;
         }
-    }
+    }    
     private void OnGameStateChanged(GameState state)
     {
         switch (state)

@@ -40,6 +40,16 @@ public class UIController : MonoBehaviour
             ShowComponent<MainMenuUI>(true);
         }
     }
+    public bool IsVisible<T>() where T : IUIComponent 
+    {
+        var comp = m_uiComponents.OfType<T>().FirstOrDefault();
+        if (comp != null) 
+        {
+            return comp.IsVisible();
+        }
+        return false;
+
+    }
     public void ShowComponent<T>(bool show) where T : IUIComponent
     {
         var comp = m_uiComponents.OfType<T>().FirstOrDefault();

@@ -136,13 +136,19 @@ public class InputManager : ManagerBase
             m_inputActions.Combat.Dodge.WasPressedThisFrame();
     }
     private void HandleUIInput() 
-    {
-        m_uiInputState.SubmitPressed =
-            m_inputActions.UI.Submit.WasPressedThisFrame();
+    {        
         m_uiInputState.SubmitReleased = 
             !m_inputActions.UI.Submit.IsPressed();
         m_uiInputState.CancelPressed =
             m_inputActions.UI.Cancel.WasPressedThisFrame();
+
+        if (m_inputActions.UI.Submit.WasPressedThisFrame()) 
+        {
+            m_uiInputState.SubmitPressed =
+            m_inputActions.UI.Submit.WasPressedThisFrame();
+
+            OnUIInputAction?.Invoke(UIInputAction.Submit);
+        }
         
         if (m_inputActions.UI.OpenMenu.WasPressedThisFrame()) 
         {
