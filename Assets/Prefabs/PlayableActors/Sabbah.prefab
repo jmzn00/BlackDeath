@@ -2926,10 +2926,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c246a3f1bf280643b859a9da5b901e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MovementController
-  m_defaultLayer:
-    serializedVersion: 2
-    m_Bits: 1
-  m_visualCapsule: {fileID: 899935035846688040}
   m_playerStats:
     WalkSpeed: 3
     RunSpeed: 5
@@ -2959,6 +2955,7 @@ MonoBehaviour:
     SecondWallJumpStaminaCost: 0
     WallJumpStaminaCost: 0
     ConsecutiveWallJumpStaminaCostMultiplier: 0
+  m_visualCapsule: {fileID: 899935035846688040}
 --- !u!114 &235847617929029359
 MonoBehaviour:
   m_ObjectHideFlags: 0

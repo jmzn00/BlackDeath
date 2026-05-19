@@ -492,6 +492,7 @@ GameObject:
   - component: {fileID: 4152186637767229355}
   - component: {fileID: -2854691987104007566}
   - component: {fileID: 4348074537858673611}
+  - component: {fileID: 6111817344662291944}
   m_Layer: 0
   m_Name: FanaticVillager_Leader
   m_TagString: Untagged
@@ -553,6 +554,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AnimatorComponent
   m_idle: {fileID: 7400000, guid: d35f6297425bc6048b20c6e0d6dfcbe7, type: 2}
   m_walk: {fileID: 7400000, guid: 5ec48817f2b047342bf6f884353b74d2, type: 2}
+  m_run: {fileID: 0}
   m_combatIdle: {fileID: 7400000, guid: d35f6297425bc6048b20c6e0d6dfcbe7, type: 2}
   m_parry: {fileID: 0}
   m_dodge: {fileID: 0}
@@ -636,6 +638,51 @@ MonoBehaviour:
   m_blobScale: 8
   m_fadeHeight: 0.5
   m_shadowSortingOrder: -1
+--- !u!114 &6111817344662291944
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7033920502150300334}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7115fc7a8c586747873db663a8fe6b6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HealthBarSpawner
+  m_anchor: {fileID: 1376280131895537518}
+  m_prefab: {fileID: 2674936422528750418, guid: 1beee482bce1e1e408d1573b652d6b25, type: 3}
+--- !u!1 &7218590167925627478
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1376280131895537518}
+  m_Layer: 0
+  m_Name: HpAnchor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1376280131895537518
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7218590167925627478}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.06, y: 8.96, z: 0}
+  m_LocalScale: {x: 3.3333328, y: 3.3333328, z: 3.3333328}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 757449652028061309}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7496464386689159434
 GameObject:
   m_ObjectHideFlags: 0
@@ -1038,6 +1085,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -7552582706839291426, guid: ded315b627f472b408a7efb124abf04f, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7840929604071449925}
+    - targetCorrespondingSourceObject: {fileID: -7552582706839291426, guid: ded315b627f472b408a7efb124abf04f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1376280131895537518}
     - targetCorrespondingSourceObject: {fileID: 4257508509235537429, guid: ded315b627f472b408a7efb124abf04f, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4173421604016581660}

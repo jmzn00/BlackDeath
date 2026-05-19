@@ -16,12 +16,13 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
     private CombatManager m_combat;
 
     private ActionView m_actionView;
-    private TargetView m_targetView;
     private DamageView m_damageView;
     private ReactionView m_reactionView;
     private StatusView m_statusView;
     private ResultView m_resultView;
     private AnnouncementView m_announcementView;
+
+    private ActorHealthBar m_highlightedBar;
 
     private CombatActor m_currentActor;
 
@@ -40,7 +41,6 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
         m_combat = game.Resolve<CombatManager>();
 
         m_actionView = group.Get<ActionView>();
-        m_targetView = group.Get<TargetView>();
         m_damageView = group.Get<DamageView>();
         m_reactionView = group.Get<ReactionView>();
         m_statusView = group.Get<StatusView>();
@@ -153,6 +153,11 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
     {
         m_statusView.ActorDied(actor);
     }
+    private void ClearTargetHighlight()
+    {
+        m_highlightedBar?.SetHighlighted(false);
+        m_highlightedBar = null;
+    }
     private void SelectTarget(float value)
     {
         if (m_game.State != GameState.Combat) return;
@@ -192,8 +197,9 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
         }
 
         m_currentTarget = validTargets[m_currentTargetIndex];
-        m_targetView.ChangeTarget(m_currentTarget);
-        m_targetView.SetPosition(m_currentTarget.transform.position);
+        ClearTargetHighlight();
+        m_highlightedBar = m_currentTarget.GetComponentInChildren<ActorHealthBar>();
+        m_highlightedBar?.SetHighlighted(true);
 
         CameraAnimationEvents.NotifyTargetChanged(m_currentTarget.Target);
         CombatEvents.ActorTargetChanged(m_currentActor, m_currentTarget);
@@ -230,7 +236,7 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
             ActionProvider.SetAction(ctx);
 
         Debug.Log($"{m_currentActor.name} Set Action, {ctx.Action.actionName}");
-        m_targetView.Hide();
+        ClearTargetHighlight();
     }
     private void GoBack()
     {
@@ -286,7 +292,7 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
         m_currentActor = null;
 
         m_actionView.Hide();
-        m_targetView.Hide();
+        ClearTargetHighlight();
 
         m_actionView.OnActionTypeSelected -= ActionTypeSelected;
         m_actionView.OnActionSelected -= ActionSelected;
@@ -322,7 +328,6 @@ public class CombatUI : UIComponentBase<CombatUIViewGroup>
                 break;
             case TargetType.Enemy:
             case TargetType.Ally:
-                m_targetView.View();
                 CombatEvents.ActorStateChanged(m_currentActor, CombatActorState.Targeting);
                 m_state = CombatUIState.TargetSelecting;
                 m_currentTargetIndex = 0;
