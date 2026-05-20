@@ -433,6 +433,7 @@ Transform:
   - {fileID: 7885814988000868634}
   - {fileID: 4266567595946747290}
   - {fileID: 8417883587592521099}
+  - {fileID: 5951615707199056215}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &5408141083672164264
@@ -524,7 +525,9 @@ MonoBehaviour:
   m_actions:
   - {fileID: 11400000, guid: a766e0fe4293df04e837678800378648, type: 2}
   m_displayName: Plagued Rat
+  m_preCombatLines: []
   m_maxActionPoints: 0
+  m_speechBubbleAnchor: {fileID: 5951615707199056215}
   m_reactionSettings:
     dodgePercentage: 10
     parryPercentage: 0
@@ -2197,6 +2200,37 @@ MonoBehaviour:
     m_Extent: {x: 0.34500015, y: 0.57874775, z: 0}
   m_AlwaysUpdate: 1
   m_AutoRebind: 0
+--- !u!1 &7286560977384867870
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5951615707199056215}
+  m_Layer: 0
+  m_Name: SpeechBubbleAnchor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5951615707199056215
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7286560977384867870}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 2, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 9200920035006019682}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7444952941387808418
 GameObject:
   m_ObjectHideFlags: 0

@@ -3005,6 +3005,7 @@ MonoBehaviour:
   m_actorID: e26135c6-4912-48f4-9018-5464a010f316
   m_team: 0
   m_controlType: 0
+  m_isDefaultControlled: 0
   m_trackingTarget: {fileID: 5596600506821568861}
   actorSprite: {fileID: 687447985770701780, guid: 3635139300d2996419e449b224c4df4a, type: 3}
 --- !u!114 &5225474487877745728
@@ -3026,7 +3027,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: dd13382c071febf4e91e1568201f3d61, type: 2}
   - {fileID: 11400000, guid: 0b680f8c2b5afc04fb127982d3614a5d, type: 2}
   m_displayName: Sabbah
+  m_preCombatLines: []
   m_maxActionPoints: 6
+  m_speechBubbleAnchor: {fileID: 0}
 --- !u!114 &8360358422550261991
 MonoBehaviour:
   m_ObjectHideFlags: 0

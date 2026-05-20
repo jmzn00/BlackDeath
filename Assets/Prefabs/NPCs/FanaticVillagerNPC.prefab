@@ -313,6 +313,7 @@ GameObject:
   - component: {fileID: 6854122135224864076}
   - component: {fileID: 7172464170725332048}
   - component: {fileID: 1810283582848467659}
+  - component: {fileID: -8289963957279318867}
   m_Layer: 0
   m_Name: FanaticVillagerNPC
   m_TagString: Untagged
@@ -410,16 +411,16 @@ SphereCollider:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.5
+  m_Radius: 7.52
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &6854122135224864076
 MonoBehaviour:
@@ -436,7 +437,7 @@ MonoBehaviour:
   m_text: Hello!
   m_anchor: {fileID: 8460245961171643377}
   m_bubblePrefab: {fileID: 7426253855518740505, guid: 206fd6d6cfaff094fa24fd8ca88ab026, type: 3}
-  m_triggerRadius: 5
+  m_triggerRadius: 8
 --- !u!114 &7172464170725332048
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -449,9 +450,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 018f890d9c1cfb34f926ea827b44e9f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Actor
-  m_actorID: 7393ec8d-83c3-485b-a66a-88994fb1f422
+  m_actorID: a37d3e18-8c92-42ff-9d90-703e3f45e63d
   m_team: 2
   m_controlType: 1
+  m_isDefaultControlled: 0
   m_trackingTarget: {fileID: 4672786338507661158}
   actorSprite: {fileID: 0}
 --- !u!114 &1810283582848467659
@@ -469,13 +471,29 @@ MonoBehaviour:
   m_visual: {fileID: 632873740022171218}
   m_actions: []
   m_displayName: 
+  m_preCombatLines: []
   m_maxActionPoints: 0
+  m_speechBubbleAnchor: {fileID: 8460245961171643377}
   m_reactionSettings:
     dodgePercentage: 0
     parryPercentage: 0
     confirmPercentage: 0
   m_actionBehaviours: []
   m_targetingBehaviours: []
+--- !u!114 &-8289963957279318867
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5758744524229300783}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80c1c75e03f205d42aab4767c478f87e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HealthComponent
+  ch: 0
+  m_maxHealth: 5
 --- !u!1 &6079320455359159318
 GameObject:
   m_ObjectHideFlags: 0

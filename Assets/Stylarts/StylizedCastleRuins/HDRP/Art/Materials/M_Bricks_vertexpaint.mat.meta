@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: f47be8b530a5bde4496df0572eb114b6
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 333790
+  packageName: Stylized Castle Ruins
+  packageVersion: 1.0
+  assetPath: Assets/Stylarts/StylizedCastleRuins/HDRP/Art/Materials/M_Bricks_vertexpaint.mat
+  uploadId: 790042

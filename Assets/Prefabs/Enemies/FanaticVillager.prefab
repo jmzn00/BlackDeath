@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &290573457491815655
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3976149464697653383}
+  m_Layer: 0
+  m_Name: SpeechBubbleAnchor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3976149464697653383
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 290573457491815655}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 2.3, y: 9.999999, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 757130338736482871}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &650288711837084089
 GameObject:
   m_ObjectHideFlags: 0
@@ -336,6 +367,7 @@ Transform:
   m_Children:
   - {fileID: 1729508172084452913}
   - {fileID: 4672786338507661158}
+  - {fileID: 3976149464697653383}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &3198172837958669775
@@ -429,7 +461,10 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 7bd1c35fbefb7b3438277af5778813a5, type: 2}
   - {fileID: 11400000, guid: 0dbbd21e8b65677469967d7e7b4a8fd9, type: 2}
   m_displayName: Fanatic Villager
+  m_preCombatLines:
+  - OUTSIDER !!
   m_maxActionPoints: 0
+  m_speechBubbleAnchor: {fileID: 3976149464697653383}
   m_reactionSettings:
     dodgePercentage: 10
     parryPercentage: 0

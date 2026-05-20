@@ -6,6 +6,7 @@ public class CombatOcclusionHandler : MonoBehaviour
     [SerializeField] private LayerMask m_buildingLayer;
     [SerializeField] private Behaviour m_deoccluder;
     [SerializeField] private float m_hideRadius = 20f;
+    [SerializeField] private bool m_hideAllInRadius = false;
 
     private readonly List<Renderer> m_hiddenRenderers = new();
 
@@ -27,6 +28,9 @@ public class CombatOcclusionHandler : MonoBehaviour
 
         if (m_deoccluder != null) m_deoccluder.enabled = false;
 
+        Camera cam = Camera.main;
+        if (cam == null) return;
+
         Vector3 combatCenter = Vector3.zero;
         int count = 0;
         foreach (var actor in actors)
@@ -38,10 +42,17 @@ public class CombatOcclusionHandler : MonoBehaviour
         if (count == 0) return;
         combatCenter /= count;
 
+        Vector3 combatToCamera = cam.transform.position - combatCenter;
+
         foreach (var r in FindObjectsByType<MeshRenderer>(FindObjectsSortMode.None))
         {
             if (!IsOnBuildingLayer(r.transform)) continue;
-            if (Vector3.Distance(r.transform.position, combatCenter) < m_hideRadius)
+            if (Vector3.Distance(r.transform.position, combatCenter) > m_hideRadius) continue;
+
+            bool shouldHide = m_hideAllInRadius ||
+                Vector3.Dot(r.transform.position - combatCenter, combatToCamera) > 0f;
+
+            if (shouldHide)
             {
                 r.enabled = false;
                 m_hiddenRenderers.Add(r);

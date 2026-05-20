@@ -9,6 +9,7 @@ public static class CameraAnimationEvents
     public static event Action<CameraTarget, string> OnCameraEventTriggered;
     public static event Action<CameraTarget> OnTargetChanged;
     public static event Action<float> OnZoomChanged;
+    public static event Action<CameraPresetType> OnPresetChangeRequested;
 
     public static void NotifyCameraEvent(CameraTarget target, string eventName)
     {
@@ -24,4 +25,7 @@ public static class CameraAnimationEvents
     {
         OnZoomChanged?.Invoke(zoom);
     }
+
+    public static void NotifyPresetChange(CameraPresetType preset)
+        => OnPresetChangeRequested?.Invoke(preset);
 }

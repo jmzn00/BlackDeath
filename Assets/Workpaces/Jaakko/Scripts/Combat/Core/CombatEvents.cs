@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using UnityEditor;
 
 public static class CombatEvents
 {
@@ -161,9 +160,18 @@ public static class CombatEvents
         OnActorDied?.Invoke(actor);
     }
     
-    public static void CombatActorsChanged(List<CombatActor> actors) 
+    public static void CombatActorsChanged(List<CombatActor> actors)
     {
         OnCombatActorsChanged?.Invoke(actors);
     }
 
+    // PRE-COMBAT CUTSCENE
+    public static event Action<List<CombatActor>> OnPreCombatCutsceneRequested;
+    public static event Action OnPreCombatCutsceneCompleted;
+
+    public static void PreCombatCutsceneRequested(List<CombatActor> actors)
+        => OnPreCombatCutsceneRequested?.Invoke(actors);
+
+    public static void PreCombatCutsceneCompleted()
+        => OnPreCombatCutsceneCompleted?.Invoke();
 }

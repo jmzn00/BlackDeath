@@ -84,6 +84,7 @@ public class CombatCameraMode : ICameraMode
         // Subscribe to animation events
         CameraAnimationEvents.OnTargetChanged += OnAnimationTargetChanged;
         CameraAnimationEvents.OnZoomChanged += OnAnimationZoomChanged;
+        CameraAnimationEvents.OnPresetChangeRequested += ApplyPreset;
 
         //Debug.Log("CombatCameraMode: All event subscriptions complete");
 
@@ -112,6 +113,7 @@ public class CombatCameraMode : ICameraMode
 
         CameraAnimationEvents.OnTargetChanged -= OnAnimationTargetChanged;
         CameraAnimationEvents.OnZoomChanged -= OnAnimationZoomChanged;
+        CameraAnimationEvents.OnPresetChangeRequested -= ApplyPreset;
 
         m_currentTarget = null;
         m_currentActor = null;
@@ -308,7 +310,7 @@ public class CombatCameraMode : ICameraMode
         else
         {
             m_isTransitioning = false;
-            // Immediately apply even if we don't have a CameraTarget mapped — fall back to actor transform
+            // Immediately apply even if we don't have a CameraTarget mapped ï¿½ fall back to actor transform
             UpdateCinemachineFollow();
             ApplyZoomFromTarget();
             //Debug.Log($"Applied camera preset immediately: {presetType}");
@@ -338,7 +340,7 @@ public class CombatCameraMode : ICameraMode
         }
         else
         {
-            // No CameraTarget found — clear mapping and fallback to actor transform
+            // No CameraTarget found ï¿½ clear mapping and fallback to actor transform
             m_currentTarget = null;
             //Debug.LogWarning($"No CameraTarget found for actor: {actor.name}. Falling back to actor transform.");
             if (m_camera != null)

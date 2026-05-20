@@ -40,11 +40,23 @@ public class MovementController : MonoBehaviour, IActorComponent
         m_controller = GetComponent<CharacterController>();
         m_controller.slopeLimit = 45f;
         m_controller.stepOffset = 0.35f;
+        CombatEvents.OnCombatStarted += FaceRight;
         return true;
     }
 
     public void OnActorComponentsInitialized(Actor actor) { }
-    public bool Dispose() => true;
+
+    public bool Dispose()
+    {
+        CombatEvents.OnCombatStarted -= FaceRight;
+        return true;
+    }
+
+    private void FaceRight()
+    {
+        if (m_visualCapsule != null)
+            m_visualCapsule.transform.rotation = Quaternion.Euler(0, 180, 0);
+    }
     public void SaveData(ActorSaveData data) { }
 
     public void LoadData(ActorSaveData data)

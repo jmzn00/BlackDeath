@@ -516,6 +516,7 @@ Transform:
   - {fileID: 7342933736329140022}
   - {fileID: 757449652028061309}
   - {fileID: 5065800609448104997}
+  - {fileID: 6037981671476271999}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &2175430789103840289
@@ -589,6 +590,7 @@ MonoBehaviour:
   m_actorID: 54961730-f0f7-4345-bdba-2e0ccbee4913
   m_team: 1
   m_controlType: 1
+  m_isDefaultControlled: 0
   m_trackingTarget: {fileID: 7342933736329140022}
   actorSprite: {fileID: -6112862246468563634, guid: ded315b627f472b408a7efb124abf04f, type: 3}
 --- !u!114 &-2854691987104007566
@@ -608,7 +610,12 @@ MonoBehaviour:
   - {fileID: 11400000, guid: a6fc1f4a1f8f8c143a2d33c160cf69a8, type: 2}
   - {fileID: 11400000, guid: b846859bcddf2124e81b44d02e925bf0, type: 2}
   m_displayName: Leader of the Villagers
+  m_preCombatLines:
+  - Plague be our salvation
+  - Absolution is upon us..
+  - DIE !!
   m_maxActionPoints: 0
+  m_speechBubbleAnchor: {fileID: 6037981671476271999}
   m_reactionSettings:
     dodgePercentage: 0
     parryPercentage: 0
@@ -713,6 +720,37 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 681854526908502603}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &7774080347863345613
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6037981671476271999}
+  m_Layer: 0
+  m_Name: SpeechBubbleAnchor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6037981671476271999
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7774080347863345613}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 3.333333, y: 9.999999, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5388565632050498619}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8339025699985416640
 GameObject:

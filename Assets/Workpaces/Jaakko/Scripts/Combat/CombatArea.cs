@@ -41,6 +41,9 @@ public class CombatArea : MonoBehaviour
     [SerializeField] private string m_areaID;
     public string ID => m_areaID;
 
+    [SerializeField] private bool m_isBoss;
+    public bool IsBoss => m_isBoss;
+
     private bool m_initialized = false;
 
 #if UNITY_EDITOR

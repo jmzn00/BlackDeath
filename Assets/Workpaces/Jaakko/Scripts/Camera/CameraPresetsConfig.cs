@@ -9,6 +9,9 @@ public class CameraPresetsConfig : ScriptableObject
     
     [Header("Enemy Turn Presets")]
     public CameraPresetData enemyTurn = new CameraPresetData { presetName = "Enemy Turn" };
+
+    [Header("Pre-Combat Presets")]
+    public CameraPresetData preCombatDialogue = new CameraPresetData { presetName = "Pre-Combat Dialogue" };
     
     [Header("Shared Combat Presets")]
     public CameraPresetData transition = new CameraPresetData { presetName = "Transition" };
@@ -31,6 +34,9 @@ public class CameraPresetsConfig : ScriptableObject
             
             // Enemy Turn
             case CameraPresetType.EnemyTurn: return enemyTurn;
+
+            // Pre-Combat
+            case CameraPresetType.PreCombatDialogue: return preCombatDialogue;
             
             // Shared Combat
             case CameraPresetType.Transition: return transition;
@@ -56,6 +62,9 @@ public enum CameraPresetType
     
     // Enemy Turn
     EnemyTurn,
+
+    // Pre-Combat
+    PreCombatDialogue,
     
     // Shared Combat States
     Transition,

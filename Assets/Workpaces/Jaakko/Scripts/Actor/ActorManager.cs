@@ -113,11 +113,22 @@ public class ActorManager : ManagerBase
 
         if (m_party.Count > 0)
         {
-            foreach (var a in m_party)
+            var preferred = m_party.FirstOrDefault(a => a.IsDefaultControlled);
+            if (preferred != null)
+                SetControlledActor(preferred);
+
+            if (m_currentControlled == null)
             {
-                if (a.CompareTag("Player"))
-                    SetControlledActor(a);
+                foreach (var a in m_party)
+                {
+                    if (a.CompareTag("Player"))
+                    {
+                        SetControlledActor(a);
+                        break;
+                    }
+                }
             }
+
             if (m_currentControlled == null)
                 SetControlledActor(m_party[0]);
         }

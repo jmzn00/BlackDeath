@@ -9,11 +9,21 @@ public class NPCSpeechBubble : MonoBehaviour
 
     private void Start()
     {
-        m_cam = Camera.main?.transform;
+        foreach (var t in GetComponentsInChildren<Transform>(true))
+            t.gameObject.layer = 0;
+
+        var canvas = GetComponent<Canvas>();
+        if (canvas != null)
+        {
+            canvas.overrideSorting = true;
+            canvas.sortingOrder = 50;
+        }
     }
 
     private void LateUpdate()
     {
+        if (m_cam == null)
+            m_cam = Camera.main?.transform;
         if (m_cam != null)
             transform.rotation = m_cam.rotation;
     }

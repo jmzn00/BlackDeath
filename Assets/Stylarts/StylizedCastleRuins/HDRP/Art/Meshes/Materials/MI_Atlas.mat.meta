@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: c36418817de51b94f8b2d4465bee2993
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 333790
+  packageName: Stylized Castle Ruins
+  packageVersion: 1.0
+  assetPath: Assets/Stylarts/StylizedCastleRuins/HDRP/Art/Meshes/Materials/MI_Atlas.mat
+  uploadId: 790042

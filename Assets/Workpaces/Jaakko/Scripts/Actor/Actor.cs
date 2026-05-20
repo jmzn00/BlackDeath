@@ -12,6 +12,8 @@ public class Actor : MonoBehaviour, IActor
 
     [SerializeField] private Team m_team = Team.Neutral;
     [SerializeField] private ControlType m_controlType = ControlType.Ai;
+    [SerializeField] private bool m_isDefaultControlled;
+    public bool IsDefaultControlled => m_isDefaultControlled;
 
     public Team Team => m_team;
     public ControlType ControlType => m_controlType;

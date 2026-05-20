@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CameraPresetsConfig
   playerActionSelecting:
     presetName: Player Action Selecting
-    positionOffset: {x: -1, y: 2, z: -2}
-    rotation: {x: 28.205963, y: 26.62339, z: 0}
+    positionOffset: {x: -1, y: 2, z: -15}
+    rotation: {x: 4.451387, y: 3.8095162, z: -0.000000013380577}
     fieldOfView: 60
     orthographicSize: 5
     followDamping: 1.5
@@ -38,6 +38,17 @@ MonoBehaviour:
     presetName: Enemy Turn
     positionOffset: {x: 0, y: 3, z: -5}
     rotation: {x: 0, y: 0, z: 0}
+    fieldOfView: 60
+    orthographicSize: 5
+    followDamping: 1
+    transitionSpeed: 2
+    width: 10
+    zoomDamping: 0.5
+    fovRange: {x: 40, y: 60}
+  preCombatDialogue:
+    presetName: Pre-Combat Dialogue
+    positionOffset: {x: 0, y: 2, z: -6}
+    rotation: {x: 11.203847, y: -0.0015780125, z: 0}
     fieldOfView: 60
     orthographicSize: 5
     followDamping: 1

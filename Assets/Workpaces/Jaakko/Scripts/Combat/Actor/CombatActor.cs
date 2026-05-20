@@ -55,6 +55,10 @@ public class CombatActor : MonoBehaviour, IActorComponent, IDamageSource
     public AnimationClip TransitionClip => m_animator.TransitionClip;
 
     [SerializeField] private string m_displayName;
+
+    [Header("Pre-Combat")]
+    [SerializeField][TextArea(1, 4)] private string[] m_preCombatLines;
+    public string[] PreCombatLines => m_preCombatLines;
     public string DisplayName => string.IsNullOrEmpty(m_displayName)
         ? name.Replace("(Clone)", "").Trim()
         : m_displayName;
@@ -75,6 +79,9 @@ public class CombatActor : MonoBehaviour, IActorComponent, IDamageSource
 
     private CameraTarget m_cameraTarget;
     public CameraTarget Target => m_cameraTarget;
+
+    [SerializeField] private Transform m_speechBubbleAnchor;
+    public Transform SpeechBubbleAnchor => m_speechBubbleAnchor;
 
     private void Update()
     {

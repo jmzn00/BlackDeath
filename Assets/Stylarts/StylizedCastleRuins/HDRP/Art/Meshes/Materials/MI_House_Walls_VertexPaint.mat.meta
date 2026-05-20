@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 41e68114c167a7d478770600873a573f
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 333790
+  packageName: Stylized Castle Ruins
+  packageVersion: 1.0
+  assetPath: Assets/Stylarts/StylizedCastleRuins/HDRP/Art/Meshes/Materials/MI_House_Walls_VertexPaint.mat
+  uploadId: 790042

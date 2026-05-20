@@ -1075,10 +1075,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c246a3f1bf280643b859a9da5b901e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MovementController
-  m_defaultLayer:
-    serializedVersion: 2
-    m_Bits: 1
-  m_visualCapsule: {fileID: 5352185317220870533}
   m_playerStats:
     WalkSpeed: 3
     RunSpeed: 5
@@ -1108,6 +1104,7 @@ MonoBehaviour:
     SecondWallJumpStaminaCost: 0
     WallJumpStaminaCost: 0
     ConsecutiveWallJumpStaminaCostMultiplier: 0
+  m_visualCapsule: {fileID: 5352185317220870533}
 --- !u!114 &1180821602836638563
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1172,6 +1169,7 @@ MonoBehaviour:
   m_actorID: 7edca80d-56a0-4f99-9452-bb954c0badac
   m_team: 0
   m_controlType: 0
+  m_isDefaultControlled: 1
   m_trackingTarget: {fileID: 3930918499331714944}
   actorSprite: {fileID: 3111080797503179915, guid: 8c74284c3e7defc439015d0e1a641bce, type: 3}
 --- !u!114 &944227234634294388
@@ -1192,7 +1190,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 8b06f7ca976b9604483b267fdb0be5f4, type: 2}
   - {fileID: 11400000, guid: 90c79fd1fa1e1e440aef025125e5a633, type: 2}
   m_displayName: Basselios
+  m_preCombatLines: []
   m_maxActionPoints: 6
+  m_speechBubbleAnchor: {fileID: 0}
 --- !u!114 &358198684617041155
 MonoBehaviour:
   m_ObjectHideFlags: 0

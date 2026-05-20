@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 218cc73f3f8b6504b952e27914a15942
+TextScriptImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 333790
+  packageName: Stylized Castle Ruins
+  packageVersion: 1.0
+  assetPath: Assets/Stylarts/StylizedCastleRuins/HDRP/Scene/HDRP_StylizedCastleRuins/README_About_ExtraFogs.txt
+  uploadId: 790042

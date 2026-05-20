@@ -21,12 +21,13 @@ public class AnimationController : MonoBehaviour
 
     private void Awake()
     {
-        m_animator = GetComponent<Animator>();        
+        m_animator = GetComponent<Animator>();
         m_movementController = GetComponent<MovementController>();
 
-        if (m_movementController == null)
-            return;
-        m_movementController.OnMove += OnMove;
+        if (m_movementController != null)
+            m_movementController.OnMove += OnMove;
+
+        CombatEvents.OnCombatStarted += FaceRight;
     }
     private void Start()
     {
@@ -36,12 +37,17 @@ public class AnimationController : MonoBehaviour
             m_combatActor.OnActionFinished += OnActionAnimationFinished;
         */
     }
+    private void FaceRight()
+    {
+        if (m_spriteRenderer != null)
+            m_spriteRenderer.flipX = false;
+    }
+
     private void OnDestroy()
     {
-        if (m_movementController == null)
-
-            return;
-        m_movementController.OnMove -= OnMove;
+        if (m_movementController != null)
+            m_movementController.OnMove -= OnMove;
+        CombatEvents.OnCombatStarted -= FaceRight;
         /*
         if (m_combatActor != null)
             m_combatActor.OnActionFinished -= OnActionAnimationFinished;

@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: f9b0578bd6ae17148a6434b0e5b7a438
+ScriptedImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 2
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+  script: {fileID: 11500000, guid: 625f186215c104763be7675aa2d941aa, type: 3}
+AssetOrigin:
+  serializedVersion: 1
+  productId: 333790
+  packageName: Stylized Castle Ruins
+  packageVersion: 1.0
+  assetPath: Assets/Stylarts/StylizedCastleRuins/HDRP/Art/Shadergraphs/S_Foliage.shadergraph
+  uploadId: 790042

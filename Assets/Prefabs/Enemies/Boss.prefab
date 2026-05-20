@@ -176,6 +176,7 @@ MonoBehaviour:
   m_actorID: dbb83ade-8973-4285-bcad-7a4aad543d87
   m_team: 1
   m_controlType: 1
+  m_isDefaultControlled: 0
   m_trackingTarget: {fileID: 1152866835894812299}
   actorSprite: {fileID: 5972755998040467029, guid: 9555d411535324e4eb13f01ffa23a26e, type: 3}
 --- !u!114 &9152552109941912620
@@ -196,7 +197,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 57aace21b5e284049b62880446904550, type: 2}
   - {fileID: 11400000, guid: c46c9bb9a2169054883a4716f4b5d368, type: 2}
   m_displayName: Plague Demon
+  m_preCombatLines: []
   m_maxActionPoints: 0
+  m_speechBubbleAnchor: {fileID: 0}
   m_reactionSettings:
     dodgePercentage: 0
     parryPercentage: 0

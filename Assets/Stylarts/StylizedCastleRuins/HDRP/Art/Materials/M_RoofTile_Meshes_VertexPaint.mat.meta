@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 3212ddf269e7a784ebe7f84ccee87d29
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 333790
+  packageName: Stylized Castle Ruins
+  packageVersion: 1.0
+  assetPath: Assets/Stylarts/StylizedCastleRuins/HDRP/Art/Materials/M_RoofTile_Meshes_VertexPaint.mat
+  uploadId: 790042

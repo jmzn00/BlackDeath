@@ -11,24 +11,32 @@ public class NPCInteraction : MonoBehaviour
     private NPCSpeechBubble m_activeBubble;
     private bool m_playerInRange;
 
-    private void Start()
+    private void Start() => FindPlayer();
+
+    private void OnEnable()  => CombatEvents.OnCombatEnded += OnCombatEnded;
+    private void OnDisable() => CombatEvents.OnCombatEnded -= OnCombatEnded;
+
+    private void OnCombatEnded(CombatResult result)
     {
-        var playerObj = GameObject.FindGameObjectWithTag("Player");
-        if (playerObj != null)
-            m_player = playerObj.transform;
+        FindPlayer();
+        HideBubble();
+        m_playerInRange = false;
+    }
+
+    private void FindPlayer()
+    {
+        var movement = Object.FindFirstObjectByType<MovementController>();
+        if (movement != null) { m_player = movement.transform; return; }
+        var obj = GameObject.FindGameObjectWithTag("Player");
+        if (obj != null) m_player = obj.transform;
     }
 
     private void Update()
     {
-        if (m_player == null) return;
-
+        if (m_player == null) { FindPlayer(); return; }
         bool inRange = Vector3.Distance(transform.position, m_player.position) < m_triggerRadius;
-
-        if (inRange && !m_playerInRange)
-            ShowBubble();
-        else if (!inRange && m_playerInRange)
-            HideBubble();
-
+        if (inRange && !m_playerInRange)  ShowBubble();
+        else if (!inRange && m_playerInRange) HideBubble();
         m_playerInRange = inRange;
     }
 

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
 public enum CombatState
 {
     Active,
@@ -42,6 +41,8 @@ public class CombatManager : ManagerBase
     public Container Container => m_container;
 
     private ActorManager m_actor;
+
+    private bool m_bossDefeated;
 
     public CombatManager(GameManager game)
     {
@@ -136,10 +137,30 @@ public class CombatManager : ManagerBase
 
         m_container.Resolve<TransitionSystem>().UpdateArea(area);
 
+        m_bossDefeated = false;
+
         m_context = new CombatContext(actors);
         foreach (var s in m_systems)
             s.Init(m_context);
 
+        bool hasCutscene = actors.Any(a =>
+            a.Team == Team.Enemy &&
+            a.PreCombatLines != null &&
+            a.PreCombatLines.Length > 0);
+
+        if (hasCutscene)
+        {
+            CombatEvents.OnPreCombatCutsceneCompleted += OnCutsceneCompleted;
+            CombatEvents.PreCombatCutsceneRequested(actors);
+        }
+        else
+        {
+            NextTurn();
+        }
+    }
+    private void OnCutsceneCompleted()
+    {
+        CombatEvents.OnPreCombatCutsceneCompleted -= OnCutsceneCompleted;
         NextTurn();
     }
     private void NextTurn()
@@ -226,12 +247,20 @@ public class CombatManager : ManagerBase
         foreach (var s in m_systems)
             s.Reset();
 
+        if (m_area != null && m_area.IsBoss && result == CombatResult.Won)
+            m_bossDefeated = true;
+
         m_area.AreaFinished(result);
         m_area = null;
         CombatEvents.CombatCameraEnded();
     }
     public void EndScreenFinished()
     {
+        if (m_bossDefeated)
+        {
+            UnityEngine.SceneManagement.SceneManager.LoadScene("Scene_MainMenu");
+            return;
+        }
         m_game.SetState(GameState.None);
         ChangeState(CombatState.Inactive);
     }
